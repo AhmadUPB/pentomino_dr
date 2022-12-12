@@ -37,8 +37,9 @@
     var url='';
 
     function createURL(){
-
-        url='i?';
+        // convert from i? to i.php? to make it work in local host for debugging purposes
+        //TODO: Turn it back to i?
+        url='i.php?';
 
         var inputs=document.getElementsByTagName('select');
 
