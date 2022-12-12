@@ -1,0 +1,40 @@
+:root {
+	  
+  /* colorful colors ;-) */
+	
+  --f-color: #bd3931;
+  --i-color: #c27d3b;
+  --l-color: #ccca4d;
+  --n-color: #8cc849;
+  --p-color: #60c847;
+  --t-color: #60c881;
+  --u-color: #5fc9ca;
+  --v-color: #3e7ac6;
+  --w-color: #2531c4;
+  --x-color: #7136c4;
+  --y-color: #bd3fc5;
+  --z-color: #bd3b78;
+
+  --partition-3-board-color:hsl(170, 19%, 35%);
+  --partition-3-piece-color:hsl(170, 19%, 25%);
+  --partition-2-board-color:hsl(152, 23%, 59%);
+  --partition-2-piece-color:hsl(152, 23%, 49%);
+  --partition-1-board-color:hsl(189, 31%, 67%);
+  --partition-1-piece-color:hsl(189, 31%, 57%);
+    
+  --field-color: #a8a8a8;
+  --board-color: #e4e4e4;
+  --board-grid-color: #c3c3c3;
+  --board-blocked-color: #a8a8a8;
+  
+  --piece-border-color: #000;
+  --piece-borders: false;
+  --piece-inner-borders: false;
+  --piece-inner-borders-color:#000;
+  
+  --tray-color: #c0c0c0;
+  
+  --functionbar-color:#808080;
+  --functionbar-text-color:white;
+
+}

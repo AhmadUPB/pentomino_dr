@@ -1,0 +1,335 @@
+/* #################################################################
+
+     Pentomino Digital
+     
+     DDI Paderborn, 2020-2022
+     
+     Realisation: Felix Winkelnkemper,
+                  felix.winkelnkemper@uni-paderborn.de
+                  
+     Published under the European Union Public License
+     
+     https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+     
+     This project uses material from other sources.
+     See acknowledgements.md for details.
+     
+   #################################################################
+
+*/
+
+@font-face {
+	font-family: schoolfont;
+	src: url(boardstyles/Grundschrift-Regular.otf);
+  }
+
+/* Variable definitions */
+
+:root {
+  
+  --function-area-width: 7vw;
+  --game-area-width: 93vw;
+  --tray-height: 7vw;
+  
+  --legend-color: #222;
+  --legend-text-color:#FFF;
+  --legend-height:7vw;
+  --legend-width:7vw;
+  
+  --overlay-color: #222;
+  --overlay-text-color:#FFF;
+
+  --piece-f-color: var(--f-color);
+  --piece-i-color: var(--i-color);
+  --piece-l-color: var(--l-color);
+  --piece-n-color: var(--n-color);
+  --piece-p-color: var(--p-color);
+  --piece-t-color: var(--t-color);
+  --piece-u-color: var(--u-color);
+  --piece-v-color: var(--v-color);
+  --piece-w-color: var(--w-color);
+  --piece-x-color: var(--x-color);
+  --piece-y-color: var(--y-color);
+  --piece-z-color: var(--z-color);
+  
+}
+
+* {
+	font-family:sans-serif;
+}
+
+html {margin: 0; height: 100%; overflow: hidden;
+	 font-size:1vw;
+	 touch-action:none;
+	 position: fixed;}
+
+body {
+	background:var(--field-color);
+	background-size: 100vw;
+    background-position: bottom 0px left 0;
+	touch-action: none;
+	}
+
+#functions {
+	box-sizing: border-box;
+	position:fixed;
+	top:0;left:0;
+	background:var(--functionbar-color);
+	bottom:0;
+	padding-left:0px;
+	width:var(--function-area-width);
+	color:var(--functionbar-text-color);
+}
+
+#game {
+	position:fixed;
+	top:0;left:var(--function-area-width);
+	bottom:0;
+	width:var(--game-area-width)
+}
+
+#tray {
+	position:fixed;
+	top:0;
+	left:var(--function-area-width);
+	background:var(--tray-color);
+	height:var(--tray-height);
+	width:var(--game-area-width);
+}
+
+#field {
+	position:fixed;
+	top:var(--tray-height);bottom:0;
+	width:var(--game-area-width);
+}
+
+#piecearea {
+	user-select: none;
+}
+
+#operations{
+	display:none
+}
+
+#hint{
+	position:fixed;
+	bottom:0;
+	left:var(--function-area-width);
+	color:white;
+	height:4vw;
+	right:0;
+	font-family: schoolfont, monospace;
+	font-size:300%;
+	display:block;
+	text-align:center;
+	text-shadow:  1px  1px 1px black,
+                  1px -1px 1px black,
+                 -1px  1px 1px black,
+                 -1px -1px 1px black;
+}
+
+#hint.problem{
+	color:red;
+}
+
+#legend{
+	position:fixed;
+	top:calc(var(--tray-height) + 1vw);
+	background:var(--legend-color);
+	color:var(--legend-text-color);
+	min-height:var(--legend-height);
+	min-width:var(--legend-width);
+	right:1vw;
+	font-family:monospace;
+	padding:10px;
+	display:none;
+}
+
+.LEGEND_SINGLE_FIT {background:#64b74a;color:black;}
+.LEGEND_SENSIBLE_FIT {background:#b1d5a5;color:black;}
+.LEGEND_ALL_SENSIBLES_FIT {background:#c8cf9e;color:black;}
+.LEGEND_ONE_NONFITTING {background:#c0c0c0;color:black;}
+.LEGEND_NOT_SOLVABLE {background:#e5c9c6;color:black;}
+.LEGEND_NOT_COVERABLE {background:#e7191b;}
+
+
+.gamearea{
+	display:block;
+	
+	position:absolute;
+	left:0;
+	top:0;
+	
+	user-select: none;
+	text-align:center;
+	color:black;
+}
+
+.boardarea{
+	background:var(--board-color);
+	border:1px solid var(--board-grid-color);
+	font-size:300%
+}
+
+.blocked{
+	background:transparent;
+	border:1px solid transparent;
+}
+
+.piece {
+	position:fixed;
+}
+
+.piece div{
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+}
+
+.bmAround {}
+
+.bmPoint {
+	border:1px solid var(--piece-border-color);
+}
+
+.button {
+	width:25%;height:25%;
+	position:absolute;
+	background:#c0c0c0;
+	border:2px solid black;
+	border-top-color:white;
+	border-left-color:white;
+	border-radius: 10%;
+	opacity:0.5;
+}
+
+.button:hover {opacity:1}
+
+#functions div.section{
+	clear:both;
+	padding-top:1vw;
+}
+
+#functions .button{
+	position:relative;
+	float:left;
+	width:calc(var(--function-area-width) * 0.75);
+	height:calc(var(--function-area-width)* 0.75);
+	margin:5%;
+	margin-left:calc(var(--function-area-width)* 0.120);
+	background:#ddd;
+	border:1px solid #eee;
+	border-radius:100%;
+	opacity:1;
+}
+
+#functions .button:hover {
+	background:white;
+	border:1px solid #fff;
+}
+
+#functions h1{
+	color:white;
+	font-size:100%;
+	font-family:sans-serif;
+	border:bottom:1px solid #ccc;
+}
+
+#overlay {
+	display:none;
+	font-family:sans-serif;
+	z-index:2147483647;
+	padding:30px;
+	padding-top:70px;
+	font-size:200%;
+	position:fixed;
+	background:var(--overlay-color);
+	color:var(--overlay-text-color);
+	top:0;
+	left:0;
+	bottom:0;
+	right:0;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	touch-action:auto;
+}
+
+#overlay button{
+	clear:both;
+	display:block;
+	font-size:100%;
+	float:right;
+}
+
+#overlay h1 {
+	font-size:100%;
+	display:block;
+	position:fixed;
+	margin:0;
+	padding:10px;
+	top:0;
+	left:0;
+	right:0;
+	text-align:center;
+	background:black;
+}
+
+#overlay a{
+	  color:var(--overlay-text-color);
+}
+
+.board_prev{
+	box-sizing: border-box;
+	display:block;
+	width:calc(20vw - 20px);
+	height:calc(20vw - 20px);
+	padding:10px;
+	float:left;
+	opacity:80%;
+}
+
+.board_prev:hover{
+	opacity:100%;
+}
+
+.board_prev div{
+	width:20px;
+	height:20px;
+	display:block;
+	float:left;
+}
+
+.board_prev div.filled{
+	background:white;
+	outline:1px solid black;
+}
+
+#qrcodeDisplay{
+	border:2px solid white;
+	height:85vh;
+	width:85vh;
+	position:fixed;
+	top:1vw;
+	left:calc(50% - 42.5vh);
+
+}
+
+#overlay .closebutton{
+	position:fixed;
+	bottom:2vw;
+	right:2vw;
+}
+
+#qrcodeDisplay img{
+ height:100%;
+}
+
+#urlDisplay {
+	font-size:1vw;
+	position:fixed;
+	bottom:1vw;
+	left:0;
+	right:0;
+	text-align:center;
+}

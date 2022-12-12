@@ -1,0 +1,40 @@
+:root {
+	  
+  /* colorful colors ;-) */
+	
+  --f-color: #083ef5;
+  --i-color: #6ff9fd;
+  --l-color: #ec4025;
+  --n-color: #a37a4b;
+  --p-color: #ec59f7;
+  --t-color: #6ff34a;
+  --u-color: #f19273;
+  --v-color: #fadc61;
+  --w-color: #f29737;
+  --x-color: #892f8c;
+  --y-color: #fff953;
+  --z-color: #88f6a0;
+
+  --partition-3-board-color:hsl(170, 19%, 35%);
+  --partition-3-piece-color:hsl(170, 19%, 25%);
+  --partition-2-board-color:hsl(152, 23%, 59%);
+  --partition-2-piece-color:hsl(152, 23%, 49%);
+  --partition-1-board-color:hsl(189, 31%, 67%);
+  --partition-1-piece-color:hsl(189, 31%, 57%);
+    
+  --field-color: url("boardstyles/wood.jpg") #c9c9c1;
+  --board-color: #FFF;
+  --board-grid-color: #000;
+  --board-blocked-color: transparent;
+  
+  --piece-border-color: #000;
+  --piece-borders: true;
+  --piece-inner-borders: true;
+  --piece-inner-borders-color:#000;
+  
+  --tray-color: rgba(0,0,0,20%);
+  
+  --functionbar-color:rgba(0,0,0,50%);;
+  --functionbar-text-color:white;
+  
+}

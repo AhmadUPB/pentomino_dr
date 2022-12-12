@@ -1,0 +1,7 @@
+1, ...T........... .TTT........... ..NT........... ..NN........... ..ZN........... ZZZN........... Z.UUU.......... ..UFUWW........ ..FFFXWW....... ..FYXXXWL...... ..VYYXPPL...... ..VY..PPL...... VVVY...PLLIIIII
+2, ...T........... .TTT........... ..NT........... ..NN........... ..ZN........... ZZZN........... Z.UUX.......... ..UXXXW........ ..UUXFWW....... ..LLFFFWW...... ..VLFYYYY...... ..VL..YPP...... VVVL...PPPIIIII
+3, ...T........... .TTT........... ..NT........... ..NN........... ..ZN........... ZZZN........... Z.UUX.......... ..UXXXW........ ..UUXWWF....... ..LLWWFFF...... ..VLYYYYF...... ..VL..YPP...... VVVL...PPPIIIII
+4, ...F........... .FFF........... ..FY........... ..YY........... ..ZY........... ZZZY........... Z.UUU.......... ..UXUPP........ ..XXXPPN....... ..TXWWPNN...... ..TTTWWVN...... ..TL..WVN...... LLLL...VVVIIIII
+5, ...F........... .FFF........... ..FY........... ..YY........... ..ZY........... ZZZY........... Z.UUX.......... ..UXXXW........ ..UUXWWN....... ..PPWWTNN...... ..PPTTTVN...... ..PL..TVN...... LLLL...VVVIIIII
+6, ...F........... .FFF........... ..FY........... ..YY........... ..ZY........... ZZZY........... Z.LUU.......... ..LUTTT........ ..LUUTWW....... ..LLNTXWW...... ..VNNXXXW...... ..VN..XPP...... VVVN...PPPIIIII
+7, ...F........... .FFF........... ..FY........... ..YY........... ..ZY........... ZZZY........... Z.LUU.......... ..LUPPP........ ..LUUPPX....... ..LLNWXXX...... ..VNNWWXT...... ..VN..WWT...... VVVN...TTTIIIII

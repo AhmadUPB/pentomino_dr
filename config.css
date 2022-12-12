@@ -1,0 +1,59 @@
+/* #################################################################
+
+     Pentomino Digital
+     
+     DDI Paderborn, 2020-2022
+     
+     Realisation: Felix Winkelnkemper,
+                  felix.winkelnkemper@uni-paderborn.de
+                  
+     Published under the European Union Public License
+     
+     https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+     
+     This project uses material from other sources.
+     See acknowledgements.md for details.
+     
+   #################################################################
+
+*/
+
+body {background:hsl(0, 0%, 75%);
+	  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
+
+table {max-width:800px; border-collapse: collapse;}
+
+th {text-align:left; white-space: nowrap;padding:3px 7px;}
+td {padding:3px}
+
+tr:nth-child(even) {background: hsl(0, 0%, 85%);}
+tr:nth-child(odd) {background: hsl(0, 0%, 65%);}
+
+tr.transparent {background:hsl(0, 0%, 75%);}
+
+#targetDisplay {
+  position:fixed;
+  top:10px;
+  right:10px;
+  border:1px solid black;
+  width:calc(100% - 840px);
+}
+
+#qrcodeDisplay img{
+  width:100%;
+}
+
+#urlDisplay {
+  font-size:50%;
+  overflow:hidden;
+}
+
+@media only screen and (max-width: 1175px) {
+  #targetDisplay {
+    margin-top:20px;
+    position:static;
+    width:100%
+  }
+
+  table {width:auto;max-width:100%}
+}

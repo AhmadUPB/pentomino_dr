@@ -1,0 +1,3 @@
+1, .......NNN... ......PPINN.. ......PPILLLL .......PIL... ........IWW.. ..TVVVZZIFWW. TTTVUUZFFFXW. ..TVUZZYFXXX. ....UUYYYYX..
+2, .......NNN... ......PPPNN.. ......PPFLLLL .......FFL... ........FFX.. ..TYYYYZVXXX. TTTWYZZZVUXU. ..TWWZVVVUUU. ....WWIIIII..
+3, .......PPP... ......WPPNN.. ......WWZZNNN .......WWZ... ........FZZ.. ..LLLLFFFVVV. IIIIILTFXUUV. ..YYYYTXXXUV. ....YTTTXUU..

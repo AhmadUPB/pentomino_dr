@@ -1,0 +1,40 @@
+:root {
+	  
+  /* colorful colors ;-) */
+	
+  --f-color: hsl(0,50%,50%);
+  --i-color: hsl(30,50%,50%);
+  --l-color: hsl(60,50%,50%);
+  --n-color: hsl(90,50%,50%);
+  --p-color: hsl(120,50%,75%);
+  --t-color: hsl(150,50%,25%);
+  --u-color: hsl(180,50%,50%);
+  --v-color: hsl(210,50%,50%);
+  --w-color: hsl(230,50%,75%);
+  --x-color: hsl(260,50%,50%);
+  --y-color: hsl(290,50%,50%);
+  --z-color: hsl(320,50%,30%);
+
+  --partition-3-board-color:hsl(0,40%,90%);
+  --partition-3-piece-color:hsl(0,50%,50%);
+  --partition-2-board-color:hsl(90,40%,90%);
+  --partition-2-piece-color:hsl(90,50%,50%);
+  --partition-1-board-color:hsl(210,40%,90%);
+  --partition-1-piece-color:hsl(210,50%,50%);
+    
+  --field-color: #a9a9a9;
+  --board-color: #f9f9f9;
+  --board-grid-color: #c3caca;
+  --board-blocked-color: #a9a9a9;
+  
+  --piece-border-color: #000;
+  --piece-borders: true;
+  --piece-inner-borders: true;
+  --piece-inner-borders-color:rgba(0,0,0,12%);
+  
+  --tray-color: #e2e0e0;
+  
+  --functionbar-color:#444;
+  --functionbar-text-color:white;
+  
+}

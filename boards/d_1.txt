@@ -1,0 +1,5 @@
+1, ....XVVV.. ...XXXIV.. ..UUXTIV.. .FUTTTIL.. FFUU.TIL.. .FF..YIL.. .....YLL.. .....YYW.. .....YWW.. .....WWZ.. ...PPNNZZZ ...PPPNNNZ
+2, ....XVVV.. ...XXXNV.. ..UUXTNV.. .FUTTTNN.. FFUU.TPN.. .FF..YPP.. .....YPP.. .....YYW.. .....YWW.. .....WWZ.. ...LLLLZZZ ...LIIIIIZ
+3, ....XVVV.. ...XXXNV.. ..UUXTNV.. .FUTTTNN.. FFUU.TPN.. .FF..PPY.. .....PPY.. .....WYY.. .....WWY.. .....ZWW.. ...ZZZLLLL ...ZIIIIIL
+4, ....ZVVV.. ...YZZZV.. ..YYYYZV.. .FFWWUUU.. FFWW.UXU.. .FW..XXX.. .....IXN.. .....INN.. .....INT.. .....INT.. ...PPITTTL ...PPPLLLL
+5, ....ZVVV.. ...YZZZV.. ..YYYYZV.. .FFWWUUU.. FFWW.UXU.. .FW..XXX.. .....NXI.. .....NNI.. .....TNI.. .....TNI.. ...LTTTIPP ...LLLLPPP

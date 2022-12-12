@@ -1,0 +1,153 @@
+LANG::deutsch
+
+AND::und
+OR::oder
+
+LABEL_SOLUTIONS::Lösungen
+LABEL_HINTS::Tipps
+LABEL_DEBUG::Entwicklung
+LABEL_PREFILL::Vor-Ausfüllen
+LABEL_NEW_GAME::Neues Spiel
+LABEL_HINT::Tipp
+
+LABEL_FILL_LEFT::von links füllen
+LABEL_FILL_RIGHT::von rechts füllen
+LABEL_FILL_CENTER::von der Mitte füllen
+LABEL_FILL_RANDOM::zufällig füllen
+LABEL_FILL_GAP::auf Lücke füllen
+LABEL_FILL_MINTOUCH::mit minimaler Berührung füllen
+LABEL_FILL_ALL::vollständig füllen
+
+LABEL_SUGGEST::Vorschlagen
+LABEL_INFO::Informationen
+LABEL_LOAD::Laden
+LABEL_SAVE::Speichern
+LABEL_CLEAR::Abräumen
+LABEL_RELOAD::Neu laden
+LABEL_CATALOG::Brettauswahl
+LABEL_PARTITION::Board-Teilung
+LABEL_CONFIG::Konfiguration
+LABEL_QR::QR-Code
+TOGGLE_SOUND::Sound ein/ausschalten
+TOGGLE_HEAT::Heatmap ein/ausschalten
+
+HEADING_BOARD_SELECTOR::Brettauswahl
+HEADING_QR_CODE::Hier ist der QR-Code
+
+STATUS_LOADING::Lädt...
+DOWNLOAD_QR::QR-Code herunterladen
+URL_COPIED::Die Adresse wurde die Zwischenablage kopiert.
+
+BUTTON_CLOSE::Schließen
+
+PROBLEM_UNSOLVABLE::Nicht mehr lösbar!
+PROBLEM_partial::Spielstein %1 nur teilweise auf Brett!
+PROBLEM_overlapping::%1 überlappt %2!
+PROBLEM_%5::Lücken, die nicht durch 5 teilbar sind!
+
+WEBAPP_NOTICE::Sie können Pentomino Digital als Webapp installieren, indem Sie eine Verknüpfung auf den Starbildschirm einrichten. Wenn Sie das machen haben Sie mehr Platz für Steine und Bretter und werden nicht durch den Browser abgelenkt.
+
+LEGEND_SINGLE_FIT::eindeutig
+LEGEND_SENSIBLE_FIT::eindeutig
+LEGEND_ALL_SENSIBLES_FIT::alle passen
+LEGEND_ONE_NONFITTING::ein Stein passt nicht
+LEGEND_NOT_SOLVABLE::nicht lösbar
+LEGEND_NOT_COVERABLE::nicht abdeckbar
+
+SUGGEST_HINT::Es gibt kaum Anhaltspunkte.
+SUGGEST_UNSOLVABLE::Nicht mehr lösbar!
+SUGGEST_UNCOVERABLE::Es gibt nicht abdeckbare Bereiche!
+SUGGEST_MINUS1::Es gibt Stellen, an denen fast jeder Stein passt.
+SUGGEST_ALLFIT::Es gibt Stellen, an denen jeder Stein passt.
+SUGGEST_NONAMBIGUOUS::An einigen Stellen passt nur ein einziger Stein.
+SUGGEST_NONAMBIGUOUSP::An einigen Stellen passt nur ein einziger Stein.
+SUGGEST_REMOVAL::Entferne Steine
+
+UNAMBIGOUS_PIECES::Eindeutige Steine: 
+CLICK_FOR_HELP::Klicke den ?-Knopf für einen Tipp!
+CONGRATULATIONS::Toll! Du hast es geschafft!
+
+***** CONFIGURATION PAGE *****
+
+CONFIGURATION_TITLE::digital Pentomino – Konfiguration
+APPLY_CONFIG::Konfiguration anwenden.
+
+CONFIG_Theme::Aussehen
+CONFIG_Language::Sprache
+CONFIG_PreselectedBoard::Brettvorwahl
+CONFIG_ShowInfoButton::Hilfe/Info
+CONFIG_HintDepth::Tipp-Umfang
+CONFIG_HintAutoPilot::Autopilot
+CONFIG_ShowSuggestButton::Stein legen
+CONFIG_ShowConfigButton::Konfiguration
+CONFIG_ShowHeatmapButton::Heatmap
+CONFIG_PartitionMode::Drittelung
+CONFIG_ShowQRButton::QR-Code-Knopf
+CONFIG_ShowClearButton::Neustart-Knopf
+CONFIG_PrefillMode::Vorausfüllen
+CONFIG_FillRight::Füllen v. rechts
+CONFIG_FillLeft::Füllen v. links
+CONFIG_FillCenter::Füllen v. Mitte
+CONFIG_ShowSolutionNumber::Lösungsanzahl
+CONFIG_ShowLoadSave::Laden/Speichern
+CONFIG_BoardSelector::Brett-Auswahl
+CONFIG_ChekAppInstallation::Installationsprüfung
+CONFIG_SuggestMode::Vorschlagsmodus
+CONFIG_FreezeState::Vorbelegung einfrieren
+OPTION_DistancePlace::Auf Lücke
+OPTION_HypothesisPlace::Nach Hypothesenfaktor
+
+OPTION_ON::An
+OPTION_OFF::Aus
+OPTION_YES::Ja
+OPTION_NO::Nein
+OPTION_de::deutsch
+OPTION_en::englisch
+OPTION_NO_PREFILL::Nicht verfügbar
+OPTION_FILL_GAP::Auf Lücke füllen
+OPTION_FILL_ONE_TOUCH::Maximal 1 Berührfeld
+OPTION_3_PIECES::Drei Steine
+OPTION_5_PIECES::Fünf Steine
+OPTION_CONCRETE_HINT::Konkrete Hilfen
+OPTION_VAGUE_HINT::Grobe Hilfen
+OPTION_NO_HINTS::Keine Hilfen
+OPTION_BOARD_PROVIDED::Festgelegtes Brett
+OPTION_GET_FROM_BROWSER::Wie Browser
+OPTION_SHOW::Anzeigen
+OPTION_NOSHOW::Nicht anzeigen
+OPTION_SEQUENTIAL::sequenziell
+OPTION_COLORIZE::einfärben
+
+EXPLANATION_Theme::
+EXPLANATION_Language::
+EXPLANATION_BoardSelector::Bei "Nein" können Spieler das Brett nicht wechseln.
+EXPLANATION_PreselectedBoard::Bei "Festgelegtes Brett" werden Brett und Belegung, von dem aus diese Konfiguration aufgerufen wurde, vorgegeben.
+EXPLANATION_ShowLoadSave::Bei "Ja" ist es möglich, Brettkonfigurationen als Dateien zu laden und zu speichern.
+EXPLANATION_ShowClearButton::Bei "Ja" wird ein Knopf zum Neustarten des Bretts angezeigt.
+EXPLANATION_ShowQRButton::Bei "Ja" kann aus dem Spiel heraus ein QR-Code abgerufen werden.
+
+EXPLANATION_ShowSolutionNumber::Bei "Anzeigen" wird Anzahl verbleibender Lösungen angezeigt.
+EXPLANATION_HintDepth::Bei "Grobe Hilfen" erscheint nach Klick auf den Hilfe ur eine grobe Bewertung der Situation. Bei "Konkrete Hilfen" erscheint nach weiterem Klick ein detaillierter Hinweis.
+EXPLANATION_HintAutoPilot::Bei "Ja" werden Hinweise ohne Aufforderung direkt angezeigt.
+EXPLANATION_ShowSuggestButton::Bei "Ja" wird Knopf zum automatische Legen eines Steins angezeigt.
+EXPLANATION_ShowHeatmapButton::Bei "Ja" kann die Grundlage der Brettbewertungslogik als Heatmap angezeigt werden.
+EXPLANATION_PartitionMode::Bei "sequenziell" werden die Drittelungen nacheinander angezeigt, bei "einfärben" werden Brett und Steine mit drei Farben gefärbt.
+EXPLANATION_PrefillMode::Einstellung, wie eng Steine bei Vorausfüllung gesetzt werden. Bei "Aus" steht Vorausfüllen nicht zur Verfügung.
+EXPLANATION_FillRight::Automatisches Füllen von Rechts mit angegebener Anzahl von Steinen.
+EXPLANATION_FillLeft::Automatisches Füllen von Links mit angegebener Anzahl von Steinen.
+EXPLANATION_FillCenter::Automatisches Füllen aus der Mitte mit angegebener Anzahl von Steinen.
+EXPLANATION_FreezeState::Bei "Ja" können vorbelegte Steine (per URL/QR-Code) nicht bewegt werden.
+
+EXPLANATION_ShowConfigButton::Button zum Aufrufen der Konfigurationseinstellung anzeigen.
+EXPLANATION_ShowInfoButton::Button zum Aufrufen der Hilfe und der Copyright-Informationen anzeigen.
+EXPLANATION_ChekAppInstallation::Auf Tablets auf Installationsmöglichkeit hinweisen.
+EXPLANATION_SuggestMode::Bestimmt, nach welchem Kriterium Steine automatisch gesetzt werden.
+
+
+OPTION_standard::Standard
+OPTION_v3::Version 3
+OPTION_v4::Version 4
+OPTION_v5::Version 5
+OPTION_wood::Holz
+OPTION_tuca::Tuca
+OPTION_gray::Grau

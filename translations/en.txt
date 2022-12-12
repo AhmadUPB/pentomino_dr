@@ -1,0 +1,150 @@
+LANG::english
+
+AND::and
+OR::or
+
+LABEL_SOLUTIONS::Solutions
+LABEL_HINTS::Tips
+LABEL_DEBUG::Development
+LABEL_PREFILL::Prefill
+LABEL_NEW_GAME::New Game
+LABEL_HINT::Tip
+
+LABEL_FILL_LEFT::fill from the left
+LABEL_FILL_RIGHT::fill from the right
+LABEL_FILL_CENTER::fill from the center
+LABEL_FILL_RANDOM::fill randomly
+LABEL_FILL_GAP::fill with gap
+LABEL_FILL_MINTOUCH::fill with minimum touch
+LABEL_FILL_ALL::solve
+
+LABEL_SUGGEST::Suggest
+LABEL_INFO::Info
+LABEL_LOAD::Load
+LABEL_SAVE::Save
+LABEL_CLEAR::Clear
+LABEL_RELOAD::Reload
+LABEL_CATALOG::Board Selection
+LABEL_PARTITION::Partition
+LABEL_CONFIG::Konfiguration
+LABEL_QR::QR-Code
+TOGGLE_SOUND::Toggle Sound
+TOGGLE_HEAT::Toggle Heatmap
+
+HEADING_BOARD_SELECTOR::Board Selection
+HEADING_QR_CODE::Hier is your QR code
+
+STATUS_LOADING::Loading...
+DOWNLOAD_QR::Download the QR code
+URL_COPIED::Die URL has been copied to the clipboard.
+
+BUTTON_CLOSE::Close
+
+PROBLEM_UNSOLVABLE::Not solvable any more!
+PROBLEM_partial::Piece %1 only partially on board!
+PROBLEM_overlapping::%1 overlaps %2!
+PROBLEM_%5::Gaps not fillable by Pentominoes!
+
+WEBAPP_NOTICE::You can install Pentomino Digital as a web application by establishing a shortcut on the start screen. If you do that, you get more space for the pieces and for the board and are not distracted by the browser any more.
+
+LEGEND_SINGLE_FIT::nonambiguous
+LEGEND_SENSIBLE_FIT::nonambiguous
+LEGEND_ALL_SENSIBLES_FIT::all fit
+LEGEND_ONE_NONFITTING::single nonfitting
+LEGEND_NOT_SOLVABLE::not solvable
+LEGEND_NOT_COVERABLE::not coverable
+
+SUGGEST_HINT::Hardly any indications.
+SUGGEST_UNSOLVABLE::Unsolvable!
+SUGGEST_UNCOVERABLE::There are areas which cannot be covered.
+SUGGEST_MINUS1::There are areas where almost ever piece fits.
+SUGGEST_ALLFIT::There are areas where every piece fits.
+SUGGEST_NONAMBIGUOUS::In some areas only a single piece fits.
+SUGGEST_NONAMBIGUOUSP::In some areas only a single piece fits.
+SUGGEST_REMOVAL::Revomove pieces
+
+UNAMBIGOUS_PIECES::Nonambiguous pieces: 
+CLICK_FOR_HELP::Klick the ? button for a hint!
+
+***** CONFIGURATION PAGE *****
+
+CONFIGURATION_TITLE::digital Pentomino – Configuration
+APPLY_CONFIG::Apply Config
+
+CONFIG_Theme::Theme
+CONFIG_Language::Language
+CONFIG_PreselectedBoard::Preselected Board
+CONFIG_ShowInfoButton::Help/Info
+CONFIG_HintDepth::Hint Level
+CONFIG_HintAutoPilot::Auto Pilot
+CONFIG_ShowSuggestButton::Suggest Piece
+CONFIG_ShowConfigButton::Configuration
+CONFIG_ShowHeatmapButton::Heatmap
+CONFIG_PartitionMode::Thirds 
+CONFIG_ShowQRButton::QR Code Button
+CONFIG_ShowClearButton::Restart Button
+CONFIG_PrefillMode::Prefilling
+CONFIG_FillRight::Fill from Right
+CONFIG_FillLeft::Fill from Left
+CONFIG_FillCenter::Fill from Center
+CONFIG_ShowSolutionNumber::Number of Solutions
+CONFIG_ShowLoadSave::Load/Save
+CONFIG_BoardSelector::Board Selector
+CONFIG_ChekAppInstallation::Check Installation
+CONFIG_SuggestMode::Suggestion Mode
+CONFIG_FreezeState::Freeze provided state
+
+OPTION_ON::On
+OPTION_OFF::Off
+OPTION_YES::Yes
+OPTION_NO::No
+OPTION_de::German
+OPTION_en::English
+OPTION_NO_PREFILL::Not available
+OPTION_FILL_GAP::Fill on Gap
+OPTION_FILL_ONE_TOUCH::Maximum One Touch
+OPTION_3_PIECES::Three Pieces
+OPTION_5_PIECES::Five Pieces
+OPTION_CONCRETE_HINT::Concrete Hints
+OPTION_VAGUE_HINT::Vague Hints
+OPTION_NO_HINTS::No Hints
+OPTION_BOARD_PROVIDED::Provided Board
+OPTION_GET_FROM_BROWSER::From Browser
+OPTION_SHOW::Show
+OPTION_NOSHOW::Do not show
+OPTION_SEQUENTIAL::Sequential
+OPTION_COLORIZE::Colorize
+OPTION_DistancePlace::On Gap
+OPTION_HypothesisPlace::By Hypothesis Factor
+
+EXPLANATION_Theme::
+EXPLANATION_Language::
+EXPLANATION_BoardSelector::If "No", players cannot chose a board.
+EXPLANATION_PreselectedBoard::If "Provided Board", board shape and set pieces from the game this configuration was called from is set.
+EXPLANATION_ShowLoadSave::If "Yes", it is possible to load and save game states from and to files.
+EXPLANATION_ShowClearButton::If "Yes", a restart button is displayed.
+EXPLANATION_ShowQRButton::If "Yes", a QR code can be displayed from the game.
+
+EXPLANATION_ShowSolutionNumber::If "Show", the number of remaining solutions is displayed.
+EXPLANATION_HintDepth::If "Vague Hints", a click on the button shows only a vague assessment of the situation. If "Concete Hints", a more detailed hint is provided after a second click.
+EXPLANATION_HintAutoPilot::If "Yes", hints are displayed without any player action.
+EXPLANATION_ShowSuggestButton::If "Yes", a button for automatically setting a piece is displayed.
+EXPLANATION_ShowHeatmapButton::If "Yes", a heatmap showing the evaluation of the situation can displayed.
+EXPLANATION_PartitionMode::If "Sequential", the partitions are provided one after the other, if "Colorize" boards and pieces are colorized in three colors.
+EXPLANATION_PrefillMode::Specifies, how closely together pieces are positioned when prefilling. If "Off", prefilling is not available.
+EXPLANATION_FillRight::Prefilling from the right with specified number of pieces.
+EXPLANATION_FillLeft::Prefilling from the left with specified number of pieces.
+EXPLANATION_FillCenter::Prefilling from the center with specified number of pieces.
+
+EXPLANATION_ShowConfigButton::Show Configuration button.
+EXPLANATION_ShowInfoButton::Show button for Help and Copyright information.
+EXPLANATION_ChekAppInstallation::Check for installation on tablet devices.
+EXPLANATION_SuggestMode::Determines, according to which criteria, pieces are automatically placed.
+
+OPTION_standard::Standard
+OPTION_v3::Version 3
+OPTION_v4::Version 4
+OPTION_v5::Version 5
+OPTION_wood::Wood
+OPTION_tuca::Tuca
+OPTION_gray::Gray
