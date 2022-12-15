@@ -1,0 +1,65 @@
+
+
+#img {
+    opacity: 10%;
+    background-image: url("../help/pentomino.jpg");
+    height: 80vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+#img2 {
+
+    background-image: url("../help/pentomino_title.png");
+    height: 13vh;
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: 50vw;
+}
+
+
+#text{
+
+    height: 1vw;
+    border-radius: 5px;
+    padding: 1vw;
+    border: solid thin #aaa;
+    width: 88.7%;
+}
+
+#button{
+    height: 3vw;
+    border-radius: 5px;
+    width: 100%;
+    color: white;
+    background-color: #444444;
+    border: solid thin #aaa;
+}
+
+#box{
+    position: absolute;
+    top: 30vh;
+    left:38vw ;
+    background-color: #eeeeee;
+    margin: auto;
+    width: 20vw;
+    padding: 2vw;
+    border: #cccccc solid 1px;
+    border-radius: 1.5vw;
+}
+
+@media (max-width: 680px) {
+    #box{
+        width: 50vw;
+        left:23vw;
+    }
+    #button{
+        height: 6vw;
+    }
+    #text{
+        width: 95.15%;
+        height: 4vw;
+        padding: 1vw;
+    }
+}

@@ -18,6 +18,7 @@
 
 */
 
+
 /** The User Interface (Frontend) */
 class UI{
 	
@@ -157,6 +158,7 @@ game itself. Those are in Visual.js
 				if (pd.config.qrbutton){
 					addButton('qrbutton','qr','LABEL_QR',div,function(){pd.game.showQRCode();});
 				}
+				if (pd.config.login) addButton('loginbutton',window.isLoggedIn?'logout':'login' ,window.isLoggedIn?'LABEL_LOGOUT':'LABEL_LOGIN',div,function(){window.isLoggedIn?location.href="loginsystem/logout.php":location.href="loginsystem/login.php";});
 
 				if (pd.config.config) addButton('configbutton','config','LABEL_CONFIG',div,function(){pd.game.toConfig();});
 

@@ -26,6 +26,8 @@ LABEL_CLEAR::Abräumen
 LABEL_RELOAD::Neu laden
 LABEL_CATALOG::Brettauswahl
 LABEL_PARTITION::Board-Teilung
+LABEL_LOGIN::Einloggen
+LABEL_LOGOUT::Ausloggen
 LABEL_CONFIG::Konfiguration
 LABEL_QR::QR-Code
 TOGGLE_SOUND::Sound ein/ausschalten
@@ -79,6 +81,7 @@ CONFIG_ShowInfoButton::Hilfe/Info
 CONFIG_HintDepth::Tipp-Umfang
 CONFIG_HintAutoPilot::Autopilot
 CONFIG_ShowSuggestButton::Stein legen
+CONFIG_ShowLoginButton::Login System
 CONFIG_ShowConfigButton::Konfiguration
 CONFIG_ShowHeatmapButton::Heatmap
 CONFIG_PartitionMode::Drittelung
@@ -138,6 +141,7 @@ EXPLANATION_FillLeft::Automatisches Füllen von Links mit angegebener Anzahl von
 EXPLANATION_FillCenter::Automatisches Füllen aus der Mitte mit angegebener Anzahl von Steinen.
 EXPLANATION_FreezeState::Bei "Ja" können vorbelegte Steine (per URL/QR-Code) nicht bewegt werden.
 
+EXPLANATION_ShowLoginButton::Login System einschalten, um den Dokumentenraum zu nuten.
 EXPLANATION_ShowConfigButton::Button zum Aufrufen der Konfigurationseinstellung anzeigen.
 EXPLANATION_ShowInfoButton::Button zum Aufrufen der Hilfe und der Copyright-Informationen anzeigen.
 EXPLANATION_ChekAppInstallation::Auf Tablets auf Installationsmöglichkeit hinweisen.

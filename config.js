@@ -133,7 +133,7 @@ var PentominoConfig={
             "buttonText":"PartitionMode",
             "values":[2,1,0],
             "readable":["COLORIZE","SEQUENTIAL","OFF"],
-            "standard":1
+            "standard":0
         }
     },
     "3": {
@@ -163,7 +163,15 @@ var PentominoConfig={
         }
 
     },
-    "4":{
+    "4": {
+        "login": {
+            "buttonText": "ShowLoginButton",
+            "values": [1, 0],
+            "readable": ["YES", "NO"],
+            "standard": 1
+        }
+    },
+    "5":{
         "config": {
             "buttonText":"ShowConfigButton",
             "values":[1,0],

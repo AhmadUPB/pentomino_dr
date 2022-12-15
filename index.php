@@ -20,7 +20,8 @@
 
 */
 
-//timestamp used in order to avoid caching.
+session_start();
+//timestamp used in order to avoid caching.'
 $t='?t='.time();
 
 ?><!DOCTYPE html>
@@ -82,6 +83,7 @@ $t='?t='.time();
 <script type="text/javascript" src="qrcode.min.js"></script>
 
 <script src="config.js<?=$t?>"></script>
+<script type="text/javascript"> var isLoggedIn=<?php echo(isset($_SESSION['id']));?></script>
 
 <?php
 

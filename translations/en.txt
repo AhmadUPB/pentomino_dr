@@ -26,6 +26,8 @@ LABEL_CLEAR::Clear
 LABEL_RELOAD::Reload
 LABEL_CATALOG::Board Selection
 LABEL_PARTITION::Partition
+LABEL_LOGIN::Log in
+LABEL_LOGOUT::Log out
 LABEL_CONFIG::Konfiguration
 LABEL_QR::QR-Code
 TOGGLE_SOUND::Toggle Sound
@@ -78,6 +80,7 @@ CONFIG_ShowInfoButton::Help/Info
 CONFIG_HintDepth::Hint Level
 CONFIG_HintAutoPilot::Auto Pilot
 CONFIG_ShowSuggestButton::Suggest Piece
+CONFIG_ShowLoginButton::Login System
 CONFIG_ShowConfigButton::Configuration
 CONFIG_ShowHeatmapButton::Heatmap
 CONFIG_PartitionMode::Thirds 
@@ -135,7 +138,9 @@ EXPLANATION_PrefillMode::Specifies, how closely together pieces are positioned w
 EXPLANATION_FillRight::Prefilling from the right with specified number of pieces.
 EXPLANATION_FillLeft::Prefilling from the left with specified number of pieces.
 EXPLANATION_FillCenter::Prefilling from the center with specified number of pieces.
+EXPLANATION_FreezeState::If "Yes" is selected, pre-allocated pieces (via URL/QR code) cannot be moved.
 
+EXPLANATION_ShowLoginButton::Enable Login to use Document Room.
 EXPLANATION_ShowConfigButton::Show Configuration button.
 EXPLANATION_ShowInfoButton::Show button for Help and Copyright information.
 EXPLANATION_ChekAppInstallation::Check for installation on tablet devices.
