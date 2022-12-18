@@ -94,9 +94,9 @@ game itself. Those are in Visual.js
 		}
 		
 		//add a section to the function bar
-		function addSection(id,title,after){
+		function addSection(id,title,after,otherParent){
 			
-			var parent=document.getElementById('functions');
+			var parent=document.getElementById(otherParent?otherParent:'functions');
 			
 			var that=this;
 			
@@ -114,7 +114,9 @@ game itself. Those are in Visual.js
 			
 		}
 
-		//Here starts the definition of the sidebr
+
+
+		//Here starts the definition of the sidebar
 		
 		addDiv('functions',0,function(div){
 
@@ -123,6 +125,7 @@ game itself. Those are in Visual.js
 
 				if (pd.config.boardselector){addButton('catalog','catalog','LABEL_CATALOG',div,function(){pd.ui.showBoardSelector();});}
 				if (pd.config.clear) addButton('clear','clear','LABEL_CLEAR',div,function(){evaluator.clear();});
+				if (pd.config.annotationButton) addButton('annotationButton','annotation','LABEL_ANNOTATION',div,function(){pd.ui.showAnnotationBar();});
 
 				if (pd.config.fillright) addButton('fill_right','fill_right','LABEL_FILL_RIGHT',div,function(){evaluator.clear();evaluator.fill(pd.config.fillright,3)});
 				if (pd.config.fillleft) addButton('fill_left','fill_left','LABEL_FILL_LEFT',div,function(){evaluator.clear();evaluator.fill(pd.config.fillleft,1)});
@@ -171,6 +174,23 @@ game itself. Those are in Visual.js
 			
 			
 		});
+		// add an annotation bar
+
+		addDiv('annotation',0,function(div){
+			document.getElementById('annotation').style.display='none';
+			addSection('annotations','',function(div){
+
+				addButton('back','back','LABEL_BACK',div,function(){pd.ui.hideAnnotationBar();});
+				//addButton('text','text','LABEL_TEXT',div,function(){;});
+				addButton('highlight','highlight','LABEL_HIGHLIGHT',div,function(){pd.ui.activateHighlighting();});
+				addButton('color','color','LABEL_COLOR',div,function(){pd.ui.showHighlightingColourBox();});
+				//addButton('freeze','freeze','LABEL_FREEZE',div,function(){;});
+				addButton('eraser','eraser','LABEL_ERASER',div,function(){pd.ui.activateEraser();});
+
+
+			},'annotation');
+		});
+
 
 		//here come all the other areas of the user interface which are filled with conten in the respective files
 		
@@ -201,6 +221,98 @@ game itself. Those are in Visual.js
 			parent.appendChild(div); 
 			
 			if (after) after.call(this,div);
+	}
+
+	activateEraser(){
+		if(!this.pd.visual.eraserActive){
+			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
+			this.pd.visual.eraserActive=true;
+			document.getElementById('eraser').style.backgroundColor=this.pd.visual.cssConf('activated-button');
+		}
+		else{
+			this.pd.visual.eraserActive=false;
+			document.getElementById('eraser').style.backgroundColor="";
+		}
+
+	}
+
+	activateHighlighting(){
+		if(!this.pd.visual.highlightActive){
+			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
+			this.pd.visual.highlightActive=true;
+			document.getElementById('highlight').style.backgroundColor=this.pd.visual.cssConf('activated-button');;
+		}
+		else{
+			this.pd.visual.highlightActive=false;
+			document.getElementById('highlight').style.backgroundColor="";
+		}
+
+	}
+
+	showHighlightingColourBox(){
+		if(document.getElementById("highlightingBox")){return;}
+		var that = this;
+		var parent=document.getElementsByTagName('body')[0];
+		var highlightingBox=document.createElement("div");
+		highlightingBox.id="highlightingBox";
+		let color1= this.pd.visual.cssConf("highlighting-color1");
+		let color2= this.pd.visual.cssConf("highlighting-color2");
+		let color3= this.pd.visual.cssConf("highlighting-color3");
+		let color4= this.pd.visual.cssConf("highlighting-color4");
+		let color5= this.pd.visual.cssConf("highlighting-color5");
+		highlightingBox.innerHTML=`<h3>${that.translate("LABEL_COLOR")}</h3>\n` +
+			"        <div id=\"colors\">\n" +
+			`            <div id='color1' style=\"background: ${color1}\"></div>\n` +
+			`            <div id='color2' style=\"background: ${color2}\"></div>\n` +
+			`            <div id='color3' style=\"background: ${color3}\"></div>\n` +
+			`            <div id='color4' style=\"background: ${color4}\"></div>\n` +
+			`            <div id='color5' style=\"background: ${color5}\"></div>\n` +
+			"        </div>\n" +
+			"        <div  id=\"highlightingColorButton\">\n" +
+			`            <span >${that.translate("BUTTON_CLOSE")}</span>\n` +
+			"        </div>"
+		parent.appendChild(highlightingBox);
+		document.getElementById("highlightingColorButton").onpointerdown=function(event){
+			//event.preventDefault();
+			that.closeHighlightingColorBox();
+		}
+
+		document.getElementById("color1").onclick=function (){selectColor("color1",color1);}
+		document.getElementById("color2").onclick=function (){selectColor("color2",color2);}
+		document.getElementById("color3").onclick=function (){selectColor("color3",color3);}
+		document.getElementById("color4").onclick=function (){selectColor("color4",color4);}
+		document.getElementById("color5").onclick=function (){selectColor("color5",color5);}
+		function selectColor(id,color){
+			for(let i=1; i<6;i++){
+				document.getElementById(`color${i}`).style.border="";
+			}
+			document.getElementById(id).style.border = `2px solid white`;
+			that.pd.visual.highlightColor=color;
+
+
+		}
+	}
+
+	closeHighlightingColorBox(){
+		document.getElementById("highlightingBox").remove();
+	}
+
+
+
+	showAnnotationBar(){
+		document.getElementById('annotation').style.display='';
+		document.getElementById('functions').style.display='none';
+		document.getElementById("hint").style.display='none';
+		this.pd.visual.annotationMode=true;
+	}
+
+    hideAnnotationBar(){
+		if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
+		if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
+		document.getElementById('annotation').style.display='none';
+		document.getElementById('functions').style.display='';
+		document.getElementById("hint").style.display='';
+		this.pd.visual.annotationMode=false;
 	}
 
 	//display a QR code on an overlay

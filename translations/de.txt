@@ -28,6 +28,13 @@ LABEL_CATALOG::Brettauswahl
 LABEL_PARTITION::Board-Teilung
 LABEL_LOGIN::Einloggen
 LABEL_LOGOUT::Ausloggen
+LABEL_ANNOTATION::Annotation-Modus
+LABEL_BACK:: Zurück zum Spiel-Modus
+LABEL_TEXT::Notizen Verfassen
+LABEL_HIGHLIGHT::Markieren
+LABEL_COLOR::Markierfarbe
+LABEL_FREEZE::Spielsteine fixieren
+LABEL_ERASER::Notizen oder Markierung löschen.
 LABEL_CONFIG::Konfiguration
 LABEL_QR::QR-Code
 TOGGLE_SOUND::Sound ein/ausschalten
@@ -82,6 +89,7 @@ CONFIG_HintDepth::Tipp-Umfang
 CONFIG_HintAutoPilot::Autopilot
 CONFIG_ShowSuggestButton::Stein legen
 CONFIG_ShowLoginButton::Login System
+CONFIG_ShowAnnotationButton::Annotation-Modus
 CONFIG_ShowConfigButton::Konfiguration
 CONFIG_ShowHeatmapButton::Heatmap
 CONFIG_PartitionMode::Drittelung
@@ -142,6 +150,7 @@ EXPLANATION_FillCenter::Automatisches Füllen aus der Mitte mit angegebener Anza
 EXPLANATION_FreezeState::Bei "Ja" können vorbelegte Steine (per URL/QR-Code) nicht bewegt werden.
 
 EXPLANATION_ShowLoginButton::Login System einschalten, um den Dokumentenraum zu nuten.
+EXPLANATION_ShowAnnotationButton::Annotation-Modus Button zeigen, um Notizen zu verfassen, Steine zu fixieren oder Steine und Brettpositionen zu markieren.
 EXPLANATION_ShowConfigButton::Button zum Aufrufen der Konfigurationseinstellung anzeigen.
 EXPLANATION_ShowInfoButton::Button zum Aufrufen der Hilfe und der Copyright-Informationen anzeigen.
 EXPLANATION_ChekAppInstallation::Auf Tablets auf Installationsmöglichkeit hinweisen.

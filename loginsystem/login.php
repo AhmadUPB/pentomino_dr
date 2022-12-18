@@ -5,13 +5,11 @@ session_start();
 
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    //something was posted
     $email = $_POST['email'];
     $password = $_POST['password'];
 
     if (!empty($email) && !empty($password) && !is_numeric($email)) {
 
-        //read from database
         $file = file_get_contents('./database.txt');
         $file = json_decode($file, true);
         $id =  md5($_POST["email"]);

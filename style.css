@@ -51,6 +51,14 @@
   --piece-x-color: var(--x-color);
   --piece-y-color: var(--y-color);
   --piece-z-color: var(--z-color);
+
+	--highlighting-color1: #f23747;
+	--highlighting-color2: #f5d75e;
+	--highlighting-color3: #3598fa;
+	--highlighting-color4: #8065fa;
+	--highlighting-color5: #0fdd7d;
+
+	--activated-button: #abeeeb;
   
 }
 
@@ -70,7 +78,7 @@ body {
 	touch-action: none;
 	}
 
-#functions {
+#functions,#annotation {
 	box-sizing: border-box;
 	position:fixed;
 	top:0;left:0;
@@ -168,7 +176,8 @@ body {
 .boardarea{
 	background:var(--board-color);
 	border:1px solid var(--board-grid-color);
-	font-size:300%
+	font-size:300%;
+	box-sizing: border-box;
 }
 
 .blocked{
@@ -206,12 +215,12 @@ body {
 
 .button:hover {opacity:1}
 
-#functions div.section{
+#functions div.section, #annotation div.section{
 	clear:both;
 	padding-top:1vw;
 }
 
-#functions .button{
+#functions .button, #annotation .button{
 	position:relative;
 	float:left;
 	width:calc(var(--function-area-width) * 0.75);
@@ -224,16 +233,16 @@ body {
 	opacity:1;
 }
 
-#functions .button:hover {
+#functions .button:hover, #annotation .button:hover{
 	background:white;
 	border:1px solid #fff;
 }
 
-#functions h1{
+#functions h1, #annotation h1{
 	color:white;
 	font-size:100%;
 	font-family:sans-serif;
-	border:bottom:1px solid #ccc;
+	border-bottom:1px solid #ccc;
 }
 
 #overlay {
@@ -332,4 +341,65 @@ body {
 	left:0;
 	right:0;
 	text-align:center;
+}
+
+
+#highlightingBox {
+	position: absolute;
+	z-index: 2147483647;
+	top:var(--tray-height);
+	left :var(--function-area-width);
+	display: flex;
+	width: 200px;
+	height: 200px;
+	justify-content: space-around;
+	flex-direction: column;
+	padding: 10px;
+	border-radius: 10px;
+	align-items: center;
+	background: #444;
+	border: 2px solid #777;
+
+}
+
+#highlightingBox>h3 {
+	border-bottom: 3px solid white;
+	padding-bottom: 5px;
+	text-align: center;
+	color: white;
+}
+
+#colors {
+	display: flex;
+	height: 20%;
+	margin: 10px 0;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#colors>div {
+	border-radius: 50%;
+	cursor: pointer;
+	width: 29px;
+	margin: 0 5px;
+	height: 29px;
+}
+
+#highlightingColorButton {
+	border: 3px solid white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 60px;
+	height: 25px;
+	border-radius: 10px;
+	cursor: pointer;
+
+}
+
+#highlightingColorButton>span {
+	margin: 3px 0;
+	color: white;
+
 }

@@ -164,6 +164,12 @@ var PentominoConfig={
 
     },
     "4": {
+        "annotationButton": {
+            "buttonText": "ShowAnnotationButton",
+            "values": [1, 0],
+            "readable": ["YES", "NO"],
+            "standard": 1
+        },
         "login": {
             "buttonText": "ShowLoginButton",
             "values": [1, 0],

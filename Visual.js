@@ -153,8 +153,11 @@ class Visual{
 				
 				element.style.top=(i*width)+'vw';
 				element.style.left=(j*width)+'vw';
-				
+				if(piece.highlighted){var borders=true;
+				}
+				else{
 				var borders=this.cssConf('piece-borders');
+				}
 				var innerBorders=this.cssConf('piece-inner-borders');
 				var innerBordersColor=this.cssConf('piece-inner-borders-color');
 				
@@ -165,31 +168,31 @@ class Visual{
 					if (!borders) {
 						element.style.borderColor=piece.color;  //no boarder means border-color equals piece color
 					} else {
+						if (piece.highlighted) element.style.border = "2px solid " + piece.highlighted;
+						else {
+							//for inner boarders means we have to check the border above,left,right or bottom
+							var topSet = (i == 0) ? false : piece.bitMap[i - 1][j];
+							var bottomSet = (i == 4) ? false : piece.bitMap[i + 1][j];
+							var leftSet = (j == 0) ? false : piece.bitMap[i][j - 1];
+							var rightSet = (j == 4) ? false : piece.bitMap[i][j + 1];
 
-						//for inner boarders means we have to check the border above,left,right or bottom
+							if (!innerBorders) {  //if no boarder is to be seen, we set it to the piece color
 
-						var topSet=(i==0)?false:piece.bitMap[i-1][j];
-						var bottomSet=(i==4)?false:piece.bitMap[i+1][j];
-						var leftSet=(j==0)?false:piece.bitMap[i][j-1];
-						var rightSet=(j==4)?false:piece.bitMap[i][j+1];
+								if (topSet) element.style.borderTopColor = piece.color;
+								if (bottomSet) element.style.borderBottomColor = piece.color;
+								if (leftSet) element.style.borderLeftColor = piece.color;
+								if (rightSet) element.style.borderRightColor = piece.color;
 
-						if (!innerBorders){  //if no boarder is to be seen, we set it to the piece color
-													
-							if (topSet) element.style.borderTopColor=piece.color;
-							if (bottomSet) element.style.borderBottomColor=piece.color;
-							if (leftSet) element.style.borderLeftColor=piece.color;
-							if (rightSet) element.style.borderRightColor=piece.color;
-						
-						} else { // otherwise, we take the specified color (see style definition files)
+							} else { // otherwise, we take the specified color (see style definition files)
 
-							if (topSet) element.style.borderTopColor=innerBordersColor;
-							if (bottomSet) element.style.borderBottomColor=innerBordersColor;
-							if (leftSet) element.style.borderLeftColor=innerBordersColor;
-							if (rightSet) element.style.borderRightColor=innerBordersColor;
+								if (topSet) element.style.borderTopColor = innerBordersColor;
+								if (bottomSet) element.style.borderBottomColor = innerBordersColor;
+								if (leftSet) element.style.borderLeftColor = innerBordersColor;
+								if (rightSet) element.style.borderRightColor = innerBordersColor;
 
+							}
 						}
 					}
-					
 				} else {
 					element.className='bmAround';
 				}
@@ -432,6 +435,19 @@ class Visual{
 		}
 		
 		move();
+	}
+
+	highlightBoardPostion(postion){
+		let that = this;
+		let element=document.getElementById("field_"+postion);
+		let colour = that.highlightColor?that.highlightColor:that.cssConf("highlighting-color2");
+		element.style.border="2px solid "+colour
+		element.style.zIndex=1;
+	}
+	removeHighlightBoardPostion(postion){
+		let element=document.getElementById("field_"+postion);
+		element.style.border="";
+		element.style.zIndex="";
 	}
 
 	unColorizeBoard(r,c){
@@ -726,71 +742,98 @@ class Visual{
 				var check=clickedElement.className;
 				
 				if (check.includes('uiElement')) {return;} //if we have an element of ui, we do nothing here
-				
+
+				if(that.annotationMode && check=='gamearea boardarea' && that.highlightActive ){
+					that.highlightBoardPostion(clickedElement.id.split('_')[1]);
+
+				}
+				if(that.annotationMode && check=='gamearea boardarea' && that.eraserActive ){
+					that.removeHighlightBoardPostion(clickedElement.id.split('_')[1]);
+
+				}
 				if (!(check=='bmPoint'||check=='bmAround')) continue; //did we hit a pixel of a piece?
 				
 				var container=elements[i*1+1];
 				
 				var piece=container.id.split('_')[1];
-				
+
 				if (!piece) return; //should not happen. just in case
-				
-				//the surrounding area must only be a valid target in the tray
-				if (!that.pd.game.get(piece).inTray && check=='bmAround') continue;
 
-				//check if piece is frozen. If this is the case, no interaction is possible
-				if (that.pd.game.frozenPieces[piece]) {
-					console.log(piece+' is frozen!');
-					continue;
-				}
-				
-				//as soon as we have a bmPoint(an element of a piece), 
-				//have determined the bounding box and the piece object itself
-				//and save those into a global variable "currentlyMoving"
-				//which we access during movement and at the end of movement.
-				
-				//bring the element to top, so it moves in front of the others.
-				that.toTop(container);
-				
-				//determine the offset, so the piece can be dragged at any position
-				
-				var pixels=container.children;
-				for (var p in pixels){
-					var pixel=pixels[p];
-				}
-			
-				//determine the offset to allow other areas except the center to be moved
-				//needed for finally placing the piece correctly
-				
-				for (var p in pixels){
-					var pixel=pixels[p];
-					if (pixel==clickedElement){
-						var oRow=Math.floor(p/5)-2;
-						var oCol=p%5-2;
-						break;
+				var pieceObject=that.pd.game.get(piece);
+				if(that.annotationMode){
+					if(that.highlightActive && check=='bmPoint'){
+						that.toTop(container);
+						pieceObject.highlighted=that.highlightColor?that.highlightColor:that.cssConf("highlighting-color2");
+						that.updatePiece(pieceObject)
+						return;
 					}
-				}				
-				
-				var piece=that.PD.game.get(piece);
+					if(that.eraserActive && check=='bmPoint' && pieceObject.highlighted){
+						that.toTop(container);
+						pieceObject.highlighted='';
+						that.updatePiece(pieceObject);
+						return;
+					}
 
-				var pieceWidth=that.cssInt('game-area-width')/that.PD.game.width; 
-				var px=piece.position[0]*pieceWidth;
-				var py=piece.position[1]*pieceWidth;
-
-				if (isNaN(px) || isNaN(px)){ 
-					// most likely piece in tray which has no game coordinates;
-					// in this case we take the center of the object as its origin
-					dx=-2.5*pieceWidth;dy=-2.5*pieceWidth;
-					oRow=0;oCol=0;
-				} else {
-					var dx=px-100*x/document.documentElement.clientWidth;
-					var dy=py-100*y/document.documentElement.clientWidth;
 				}
-			
-				window.currentlyMoving=[container,piece,oRow,oCol,dx,dy];
-				
-				break;
-			}
+				else {
+					//the surrounding area must only be a valid target in the tray
+					if (!that.pd.game.get(piece).inTray && check == 'bmAround') continue;
+
+					//check if piece is frozen. If this is the case, no interaction is possible
+					if (that.pd.game.frozenPieces[piece]) {
+						console.log(piece + ' is frozen!');
+						continue;
+					}
+
+					//as soon as we have a bmPoint(an element of a piece),
+					//have determined the bounding box and the piece object itself
+					//and save those into a global variable "currentlyMoving"
+					//which we access during movement and at the end of movement.
+
+					//bring the element to top, so it moves in front of the others.
+					that.toTop(container);
+
+					//determine the offset, so the piece can be dragged at any position
+
+					var pixels = container.children;
+					for (var p in pixels) {
+						var pixel = pixels[p];
+					}
+
+					//determine the offset to allow other areas except the center to be moved
+					//needed for finally placing the piece correctly
+
+					for (var p in pixels) {
+						var pixel = pixels[p];
+						if (pixel == clickedElement) {
+							var oRow = Math.floor(p / 5) - 2;
+							var oCol = p % 5 - 2;
+							break;
+						}
+					}
+
+					var piece = that.PD.game.get(piece);
+
+					var pieceWidth = that.cssInt('game-area-width') / that.PD.game.width;
+					var px = piece.position[0] * pieceWidth;
+					var py = piece.position[1] * pieceWidth;
+
+					if (isNaN(px) || isNaN(px)) {
+						// most likely piece in tray which has no game coordinates;
+						// in this case we take the center of the object as its origin
+						dx = -2.5 * pieceWidth;
+						dy = -2.5 * pieceWidth;
+						oRow = 0;
+						oCol = 0;
+					} else {
+						var dx = px - 100 * x / document.documentElement.clientWidth;
+						var dy = py - 100 * y / document.documentElement.clientWidth;
+					}
+
+					window.currentlyMoving = [container, piece, oRow, oCol, dx, dy];
+
+					break;
+				}}
 			
 			return;
 		}
@@ -906,7 +949,7 @@ class Visual{
 						if (!that.trayClicks) that.trayClicks=0;
 						that.trayClicks++;
 
-						if (that.trayClicks==5) that.pd.game.toConfig();
+						if (that.trayClicks==5 && !that.annotationMode) that.pd.game.toConfig(); //avoid opening configurations in Annoatation Mode
 						
 						if (that.trayTimeout) {
 							window.clearTimeout(that.trayTimeout);
