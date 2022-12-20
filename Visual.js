@@ -163,8 +163,13 @@ class Visual{
 				var innerBordersColor=this.cssConf('piece-inner-borders-color');
 				
 				if (set){
-					element.style.background=color;
+					element.style.backgroundColor=color;
+					if(piece.frozen){element.style.backgroundImage="url('ico/freeze.png')";
+						element.style.backgroundRepeat="no-repeat";
+						element.style.backgroundSize="contain";
+						}
 					element.className='bmPoint';
+
 					
 					if (!borders) {
 						element.style.borderColor=piece.color;  //no boarder means border-color equals piece color
@@ -194,9 +199,11 @@ class Visual{
 							}
 						}
 					}
+
 				} else {
 					element.className='bmAround';
 				}
+
 				
 				pieceContainer.appendChild(element);
 				
@@ -777,9 +784,29 @@ class Visual{
 						that.pd.game.storeAnnotationStatePieces();
 						return;
 					}
+					if(that.freezeActive && check=='bmPoint'){
+						if (!pieceObject.frozen){
+							that.toTop(container);
+							console.log("freeze piece")
+							pieceObject.frozen=true;
+							that.updatePiece(pieceObject);
+							that.pd.game.storeAnnotationStatePieces();
+							return;
+						}
+						else{
+							that.toTop(container);
+							console.log("unfreeze piece")
+							pieceObject.frozen=false;
+							that.updatePiece(pieceObject);
+							that.pd.game.storeAnnotationStatePieces();
+							return;
+						}
+					}
+
 
 				}
 				else {
+					if(pieceObject.frozen)continue;//ignore frozen pieces but continue for none frozen others
 					//the surrounding area must only be a valid target in the tray
 					if (!that.pd.game.get(piece).inTray && check == 'bmAround') continue;
 

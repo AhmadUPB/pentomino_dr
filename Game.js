@@ -441,9 +441,10 @@ class Game{
 		var out ={};
 		out.pieces="";
 		for (var i in this.pieceArray){
-			var piece=this.pieceArray[i];
-			var color= piece.highlighted===undefined?"":piece.highlighted;
-			out.pieces+='_' + piece.name + color;
+			var piece = this.pieceArray[i];
+			var color = piece.highlighted===undefined?"":piece.highlighted;
+			var frozen= piece.frozen===true?"f":"n";
+			out.pieces+='_' + piece.name + color + "." + frozen;
 		}
 		out=JSON.stringify(out);
 		return out;
@@ -600,38 +601,40 @@ class Game{
 
 			var name=pieceData[0];
 			var color="";
-			if(pieceData.length>1){
-			 color=pieceData.substring(1);}
-
 			var piece=this.getPiece(name);
+			if(pieceData.length>1){
+				//we need to distinguish if a piece is colored or frozen
+				if(pieceData.substring(1).includes("color") && pieceData.substring(1).includes(".")){
+					color=pieceData.substring(1,7);
+					if(pieceData.substring(8)==="f")piece.frozen=true;
+					piece.highlighted=color;
+					this.pd.visual.updatePiece(piece);
+				}
+				else if(pieceData.substring(1).includes("color") ){
+					color=pieceData.substring(1);
+					piece.highlighted=color;
+					this.pd.visual.updatePiece(piece);
 
-			//set the pieces to the correct rotation state
+				}
+				else{
+					if(pieceData.substring(2)==="f")piece.frozen=true;
+					this.pd.visual.updatePiece(piece);
+				}
 
-			if(color){
-				piece.highlighted=color;
-				this.pd.visual.updatePiece(piece);
 			}
-
-
 		}
-		//this.pd.evaluator.restartChecking();
-
-
 	}
 
 	setHighlightingStateBoard(content){
 		if(!content)return;
 		var data=JSON.parse(content);
-		console.log(data+"??????????")
 		this.highlightedPositions=data.board;
 		var postions=data.board.split('_');
-		console.log(postions,"??????????")
 		for (var i in postions){
 			var postionData=postions[i];
 			if (!postionData) continue;
 
 			if (postionData.includes("#")){
-				console.log(postionData,"??????????")
 				postionData=postionData.split("#");
 				this.pd.visual.highlightBoardPostion(postionData[0],"#"+postionData[1]);
 			}

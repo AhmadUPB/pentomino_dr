@@ -30,7 +30,7 @@ class Piece {
  	
  	type=type.toUpperCase();
  	this.name=type;
- 	
+ 	this.frozen=false;
  	//every piece has its shape as a bitmap and other
  	//properties describing its presentation
  	switch (type){
@@ -266,7 +266,7 @@ class Piece {
   //function to set the bitmap to a certain state
   //TODO: check where this is acutally used and update descripts accordingly
   loadState(id){
-  	
+
   	var state=this.idToState[id];
   	
   	var output=[[],[],[],[],[]];
@@ -288,6 +288,7 @@ class Piece {
   //Rotation and flipping functions: Create a new bitmap by processing the old one
   
   rotateRight(){
+	  if(this.frozen)return;
   	
   	var output=[[],[],[],[],[]];
   	
@@ -309,7 +310,7 @@ class Piece {
   }
   
   rotateLeft(){
-  	
+	  if(this.frozen)return;
   	var output=[[],[],[],[],[]];
   	
   	for (let row=0;row<5;row++){
@@ -330,7 +331,7 @@ class Piece {
   }
   
   turn(){
-  	
+	  if(this.frozen)return;
   	var output=[[],[],[],[],[]];
   	
   	for (let row=0;row<5;row++){
@@ -352,7 +353,7 @@ class Piece {
   }
   
   flipH(){
-  	
+	  if(this.frozen)return;
   	var output=[[],[],[],[],[]];
   	
   	for (let row=0;row<5;row++){
@@ -373,7 +374,7 @@ class Piece {
   }
   
   flipV(){
-  	
+	  if(this.frozen)return;
   	var output=[[],[],[],[],[]];
   	
   	for (let row=0;row<5;row++){
@@ -403,6 +404,7 @@ class Piece {
 
   */
   place(x,y,board){
+	if(this.frozen)return;
 
 	if (isNaN(x) || isNaN(x) ){
 		console.error('Invalid coordinates ',x,y);
@@ -430,6 +432,7 @@ class Piece {
   
   //remove pieces from the game grid and put it back into the tray
   toTray(){
+	if(this.frozen)return;
   	
   	this.inTray=true;
   	this.position=false;

@@ -184,7 +184,7 @@ game itself. Those are in Visual.js
 				//addButton('text','text','LABEL_TEXT',div,function(){;});
 				addButton('highlight','highlight','LABEL_HIGHLIGHT',div,function(){pd.ui.activateHighlighting();});
 				addButton('color','color','LABEL_COLOR',div,function(){pd.ui.showHighlightingColourBox();});
-				//addButton('freeze','freeze','LABEL_FREEZE',div,function(){;});
+				addButton('freeze','freeze','LABEL_FREEZE',div,function(){pd.ui.activateFreezing();});
 				addButton('eraser','eraser','LABEL_ERASER',div,function(){pd.ui.activateEraser();});
 
 
@@ -222,10 +222,24 @@ game itself. Those are in Visual.js
 			
 			if (after) after.call(this,div);
 	}
+	activateFreezing(){
+		if(!this.pd.visual.freezeActive){
+			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
+			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
+			this.pd.visual.freezeActive=true;
+			document.getElementById('freeze').style.backgroundColor=this.pd.visual.cssConf('activated-button');
+		}
+		else{
+			this.pd.visual.freezeActive=false;
+			document.getElementById('freeze').style.backgroundColor="";
+		}
+
+	}
 
 	activateEraser(){
 		if(!this.pd.visual.eraserActive){
 			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
+			if(this.pd.visual.freezeActive)this.pd.ui.activateFreezing();
 			this.pd.visual.eraserActive=true;
 			document.getElementById('eraser').style.backgroundColor=this.pd.visual.cssConf('activated-button');
 		}
@@ -239,6 +253,7 @@ game itself. Those are in Visual.js
 	activateHighlighting(){
 		if(!this.pd.visual.highlightActive){
 			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
+			if(this.pd.visual.freezeActive)this.pd.ui.activateFreezing();
 			this.pd.visual.highlightActive=true;
 			document.getElementById('highlight').style.backgroundColor=this.pd.visual.cssConf('activated-button');;
 		}
@@ -276,7 +291,8 @@ game itself. Those are in Visual.js
 			//event.preventDefault();
 			that.closeHighlightingColorBox();
 		}
-
+        if(that.pd.visual.highlightColor)document.getElementById(that.pd.visual.highlightColor).style.border = `2px solid white`
+		else document.getElementById("color2").style.border = `2px solid white`
 		document.getElementById("color1").onclick=function (){selectColor("color1");}
 		document.getElementById("color2").onclick=function (){selectColor("color2");}
 		document.getElementById("color3").onclick=function (){selectColor("color3");}
@@ -309,6 +325,7 @@ game itself. Those are in Visual.js
     hideAnnotationBar(){
 		if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
 		if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
+		if(this.pd.visual.freezeActive)this.pd.ui.activateFreezing();
 		document.getElementById('annotation').style.display='none';
 		document.getElementById('functions').style.display='';
 		document.getElementById("hint").style.display='';
