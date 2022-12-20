@@ -30,6 +30,7 @@ class Game{
 		this.evaluator=this.pd.evaluator;
 		this.selected=false;
 		this.frozenPieces={};
+		this.highlightedPositions="";
 		
 	    //dimensions of the game
 
@@ -158,9 +159,15 @@ class Game{
 		
 		var that=this;
 
-		if (!callback){       //When there is no callback, the board has been loaded freshly
-							  //so we memorize its initial state
-
+		if (!callback){
+							//clear the annotation states of board and pieces from local stoarge
+							//to make sure they are not loaded in a false board when a board is loaded from the board selection overlay
+			console.log("no callback!!")
+			var storage=window.localStorage;
+			storage.setItem('piecesState', "");
+			storage.setItem('boardState', "");
+							//When there is no callback, the board has been loaded freshly
+							//so we memorize its initial state
 			callback=function(){
 				that.solutionsPrePartition=false; //reset paritioning
 				that.currentPartition=0;
@@ -347,6 +354,54 @@ class Game{
 		var storage=window.localStorage;
 		storage.setItem('gameState', this.getGameState());
 	}
+	storeAnnotationStatePieces(){
+		var storage=window.localStorage;
+		storage.setItem('piecesState', this.getAnnotationStatePieces());
+	}
+	storeHighlightingStatePieces(postion,color){
+		this.updateHighlightingStateBoard(postion,color);
+		var storage=window.localStorage;
+		storage.setItem('boardState', this.getHighlightingStateBoard());
+
+
+	}
+
+	updateHighlightingStateBoard(toUpdate,color){
+		var postions=this.highlightedPositions.split("_");
+		console.log(postions);
+		console.log(this.highlightedPositions);
+		this.highlightedPositions="";
+		for (var i in postions){
+			var postion=postions[i];
+			console.log(postion);
+			if(postion) {
+				//problem postion includes # somtimes and the condtion below will not be checked correctly
+				var hasOldColor=false;
+				var oldColor="";
+				if(postion.includes("#")){
+					let info=postion.split("#");
+					postion=info[0];
+					oldColor="#"+info[1];
+					hasOldColor=true;
+				}
+				if (toUpdate == postion) {
+					console.log("!!!!!!!!!",postion)
+
+					 if (color)// in this case an already highlighted postion is being highlighted with different color
+						 // or in this case a none highlighted postion is being highlighted
+						this.highlightedPositions += "_" + postion + color;
+					else //in this case highlighted postion is being erased
+						this.highlightedPositions += "_" + postion;
+				} else
+					this.highlightedPositions += "_" + postion + oldColor;
+
+			}
+		}
+		postions=this.highlightedPositions.split("_");
+		console.log(postions);
+		console.log(this.highlightedPositions);
+
+	}
 	
 	unstore(){
 		var storage=window.localStorage;
@@ -358,15 +413,42 @@ class Game{
 		
 		var storage=window.localStorage;
 		var data=storage.getItem('gameState');
-		
+		var piecesState = storage.getItem("piecesState");
+		var boardState = storage.getItem("boardState");
 		if (data&&data!='false') {
 			this.setGameState(data,altFunc);
+			var that = this;
+			setTimeout(function(){
+				that.setPiecesAnnotationState(piecesState);
+				that.setHighlightingStateBoard(boardState);
+			},100);
+
 			return true;
 		}
 		
 		if (altFunc) return altFunc();	
 	}
-	
+
+	getHighlightingStateBoard(){
+		var out={};
+		out.board=this.highlightedPositions;
+		out=JSON.stringify(out)
+
+		return out;
+
+	};
+	getAnnotationStatePieces(){
+		var out ={};
+		out.pieces="";
+		for (var i in this.pieceArray){
+			var piece=this.pieceArray[i];
+			var color= piece.highlighted===undefined?"":piece.highlighted;
+			out.pieces+='_' + piece.name + color;
+		}
+		out=JSON.stringify(out);
+		return out;
+	}
+
 	//get the current game state (for saving and storing)
 	getGameState(after){
 		
@@ -481,7 +563,6 @@ class Game{
 				var n=pieceData[0];
 				var s=pieceData[1];
 				var p=pieceData.substring(2);
-				
 				var piece=that.get(n);
 				
 				//set the pieces to the correct rotation state
@@ -505,6 +586,57 @@ class Game{
     	 	
     	 });
 		
+	}
+
+
+	setPiecesAnnotationState(content){
+		if(!content)return;
+		//this.pd.evaluator.stopChecking();
+		var data=JSON.parse(content);
+		var state=data.pieces.split('_');
+		for (var i in state){
+			var pieceData=state[i];
+			if (!pieceData) continue;
+
+			var name=pieceData[0];
+			var color="";
+			if(pieceData.length>1){
+			 color=pieceData.substring(1);}
+
+			var piece=this.getPiece(name);
+
+			//set the pieces to the correct rotation state
+
+			if(color){
+				piece.highlighted=color;
+				this.pd.visual.updatePiece(piece);
+			}
+
+
+		}
+		//this.pd.evaluator.restartChecking();
+
+
+	}
+
+	setHighlightingStateBoard(content){
+		if(!content)return;
+		var data=JSON.parse(content);
+		console.log(data+"??????????")
+		this.highlightedPositions=data.board;
+		var postions=data.board.split('_');
+		console.log(postions,"??????????")
+		for (var i in postions){
+			var postionData=postions[i];
+			if (!postionData) continue;
+
+			if (postionData.includes("#")){
+				console.log(postionData,"??????????")
+				postionData=postionData.split("#");
+				this.pd.visual.highlightBoardPostion(postionData[0],"#"+postionData[1]);
+			}
+		}
+
 	}
 	
 	//load a game from a file

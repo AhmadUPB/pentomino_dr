@@ -28,6 +28,7 @@ class Visual{
 		this.PD=pd;
 		this.pd=pd;
 		this.game=pd.game;
+
 		
 		//Create interaction listeners
 		
@@ -55,7 +56,7 @@ class Visual{
 		
 		//The field consists of divs. Each div saves in its id field its resepective
 		//coorinates
-		
+		this.pd.game.highlightedPositions="";
 		for (var row=0;row<(this.game.height)*4;row++){ //4x height to allow for portrait usage
 			for (var col=0;col<this.game.width;col++){
 				
@@ -79,7 +80,8 @@ class Visual{
 				var fieldElement=document.createElement("div");
 				
 				var className='gamearea';
-				if (isBoard) className+=' boardarea';
+				if (isBoard) {className+=' boardarea'
+				              this.pd.game.highlightedPositions+="_"+col+","+row;}
 				if (isBlocked) className+=' blocked';
 				
 				fieldElement.className=className;
@@ -97,7 +99,6 @@ class Visual{
 				
 			}
 		}
-	
 	}
 	
 	cssInt(varname){
@@ -168,7 +169,7 @@ class Visual{
 					if (!borders) {
 						element.style.borderColor=piece.color;  //no boarder means border-color equals piece color
 					} else {
-						if (piece.highlighted) element.style.border = "2px solid " + piece.highlighted;
+						if (piece.highlighted) element.style.border = "2px solid " + this.cssConf("highlighting-"+piece.highlighted);
 						else {
 							//for inner boarders means we have to check the border above,left,right or bottom
 							var topSet = (i == 0) ? false : piece.bitMap[i - 1][j];
@@ -437,11 +438,9 @@ class Visual{
 		move();
 	}
 
-	highlightBoardPostion(postion){
-		let that = this;
+	highlightBoardPostion(postion,color){
 		let element=document.getElementById("field_"+postion);
-		let colour = that.highlightColor?that.highlightColor:that.cssConf("highlighting-color2");
-		element.style.border="2px solid "+colour
+		element.style.border="2px solid "+color
 		element.style.zIndex=1;
 	}
 	removeHighlightBoardPostion(postion){
@@ -744,11 +743,14 @@ class Visual{
 				if (check.includes('uiElement')) {return;} //if we have an element of ui, we do nothing here
 
 				if(that.annotationMode && check=='gamearea boardarea' && that.highlightActive ){
-					that.highlightBoardPostion(clickedElement.id.split('_')[1]);
+					let color = that.highlightColor?that.cssConf("highlighting-"+that.highlightColor):that.cssConf("highlighting-color2");
+					that.highlightBoardPostion(clickedElement.id.split('_')[1],color);
+					that.pd.game.storeHighlightingStatePieces(clickedElement.id.split('_')[1],color);
 
 				}
 				if(that.annotationMode && check=='gamearea boardarea' && that.eraserActive ){
 					that.removeHighlightBoardPostion(clickedElement.id.split('_')[1]);
+					that.pd.game.storeHighlightingStatePieces(clickedElement.id.split('_')[1],"");
 
 				}
 				if (!(check=='bmPoint'||check=='bmAround')) continue; //did we hit a pixel of a piece?
@@ -763,14 +765,16 @@ class Visual{
 				if(that.annotationMode){
 					if(that.highlightActive && check=='bmPoint'){
 						that.toTop(container);
-						pieceObject.highlighted=that.highlightColor?that.highlightColor:that.cssConf("highlighting-color2");
+						pieceObject.highlighted=that.highlightColor?that.highlightColor:"color2";
 						that.updatePiece(pieceObject)
+						that.pd.game.storeAnnotationStatePieces();
 						return;
 					}
 					if(that.eraserActive && check=='bmPoint' && pieceObject.highlighted){
 						that.toTop(container);
 						pieceObject.highlighted='';
 						that.updatePiece(pieceObject);
+						that.pd.game.storeAnnotationStatePieces();
 						return;
 					}
 

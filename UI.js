@@ -277,17 +277,17 @@ game itself. Those are in Visual.js
 			that.closeHighlightingColorBox();
 		}
 
-		document.getElementById("color1").onclick=function (){selectColor("color1",color1);}
-		document.getElementById("color2").onclick=function (){selectColor("color2",color2);}
-		document.getElementById("color3").onclick=function (){selectColor("color3",color3);}
-		document.getElementById("color4").onclick=function (){selectColor("color4",color4);}
-		document.getElementById("color5").onclick=function (){selectColor("color5",color5);}
-		function selectColor(id,color){
+		document.getElementById("color1").onclick=function (){selectColor("color1");}
+		document.getElementById("color2").onclick=function (){selectColor("color2");}
+		document.getElementById("color3").onclick=function (){selectColor("color3");}
+		document.getElementById("color4").onclick=function (){selectColor("color4");}
+		document.getElementById("color5").onclick=function (){selectColor("color5");}
+		function selectColor(id){
 			for(let i=1; i<6;i++){
 				document.getElementById(`color${i}`).style.border="";
 			}
 			document.getElementById(id).style.border = `2px solid white`;
-			that.pd.visual.highlightColor=color;
+			that.pd.visual.highlightColor=id;
 
 
 		}
