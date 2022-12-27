@@ -160,12 +160,17 @@ class Game{
 		var that=this;
 
 		if (!callback){
-							//clear the annotation states of board and pieces from local stoarge
+							//clear the annotation states of board, pieces and texts from local stoarge
 							//to make sure they are not loaded in a false board when a board is loaded from the board selection overlay
 			console.log("no callback!!")
 			var storage=window.localStorage;
 			storage.setItem('piecesState', "");
 			storage.setItem('boardState', "");
+			storage.setItem('TextStatePR', "");
+			that.pd.ui.layer.destroy();
+			that.pd.ui.layer = new Konva.Layer();
+			that.pd.ui.stage.add(that.pd.ui.layer);
+
 							//When there is no callback, the board has been loaded freshly
 							//so we memorize its initial state
 			callback=function(){
@@ -358,12 +363,48 @@ class Game{
 		var storage=window.localStorage;
 		storage.setItem('piecesState', this.getAnnotationStatePieces());
 	}
+
 	storeHighlightingStatePieces(postion,color){
 		this.updateHighlightingStateBoard(postion,color);
 		var storage=window.localStorage;
 		storage.setItem('boardState', this.getHighlightingStateBoard());
 
 
+	}
+
+	storeTextStatePR(){
+		var storage=window.localStorage;
+		storage.setItem('TextStatePR', this.getTextStatePR());
+	}
+
+
+	
+	unstore(){
+		var storage=window.localStorage;
+		storage.setItem('gameState', false);
+	}
+	
+	//restore game from state in localstorage
+	restore(altFunc){
+		
+		var storage=window.localStorage;
+		var data=storage.getItem('gameState');
+		var piecesState = storage.getItem("piecesState");
+		var boardState = storage.getItem("boardState");
+		var TextStatePR = storage.getItem("TextStatePR");
+		if (data&&data!='false') {
+			this.setGameState(data,altFunc);
+			var that = this;
+			setTimeout(function(){
+				that.setPiecesAnnotationState(piecesState);
+				that.setHighlightingStateBoard(boardState);
+				that.setTextStatePR(TextStatePR);
+			},100);
+
+			return true;
+		}
+		
+		if (altFunc) return altFunc();	
 	}
 
 	updateHighlightingStateBoard(toUpdate,color){
@@ -387,8 +428,8 @@ class Game{
 				if (toUpdate == postion) {
 					console.log("!!!!!!!!!",postion)
 
-					 if (color)// in this case an already highlighted postion is being highlighted with different color
-						 // or in this case a none highlighted postion is being highlighted
+					if (color)// in this case an already highlighted postion is being highlighted with different color
+						// or in this case a none highlighted postion is being highlighted
 						this.highlightedPositions += "_" + postion + color;
 					else //in this case highlighted postion is being erased
 						this.highlightedPositions += "_" + postion;
@@ -402,31 +443,24 @@ class Game{
 		console.log(this.highlightedPositions);
 
 	}
-	
-	unstore(){
-		var storage=window.localStorage;
-		storage.setItem('gameState', false);
-	}
-	
-	//restore game from state in localstorage
-	restore(altFunc){
-		
-		var storage=window.localStorage;
-		var data=storage.getItem('gameState');
-		var piecesState = storage.getItem("piecesState");
-		var boardState = storage.getItem("boardState");
-		if (data&&data!='false') {
-			this.setGameState(data,altFunc);
-			var that = this;
-			setTimeout(function(){
-				that.setPiecesAnnotationState(piecesState);
-				that.setHighlightingStateBoard(boardState);
-			},100);
 
-			return true;
+	getTextStatePR(){
+		let out={};
+		out.texts='';
+		let layerChildren = this.pd.ui.layer.getChildren();
+
+		let stageWidth =this.pd.ui.stage.width();
+		let stageHeight =this.pd.ui.stage.height();
+		let x = window.innerWidth-(7*window.innerWidth/100);
+		for(let i in layerChildren){
+			if(layerChildren[i].getClassName()==="Text"){
+				out.texts+="&"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y()*100/stageWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width());
+			}
 		}
-		
-		if (altFunc) return altFunc();	
+
+		out=JSON.stringify(out);
+		return out;
+
 	}
 
 	getHighlightingStateBoard(){
@@ -587,6 +621,33 @@ class Game{
     	 	
     	 });
 		
+	}
+
+	setTextStatePR(content){
+		if(!content)return;
+		let data=JSON.parse(content);
+		let texts=data.texts;
+		texts=texts.split('&');
+		let text="";
+		let stageWidth = this.pd.ui.stage.width();
+		//let stageHeight = this.pd.ui.stage.height();
+		for (let i in texts){
+			text=texts[i];
+			if (!text) continue;
+			text=text.split('_');
+			this.pd.ui.addText(text[0],parseFloat(text[1]*stageWidth/100),parseFloat(text[2]*stageWidth/100),text[3],parseFloat(text[4]));
+
+		}
+		let that=this;
+		setTimeout(function(){
+			let children=that.pd.ui.layer.getChildren();
+			for(let i in children){
+				if(children[i].getClassName()==="Text"){
+					children[i].draggable(false);
+				}
+			}
+		},100);
+
 	}
 
 

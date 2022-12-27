@@ -52,11 +52,12 @@
   --piece-y-color: var(--y-color);
   --piece-z-color: var(--z-color);
 
-	--highlighting-color1: #f23747;
-	--highlighting-color2: #f5d75e;
+	--highlighting-color1: #f5d75e;
+	--highlighting-color2: #f23747;
 	--highlighting-color3: #3598fa;
 	--highlighting-color4: #8065fa;
-	--highlighting-color5: #0fdd7d;
+	--highlighting-color5: #000;
+	--highlighting-color-standard:#f5d75e;
 
 	--activated-button: #abeeeb;
   
@@ -94,6 +95,13 @@ body {
 	top:0;left:var(--function-area-width);
 	bottom:0;
 	width:var(--game-area-width)
+}
+
+#stageContainerPR{
+	position: fixed;
+	top:var(--tray-height);
+	left:var(--function-area-width);
+	z-index: 2147483647;
 }
 
 #tray {

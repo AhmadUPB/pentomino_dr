@@ -685,6 +685,26 @@ class Visual{
 			e.preventDefault();
 			return false;
 		}
+		// based on https://stackoverflow.com/questions/5489946/how-to-wait-for-the-end-of-resize-event-and-only-then-perform-an-action
+		function resizeAction(){
+
+			that.pd.ui.layer.destroy();
+			that.pd.ui.layer = new Konva.Layer();
+			that.pd.ui.stage.add(that.pd.ui.layer);
+			that.pd.ui.stage.width(window.innerWidth-(7*window.innerWidth/100));
+			that.pd.ui.stage.height(window.innerHeight-(7*window.innerHeight/100));
+			var storage=window.localStorage;
+			var TextStatePR = storage.getItem("TextStatePR");
+			that.pd.game.setTextStatePR(TextStatePR);
+
+
+		}
+
+		let toDo;
+		window.onresize = function(){
+			clearTimeout(toDo);
+			toDo = setTimeout(resizeAction, 100);
+		};
 
 		//Differnt things have to happen in relation to different
 		//kinds of objects and in different states of the application
@@ -750,7 +770,7 @@ class Visual{
 				if (check.includes('uiElement')) {return;} //if we have an element of ui, we do nothing here
 
 				if(that.annotationMode && check=='gamearea boardarea' && that.highlightActive ){
-					let color = that.highlightColor?that.cssConf("highlighting-"+that.highlightColor):that.cssConf("highlighting-color2");
+					let color = that.highlightColor?that.cssConf("highlighting-"+that.highlightColor):that.cssConf("highlighting-color1");
 					that.highlightBoardPostion(clickedElement.id.split('_')[1],color);
 					that.pd.game.storeHighlightingStatePieces(clickedElement.id.split('_')[1],color);
 
@@ -772,7 +792,7 @@ class Visual{
 				if(that.annotationMode){
 					if(that.highlightActive && check=='bmPoint'){
 						that.toTop(container);
-						pieceObject.highlighted=that.highlightColor?that.highlightColor:"color2";
+						pieceObject.highlighted=that.highlightColor?that.highlightColor:"color1";
 						that.updatePiece(pieceObject)
 						that.pd.game.storeAnnotationStatePieces();
 						return;

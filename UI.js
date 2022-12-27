@@ -181,7 +181,7 @@ game itself. Those are in Visual.js
 			addSection('annotations','',function(div){
 
 				addButton('back','back','LABEL_BACK',div,function(){pd.ui.hideAnnotationBar();});
-				//addButton('text','text','LABEL_TEXT',div,function(){;});
+				addButton('text','text','LABEL_TEXT',div,function(){pd.ui.addText();});
 				addButton('highlight','highlight','LABEL_HIGHLIGHT',div,function(){pd.ui.activateHighlighting();});
 				addButton('color','color','LABEL_COLOR',div,function(){pd.ui.showHighlightingColourBox();});
 				addButton('freeze','freeze','LABEL_FREEZE',div,function(){pd.ui.activateFreezing();});
@@ -198,6 +198,7 @@ game itself. Those are in Visual.js
 			addDiv('tray',div);
 			addDiv('field',div);
 		});
+		addDiv('stageContainerPR');
 		addDiv('piecearea');
 		addDiv('operations');
 		addDiv('hint');
@@ -210,6 +211,16 @@ game itself. Those are in Visual.js
 		setTimeout(function(){
 			that.updateHeatButton();
 		},10);
+		this.stageWidth=window.innerWidth-(7*window.innerWidth/100); //7: function-area-width, tray-height
+		this.stageHeight=window.innerHeight-(7*window.innerHeight/100);
+		this.stage = new Konva.Stage({
+			container: 'stageContainerPR',
+			width: this.stageWidth,
+			height: this.stageHeight,
+		});
+		this.layer = new Konva.Layer();
+		//this.draggingLayer = new Konva.Layer();
+		this.stage.add(this.layer);
 		
 	}
 	
@@ -221,6 +232,208 @@ game itself. Those are in Visual.js
 			parent.appendChild(div); 
 			
 			if (after) after.call(this,div);
+	}
+
+    // based on https://konvajs.org/docs/sandbox/Editable_Text.html
+	addText(text,x,y,fill,width){
+		var textNode = new Konva.Text({
+			text: text?text:'Some text here',
+			x: x?x:50,
+			y: y?y:80,
+			fontSize: 20,
+			draggable: true,
+			fill: fill?fill:"#000",
+			width: width?width:200,
+		});
+
+		this.layer.add(textNode);
+
+		var tr = new Konva.Transformer({
+			node: textNode,
+			enabledAnchors: ['middle-left', 'middle-right'],
+			// set minimum width of text
+			boundBoxFunc: function (oldBox, newBox) {
+				newBox.width = Math.max(30, newBox.width);
+				return newBox;
+			},
+		});
+
+		textNode.on('transform', function () {
+			// reset scale, so only with is changing by transformer
+			textNode.setAttrs({
+				width: textNode.width() * textNode.scaleX(),
+				scaleX: 1,
+			});
+		});
+
+		this.layer.add(tr);
+        tr.hide();
+		if(!text) this.pd.game.storeTextStatePR(); //avoid open loop when text state is reconstructed when is opened
+		textNode.on('pointerclick', () => {
+			if(!this.pd.visual.annotationMode)return;
+			if(this.pd.visual.eraserActive){
+				textNode.destroy();
+				tr.destroy();
+				this.pd.game.storeTextStatePR();
+				return;
+			}
+			else if(this.pd.visual.highlightActive){
+				let color=this.pd.visual.highlightColor?this.pd.visual.cssConf("highlighting-"+this.pd.visual.highlightColor)+"":this.pd.visual.cssConf("highlighting-color1")+"";
+				textNode.fill(color);
+				this.pd.game.storeTextStatePR();
+				return;
+			}
+			tr.show();
+			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
+			function  handleOutsideClick(){
+				tr.hide()
+				window.removeEventListener('click', handleOutsideClick);
+
+			}
+		});
+		textNode.on('dragend', () => {
+			this.pd.game.storeTextStatePR();
+		});
+		textNode.on('transformend', () => {
+			this.pd.game.storeTextStatePR();
+		});
+
+		textNode.on('dblclick dbltap', () => {
+			if(!this.pd.visual.annotationMode)return;
+			let that = this;
+			// hide text node and transformer:
+			textNode.hide();
+			tr.hide();
+
+			// create textarea over canvas with absolute position
+			// first we need to find position for textarea
+			// how to find it?
+
+			// at first lets find position of text node relative to the stage:
+			var textPosition = textNode.absolutePosition();
+
+			// so position of textarea will be the sum of positions above:
+			var areaPosition = {
+				x: this.stage.container().offsetLeft + textPosition.x,
+				y: this.stage.container().offsetTop + textPosition.y,
+			};
+
+			// create textarea and style it
+			var textarea = document.createElement('textarea');
+			document.body.appendChild(textarea);
+
+			// apply many styles to match text on canvas as close as possible
+			// remember that text rendering on canvas and on the textarea can be different
+			// and sometimes it is hard to make it 100% the same. But we will try...
+			textarea.value = textNode.text();
+			textarea.style.position = 'absolute';
+			textarea.style.top = areaPosition.y + 'px';
+			textarea.style.left = areaPosition.x + 'px';
+			textarea.style.width = textNode.width() - textNode.padding() * 2 + 'px';
+			textarea.style.height =
+				textNode.height() - textNode.padding() * 2 + 5 + 'px';
+			textarea.style.fontSize = textNode.fontSize() + 'px';
+			textarea.style.border = 'none';
+			textarea.style.padding = '0px';
+			textarea.style.margin = '0px';
+			textarea.style.overflow = 'hidden';
+			textarea.style.background = 'none';
+			textarea.style.outline = 'none';
+			textarea.style.resize = 'none';
+			textarea.style.lineHeight = textNode.lineHeight();
+			textarea.style.fontFamily = textNode.fontFamily();
+			textarea.style.transformOrigin = 'left top';
+			textarea.style.textAlign = textNode.align();
+			textarea.style.color = textNode.fill();
+			let rotation = textNode.rotation();
+			var transform = '';
+			if (rotation) {
+				transform += 'rotateZ(' + rotation + 'deg)';
+			}
+
+			var px = 0;
+			// also we need to slightly move textarea on firefox
+			// because it jumps a bit
+			var isFirefox =
+				navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+			if (isFirefox) {
+				px += 2 + Math.round(textNode.fontSize() / 20);
+			}
+			transform += 'translateY(-' + px + 'px)';
+
+			textarea.style.transform = transform;
+
+			// reset height
+			textarea.style.height = 'auto';
+			// after browsers resized it we can set actual value
+			textarea.style.height = textarea.scrollHeight + 3 + 'px';
+
+			textarea.focus();
+
+			function removeTextarea() {
+				textarea.parentNode.removeChild(textarea);
+				window.removeEventListener('click', handleOutsideClick);
+				textNode.show();
+				//tr.show();
+				tr.forceUpdate();
+				if(!textNode.text()){textNode.destroy(); tr.destroy();}
+				that.pd.game.storeTextStatePR();
+			}
+
+			function setTextareaWidth(newWidth) {
+				if (!newWidth) {
+					// set width for placeholder
+					newWidth = textNode.placeholder.length * textNode.fontSize();
+				}
+				// some extra fixes on different browsers
+				var isSafari = /^((?!chrome|android).)*safari/i.test(
+					navigator.userAgent
+				);
+				var isFirefox =
+					navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+				if (isSafari || isFirefox) {
+					newWidth = Math.ceil(newWidth);
+				}
+
+				var isEdge =
+					document.documentMode || /Edge/.test(navigator.userAgent);
+				if (isEdge) {
+					newWidth += 1;
+				}
+				textarea.style.width = newWidth + 'px';
+			}
+
+			textarea.addEventListener('keydown', function (e) {
+				// hide on enter
+				// but don't hide on shift + enter
+				console.log("event!!")
+				if (e.keyCode === 13 && !e.shiftKey) {
+					console.log("event enter!!!")
+					textNode.text(textarea.value);
+					removeTextarea();
+				}
+				// on esc do not set value back to node
+				if (e.keyCode === 27) {
+					removeTextarea();
+				}
+			});
+
+			textarea.addEventListener('keydown', function (e) {
+				let scale = textNode.getAbsoluteScale().x;
+				setTextareaWidth(textNode.width() * scale);
+				textarea.style.height = 'auto';
+				textarea.style.height =
+					textarea.scrollHeight + textNode.fontSize() + 'px';
+			});
+
+			function handleOutsideClick(e) {
+				if (e.target !== textarea) {
+					textNode.text(textarea.value);
+					removeTextarea();
+				}
+			}
+			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
+		});
 	}
 	activateFreezing(){
 		if(!this.pd.visual.freezeActive){
@@ -292,7 +505,7 @@ game itself. Those are in Visual.js
 			that.closeHighlightingColorBox();
 		}
         if(that.pd.visual.highlightColor)document.getElementById(that.pd.visual.highlightColor).style.border = `2px solid white`
-		else document.getElementById("color2").style.border = `2px solid white`
+		else document.getElementById("color1").style.border = `2px solid white`
 		document.getElementById("color1").onclick=function (){selectColor("color1");}
 		document.getElementById("color2").onclick=function (){selectColor("color2");}
 		document.getElementById("color3").onclick=function (){selectColor("color3");}
@@ -319,6 +532,13 @@ game itself. Those are in Visual.js
 		document.getElementById('annotation').style.display='';
 		document.getElementById('functions').style.display='none';
 		document.getElementById("hint").style.display='none';
+		let children=this.layer.getChildren();
+		console.log(this.layer.getChildren());
+		for(let i in children){
+			if(children[i].getClassName()==="Text"){
+				children[i].draggable(true);
+			}
+		}
 		this.pd.visual.annotationMode=true;
 	}
 
@@ -329,6 +549,13 @@ game itself. Those are in Visual.js
 		document.getElementById('annotation').style.display='none';
 		document.getElementById('functions').style.display='';
 		document.getElementById("hint").style.display='';
+		let children=this.layer.getChildren();
+		console.log(this.layer.getChildren());
+		for(let i in children){
+			if(children[i].getClassName()==="Text"){
+				children[i].draggable(false);
+			}
+		}
 		this.pd.visual.annotationMode=false;
 	}
 

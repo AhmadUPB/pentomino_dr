@@ -85,6 +85,7 @@ $t='?t='.time();
 <script src="config.js<?=$t?>"></script>
 <script type="text/javascript"> var isLoggedIn=<?php echo(isset($_SESSION['id']));?></script>
 
+
 <?php
 
     //load addconfig if conf parameter is given
@@ -102,6 +103,8 @@ $t='?t='.time();
 <script src="Evaluator.js<?=$t?>"></script>
 <script src="Hinter.js<?=$t?>"></script>
 <script src="PD.js<?=$t?>"></script>
+<script src="Konva.js<?=$t?>"></script>
+
 
 <script>
     function initialize(){
