@@ -125,6 +125,8 @@ game itself. Those are in Visual.js
 
 				if (pd.config.boardselector){addButton('catalog','catalog','LABEL_CATALOG',div,function(){pd.ui.showBoardSelector();});}
 				if (pd.config.clear) addButton('clear','clear','LABEL_CLEAR',div,function(){evaluator.clear();});
+				if (pd.config.documentRoom && window.isLoggedIn) addButton('documentRoomButton','document_room','LABEL_DOCUMENTROOM',div,function(){;});
+				if (pd.config.addDocument && window.isLoggedIn) addButton('addDocumentButton','add_document','LABEL_ADDDOCUMENT',div,function(){;});
 				if (pd.config.annotationButton) addButton('annotationButton','annotation','LABEL_ANNOTATION',div,function(){pd.ui.showAnnotationBar();});
 
 				if (pd.config.fillright) addButton('fill_right','fill_right','LABEL_FILL_RIGHT',div,function(){evaluator.clear();evaluator.fill(pd.config.fillright,3)});

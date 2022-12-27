@@ -28,6 +28,8 @@ LABEL_CATALOG::Board Selection
 LABEL_PARTITION::Partition
 LABEL_LOGIN::Log in
 LABEL_LOGOUT::Log out
+LABEL_DOCUMENTROOM::Document Room
+LABEL_ADDDOCUMENT::Add Document
 LABEL_ANNOTATION::Annotation Mode
 LABEL_BACK:: Back to Play Mode
 LABEL_TEXT::Take a Note
@@ -88,6 +90,8 @@ CONFIG_HintDepth::Hint Level
 CONFIG_HintAutoPilot::Auto Pilot
 CONFIG_ShowSuggestButton::Suggest Piece
 CONFIG_ShowLoginButton::Login System
+CONFIG_ShowDocumentRoomButton::Document Room
+CONFIG_ShowAddDocumentButton::Add Document
 CONFIG_ShowAnnotationButton::Annotation Mode
 CONFIG_ShowConfigButton::Configuration
 CONFIG_ShowHeatmapButton::Heatmap
@@ -149,6 +153,8 @@ EXPLANATION_FillCenter::Prefilling from the center with specified number of piec
 EXPLANATION_FreezeState::If "Yes" is selected, pre-allocated pieces (via URL/QR code) cannot be moved.
 
 EXPLANATION_ShowLoginButton::Enable Login to use Document Room.
+EXPLANATION_ShowDocumentRoomButton::Show button to open Document Room. You need to be logged in!
+EXPLANATION_ShowAddDocumentButton::Show button to add current game situation with annotations to Document room. You need to be logged in!
 EXPLANATION_ShowAnnotationButton::Show Annotation Mode button to take notes, freeze pieces or to highlight pieces or board positions.
 EXPLANATION_ShowConfigButton::Show Configuration button.
 EXPLANATION_ShowInfoButton::Show button for Help and Copyright information.

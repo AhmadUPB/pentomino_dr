@@ -103,7 +103,7 @@ var PentominoConfig={
             "buttonText":"HintDepth",
             "values":[2,1,0],
             "readable":["CONCRETE_HINT","VAGUE_HINT","NO_HINTS"],
-            "standard":2
+            "standard":0
         },
         "autopilot": {
             "buttonText":"HintAutoPilot",
@@ -141,7 +141,7 @@ var PentominoConfig={
             "buttonText":"PrefillMode",
             "values":[-1,0,1],
             "readable":["OFF","FILL_GAP","FILL_ONE_TOUCH"],
-            "standard":0
+            "standard":-1
         },
         "fillright": {
             "buttonText":"FillRight",
@@ -164,6 +164,18 @@ var PentominoConfig={
 
     },
     "4": {
+        "documentRoom": {
+            "buttonText": "ShowDocumentRoomButton",
+            "values": [1, 0],
+            "readable": ["YES", "NO"],
+            "standard": 1
+        },
+        "addDocument": {
+            "buttonText": "ShowAddDocumentButton",
+            "values": [1, 0],
+            "readable": ["YES", "NO"],
+            "standard": 1
+        },
         "annotationButton": {
             "buttonText": "ShowAnnotationButton",
             "values": [1, 0],
@@ -188,7 +200,7 @@ var PentominoConfig={
             "buttonText":"ShowInfoButton",
             "values":[1,0],
             "readable":["YES","NO"],
-            "standard":1
+            "standard":0
         },
         "appcheck": {
             "buttonText":"ChekAppInstallation",

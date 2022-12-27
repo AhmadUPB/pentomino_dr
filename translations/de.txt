@@ -28,6 +28,8 @@ LABEL_CATALOG::Brettauswahl
 LABEL_PARTITION::Board-Teilung
 LABEL_LOGIN::Einloggen
 LABEL_LOGOUT::Ausloggen
+LABEL_DOCUMENTROOM::Dokumentenraum
+LABEL_ADDDOCUMENT::Dokument einfügen
 LABEL_ANNOTATION::Annotation-Modus
 LABEL_BACK:: Zurück zum Spiel-Modus
 LABEL_TEXT::Notizen Verfassen
@@ -89,6 +91,8 @@ CONFIG_HintDepth::Tipp-Umfang
 CONFIG_HintAutoPilot::Autopilot
 CONFIG_ShowSuggestButton::Stein legen
 CONFIG_ShowLoginButton::Login System
+CONFIG_ShowDocumentRoomButton::Dokumentenraum
+CONFIG_ShowAddDocumentButton::Dokument Einfügen
 CONFIG_ShowAnnotationButton::Annotation-Modus
 CONFIG_ShowConfigButton::Konfiguration
 CONFIG_ShowHeatmapButton::Heatmap
@@ -149,7 +153,9 @@ EXPLANATION_FillLeft::Automatisches Füllen von Links mit angegebener Anzahl von
 EXPLANATION_FillCenter::Automatisches Füllen aus der Mitte mit angegebener Anzahl von Steinen.
 EXPLANATION_FreezeState::Bei "Ja" können vorbelegte Steine (per URL/QR-Code) nicht bewegt werden.
 
-EXPLANATION_ShowLoginButton::Login System einschalten, um den Dokumentenraum zu nuten.
+EXPLANATION_ShowLoginButton::Button zum Einloggen anzeigen, um den Dokumentenraum zu nuten.
+EXPLANATION_ShowDocumentRoomButton::Button zum Aufrufen des Dokumentenraums anzeigen. Sie müssen sich zuerst einloggen!
+EXPLANATION_ShowAddDocumentButton::Button zum Einfügen von einer annotierten Spielsituation in den Dokumentraum anzeigen. Sie müssen sich zuerst einloggen!
 EXPLANATION_ShowAnnotationButton::Annotation-Modus Button zeigen, um Notizen zu verfassen, Steine zu fixieren oder Steine und Brettpositionen zu markieren.
 EXPLANATION_ShowConfigButton::Button zum Aufrufen der Konfigurationseinstellung anzeigen.
 EXPLANATION_ShowInfoButton::Button zum Aufrufen der Hilfe und der Copyright-Informationen anzeigen.
