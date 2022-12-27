@@ -251,6 +251,7 @@ game itself. Those are in Visual.js
 		var tr = new Konva.Transformer({
 			node: textNode,
 			enabledAnchors: ['middle-left', 'middle-right'],
+			rotateEnabled: false,
 			// set minimum width of text
 			boundBoxFunc: function (oldBox, newBox) {
 				newBox.width = Math.max(30, newBox.width);

@@ -448,10 +448,7 @@ class Game{
 		let out={};
 		out.texts='';
 		let layerChildren = this.pd.ui.layer.getChildren();
-
 		let stageWidth =this.pd.ui.stage.width();
-		let stageHeight =this.pd.ui.stage.height();
-		let x = window.innerWidth-(7*window.innerWidth/100);
 		for(let i in layerChildren){
 			if(layerChildren[i].getClassName()==="Text"){
 				out.texts+="&"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y()*100/stageWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width());
