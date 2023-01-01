@@ -63,7 +63,7 @@ game itself. Those are in Visual.js
 		}
 		
 		//initialize the UI
-		
+
 		function addDiv(id,parent,after){
 			return that.addDiv(id,parent,after);
 		}
@@ -125,8 +125,8 @@ game itself. Those are in Visual.js
 
 				if (pd.config.boardselector){addButton('catalog','catalog','LABEL_CATALOG',div,function(){pd.ui.showBoardSelector();});}
 				if (pd.config.clear) addButton('clear','clear','LABEL_CLEAR',div,function(){evaluator.clear();});
-				if (pd.config.documentRoom && window.isLoggedIn) addButton('documentRoomButton','document_room','LABEL_DOCUMENTROOM',div,function(){;});
-				if (pd.config.addDocument && window.isLoggedIn) addButton('addDocumentButton','add_document','LABEL_ADDDOCUMENT',div,function(){;});
+				if (pd.config.documentRoom && window.isLoggedIn) addButton('documentRoomButton','document_room','LABEL_DOCUMENTROOM',div,function(){pd.ui.openDocumentRoom();});
+				if (pd.config.addDocument && window.isLoggedIn) addButton('addDocumentButton','add_document','LABEL_ADDDOCUMENT',div,function(){pd.ui.pd.game.addDocument();});
 				if (pd.config.annotationButton) addButton('annotationButton','annotation','LABEL_ANNOTATION',div,function(){pd.ui.showAnnotationBar();});
 
 				if (pd.config.fillright) addButton('fill_right','fill_right','LABEL_FILL_RIGHT',div,function(){evaluator.clear();evaluator.fill(pd.config.fillright,3)});
@@ -235,6 +235,17 @@ game itself. Those are in Visual.js
 			
 			if (after) after.call(this,div);
 	}
+	openDocumentRoom(){
+		var oReq = new XMLHttpRequest();
+		oReq.addEventListener("load",function(){
+			var text=this.responseText
+			text=text.split('¤');
+
+			console.log(text);
+			});
+		oReq.open("GET", './loginsystem/reqhandler.php?type=documents');
+		oReq.send();
+	}
 
     // based on https://konvajs.org/docs/sandbox/Editable_Text.html
 	addText(text,x,y,fill,width){
@@ -304,6 +315,7 @@ game itself. Those are in Visual.js
 		textNode.on('dblclick dbltap', () => {
 			if(!this.pd.visual.annotationMode)return;
 			let that = this;
+			that.editingText=true;
 			// hide text node and transformer:
 			textNode.hide();
 			tr.hide();
@@ -377,10 +389,11 @@ game itself. Those are in Visual.js
 				textarea.parentNode.removeChild(textarea);
 				window.removeEventListener('click', handleOutsideClick);
 				textNode.show();
-				//tr.show();
+				tr.show();
 				tr.forceUpdate();
 				if(!textNode.text()){textNode.destroy(); tr.destroy();}
 				that.pd.game.storeTextStatePR();
+				setTimeout(function(){that.editingText=false;},100);
 			}
 
 			function setTextareaWidth(newWidth) {

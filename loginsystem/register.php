@@ -8,8 +8,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $id =  md5($_POST["email"]);
             $file = file_get_contents('./database.txt');
             $file = json_decode($file, true);
-            if (is_array($file))$registered= isset($file["$id"] );
-            if (empty($file)){
+            if (is_array($file))$registered= isset($file["$id"] ); // check if the user already registered
+            else  $registered=false;
+            if (empty($file)){ // in case the database file is empty, make an array to save users' info
                 $new = array(
                     $id => array(
                         'email' => "$email",
@@ -20,19 +21,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
 
-        else if (is_array($file)&& !$registered){
+            else if (is_array($file)&& !$registered){ // in the database file not empty just add the new user
 
-                $new =  array('email' => "$email",'password' => "$pw");
-                $file["$id"] = $new;
-                $db =json_encode($file,JSON_FORCE_OBJECT);
+                    $new =  array('email' => "$email",'password' => "$pw");
+                    $file["$id"] = $new;
+                    $db =json_encode($file,JSON_FORCE_OBJECT);
+                }
+            if(!$registered){
+                $filename = 'database.txt';
+                $fp = fopen($filename, 'w');
+                fwrite($fp, $db);
+                fclose($fp);
+                $fp= fopen('./user-documents/'.$id.'.txt', 'w');
+                //$file = file_get_contents('./user-documents/'.$id.'.txt');
+                //$file = json_decode($file, true);
+                $new = array(
+                    'lowestElement' => array(
+                        'id' => 'none',
+                        'position' => 'none'
+                    ),
+                    'boards' => array()
+                );
+                $userDocuments =json_encode($new, JSON_FORCE_OBJECT);
+                fwrite($fp, $userDocuments);
+                fclose($fp);
+
+                echo 'Registration Done';
             }
-        if(!$registered){
-            $filename = 'database.txt';
-            $fp = fopen($filename, 'w');
-            fwrite($fp, $db);
-            fclose($fp);
-            echo 'Registration Done';}
-        if($registered)echo("Your Email is already Registered!");
+            if($registered)echo("Your Email is already Registered!");
         }
         else {echo('Passwords are Not the Same');}
     }

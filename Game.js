@@ -195,9 +195,10 @@ class Game{
 			text=text.split('\n');
 
 			var solutionsFromFile=[];
-		  
+			that.layoutForDocument = text[0].split(', ')[1];
 			for (var i in text){
 				var line=text[i].split(', ')[1];
+
 				if (!line) continue;
 				
 				var lines=line.split(' ');
@@ -389,17 +390,13 @@ class Game{
 		
 		var storage=window.localStorage;
 		var data=storage.getItem('gameState');
-		var piecesState = storage.getItem("piecesState");
-		var boardState = storage.getItem("boardState");
-		var TextStatePR = storage.getItem("TextStatePR");
+
 		if (data&&data!='false') {
+
+
 			this.setGameState(data,altFunc);
-			var that = this;
-			setTimeout(function(){
-				that.setPiecesAnnotationState(piecesState);
-				that.setHighlightingStateBoard(boardState);
-				that.setTextStatePR(TextStatePR);
-			},100);
+
+
 
 			return true;
 		}
@@ -451,7 +448,7 @@ class Game{
 		let stageWidth =this.pd.ui.stage.width();
 		for(let i in layerChildren){
 			if(layerChildren[i].getClassName()==="Text"){
-				out.texts+="&"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y()*100/stageWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width());
+				out.texts+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y()*100/stageWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width());
 			}
 		}
 
@@ -610,6 +607,16 @@ class Game{
 				}
 
 			}
+			//after loading the game and pieces the annotation state is recreated
+
+			 var storage=window.localStorage;
+			 var piecesState = storage.getItem("piecesState");
+			 var boardState = storage.getItem("boardState");
+			 var TextStatePR = storage.getItem("TextStatePR");
+				 that.setPiecesAnnotationState(piecesState);
+				 that.setHighlightingStateBoard(boardState);
+				 that.setTextStatePR(TextStatePR);
+
     	 	
     	 	//set history to saved one
     	 	//that.history=data.h;
@@ -624,7 +631,7 @@ class Game{
 		if(!content)return;
 		let data=JSON.parse(content);
 		let texts=data.texts;
-		texts=texts.split('&');
+		texts=texts.split('!');
 		let text="";
 		let stageWidth = this.pd.ui.stage.width();
 		//let stageHeight = this.pd.ui.stage.height();
@@ -732,6 +739,38 @@ class Game{
 		
 		document.body.removeChild(element);
 		
+	}
+
+	addDocument(){
+		var stoarge = window.localStorage;
+		var gameState = stoarge.getItem('gameState')
+		if (!gameState) {
+			alert("Error!, no board in local stoarge to load")
+		}
+		if (!gameState.includes("{")) {gameState='{'+gameState+'}';}
+		gameState=gameState.replaceAll('.',',');
+		gameState = JSON.parse(gameState);
+		console.log("add: ",gameState);
+		let piecesState = stoarge.getItem('piecesState')
+		if(piecesState) piecesState= JSON.parse(piecesState).pieces; else piecesState='none'
+		console.log("add: ",piecesState);
+		let boardState = stoarge.getItem('boardState')
+		if(boardState) boardState= JSON.parse(boardState).board; else boardState='none';
+		console.log("add: ",boardState);
+		let TextStatePR = stoarge.getItem('TextStatePR')
+		if(TextStatePR){
+			TextStatePR= JSON.parse(TextStatePR);
+			TextStatePR=TextStatePR.texts;
+			console.log(TextStatePR);
+		}
+		else TextStatePR = 'none';
+		console.log("add: ",TextStatePR);
+		let boardLayout= this.layoutForDocument;
+		console.log("add: ",boardLayout);
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
+		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhttp.send("type="+"storedocumentPR"+"&x="+"none"+"&y="+"none"+"&boardname="+gameState.n+"&piecestate1="+gameState.s+"&piecestate2="+piecesState+"&boardState="+boardState+"&TextStatePR="+TextStatePR+"&boardLayout="+this.layoutForDocument+"&url="+document.documentURI);
 	}
 
 	//*** partition handling ***

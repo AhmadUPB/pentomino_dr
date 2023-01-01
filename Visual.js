@@ -686,25 +686,47 @@ class Visual{
 			return false;
 		}
 		// based on https://stackoverflow.com/questions/5489946/how-to-wait-for-the-end-of-resize-event-and-only-then-perform-an-action
+		let toDo1;
 		function resizeAction(){
-
+			if(that.pd.ui.editingText) return;// avoid resizing the konva stage when editing text in Annotation mode.
+			                                  // this is meant when window size changes after appearing the keyboard on touch devices and the window size changes
+			                                  // the keyboard appear when the text is double clicked to edit it
 			that.pd.ui.layer.destroy();
+			that.pd.ui.stage.destroy();
+			that.pd.ui.stageWidth=window.innerWidth-(7*window.innerWidth/100); //7: function-area-width, tray-height
+			that.pd.ui.stageHeight=window.innerHeight-(7*window.innerHeight/100);
+			that.pd.ui.stage = new Konva.Stage({
+				container: 'stageContainerPR',
+				width: that.pd.ui.stageWidth,
+				height: that.pd.ui.stageHeight,
+			});
 			that.pd.ui.layer = new Konva.Layer();
 			that.pd.ui.stage.add(that.pd.ui.layer);
-			that.pd.ui.stage.width(window.innerWidth-(7*window.innerWidth/100));
-			that.pd.ui.stage.height(window.innerHeight-(7*window.innerHeight/100));
+
 			var storage=window.localStorage;
 			var TextStatePR = storage.getItem("TextStatePR");
 			that.pd.game.setTextStatePR(TextStatePR);
+			;
+			if(that.pd.visual.annotationMode){
+				clearTimeout(toDo1);
+				toDo1 = setTimeout(function (){  // on touch devices make the texts draggable again after editing them
+				let children=that.pd.ui.layer.getChildren();
+				for(let i in children){
+					if(children[i].getClassName()==="Text"){
+						children[i].draggable(true);
+					}
+				}},100);}
 
 
 		}
 
-		let toDo;
+
+		let toDo2;
 		window.onresize = function(){
-			clearTimeout(toDo);
-			toDo = setTimeout(resizeAction, 100);
-		};
+
+			clearTimeout(toDo2);
+			toDo2 = setTimeout(resizeAction, 100);
+		}
 
 		//Differnt things have to happen in relation to different
 		//kinds of objects and in different states of the application
