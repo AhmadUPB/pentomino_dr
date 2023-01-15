@@ -39,6 +39,14 @@
   --overlay-color: #222;
   --overlay-text-color:#FFF;
 
+  --document-room-color: #222;
+  --toolbar-dr-color:#FFF;
+
+  --document-width: 15; /*will be applied in vw unit*/
+  --document-height: 10; /*will be applied in vw unit*/
+  --document-game-area-width: 20vw;
+  --document-tray-height: 2; /*will be applied in vw unit*/
+
   --piece-f-color: var(--f-color);
   --piece-i-color: var(--i-color);
   --piece-l-color: var(--l-color);
@@ -251,6 +259,118 @@ body {
 	font-size:100%;
 	font-family:sans-serif;
 	border-bottom:1px solid #ccc;
+}
+
+
+
+#documentroom_header{
+	z-index:2147483647;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	width: 100vw;
+	height: 3vw;
+	top:0;
+	left:0;
+	background-color: var(--document-room-color);
+}
+
+#documentroom_header h1{
+margin: 0;
+color:var(--toolbar-dr-color);
+}
+
+#documentroom_header img{
+	position: fixed;
+	right:0.5vw;
+	top: 0.25vw;
+	width: 2.5vw;
+}
+
+#documentroom_toolbar{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	z-index:2147483647;
+	position: fixed;
+	width: 100vw;
+	height: 3vw;
+	top: 3vw;
+	left: 0;
+	background-color: var(--toolbar-dr-color);
+}
+
+
+#documentroom_content,#DRbackground{
+	position: fixed;
+	display: block;
+	top: 6vw;
+	left: 0;
+	background-color: var(--document-room-color);
+	z-index: 2147483647;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#DRbackground{
+	width: 100%;
+	height: 100%;
+}
+
+#DRbackground p{
+	color: white;
+	text-align: center;
+	font-size: 2em;
+}
+
+#documentroom_content #large-container {
+	overflow: hidden;
+}
+
+#documentroom_content #scroll-container {
+	width: calc(100% - 22px);
+	overflow: auto;
+	margin: 10px;
+	border: 1px solid grey;
+
+}
+
+#documentroom_toolbar_general{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	width: 50vw;
+	height: 2.5vw;
+
+}
+#documentroom_toolbar_selectmode{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	width: 25vw;
+	height: 2.5vw;
+
+}
+#documentroom_toolbar_general div, #documentroom_toolbar_selectmode div{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 5vw;
+	height: 2.5vw;
+	cursor: pointer;
+
+}
+#documentroom_toolbar_general div img, #documentroom_toolbar_selectmode div img{
+	height: 2vw;
+	width: 2vw;
+}
+#documentroom_toolbar_general div span, #documentroom_toolbar_selectmode div span {
+	position: absolute;
+	top: 2.1vw;
+	font-size: 0.9vw;
+	font-weight: bold;
 }
 
 #overlay {

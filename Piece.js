@@ -265,7 +265,7 @@ class Piece {
   
   //function to set the bitmap to a certain state
   //TODO: check where this is acutally used and update descripts accordingly
-  loadState(id){
+  loadState(id,forDocumentRoom){
 
   	var state=this.idToState[id];
   	
@@ -279,9 +279,10 @@ class Piece {
   	}
   	
   	this.bitMap=output;
-  	
+  	if(!forDocumentRoom){
   	this.Game.updateVisu(this);
   	this.Game.evaluator.checkTheBoard();
+	  }
   	
   }
   

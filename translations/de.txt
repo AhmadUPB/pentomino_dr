@@ -44,8 +44,10 @@ TOGGLE_HEAT::Heatmap ein/ausschalten
 
 HEADING_BOARD_SELECTOR::Brettauswahl
 HEADING_QR_CODE::Hier ist der QR-Code
+HEADING_DOCUMENT_ROOM::Dokumentenraum
 
 STATUS_LOADING::Lädt...
+STATUS_WAIT::Bitte Warten...
 DOWNLOAD_QR::QR-Code herunterladen
 URL_COPIED::Die Adresse wurde die Zwischenablage kopiert.
 
@@ -57,6 +59,7 @@ PROBLEM_overlapping::%1 überlappt %2!
 PROBLEM_%5::Lücken, die nicht durch 5 teilbar sind!
 
 WEBAPP_NOTICE::Sie können Pentomino Digital als Webapp installieren, indem Sie eine Verknüpfung auf den Starbildschirm einrichten. Wenn Sie das machen haben Sie mehr Platz für Steine und Bretter und werden nicht durch den Browser abgelenkt.
+DELETE_CONFIRM::Sind Sie sicher, dass Sie die ausgewählten Dokumente endgültig löschen wollen?
 
 LEGEND_SINGLE_FIT::eindeutig
 LEGEND_SENSIBLE_FIT::eindeutig

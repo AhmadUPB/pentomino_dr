@@ -21,103 +21,103 @@
 
 /** The User Interface (Frontend) */
 class UI{
-	
+
 /*
 
 This class creates all the visual structures on the screen which are not the
 game itself. Those are in Visual.js
 
 */
-	
+
 	constructor(pd){
-		
+
 		this.pd=pd;
 
 		//load theme according to config;
 		this.setStyle(pd.config.theme);
-		
+
 		//TODO: Creation of the basic structure should happen in here
-		
+
 		var that=this;
-		
+
 		//Detect if browser is mobile and if running standalone
 		//If on a mobile device running with brother GUI, give a messsage
 		//pointing towards the possibility to be installed as an app
-		
+
 		this.isStandAlone= (window.navigator.standalone === true) || (window.matchMedia('(display-mode: standalone)').matches);
 
 		var isMobile=false;
-		
+
 		if (window.navigator.vendor.includes('Apple')){
 			if(window.navigator.standalone !==undefined) isMobile=true;  //try to distinguish online and offline Safari
 		} else {
 			if (window.navigator.userAgent.includes('Android')) isMobile=true;
 		}
-		
+
 		this.isMobile=isMobile;
-		
-		
-		
+
+
+
 		if (pd.config.appcheck && this.isMobile && !this.isStandAlone){
 			alert(this.translate('WEBAPP_NOTICE'));
 		}
-		
+
 		//initialize the UI
 
 		function addDiv(id,parent,after){
 			return that.addDiv(id,parent,after);
 		}
-		
+
 		function addButton(id,icon,text,parent,action){
-			
+
 			var img=document.createElement("img");
 			img.src='ico/'+icon+'.png';
 			img.id=id;
 			img.title=that.translate(text);
 			img.className='button';
-			
+
 			if(!action){
 				var message='Button '+id+' has no ation!';
 				console.log(message);
 				action=function(){alert(message);}
 			}
-			
+
 			img.onclick=function(){
 				window.setTimeout(function(){ //decouple from the click handler
 					action();
 				},10);
 			}
-			
+
 			parent.appendChild(img);
-			
-			
+
+
 		}
-		
+
 		//add a section to the function bar
 		function addSection(id,title,after,otherParent){
-			
+
 			var parent=document.getElementById(otherParent?otherParent:'functions');
-			
+
 			var that=this;
-			
-			addDiv(id,parent,function(div){			
+
+			addDiv(id,parent,function(div){
 				div.classList.add('section');
 				if (title){
-					var heading=document.createElement("h1");	
+					var heading=document.createElement("h1");
 					var textnode = document.createTextNode(this.translate(title));
 					heading.appendChild(textnode);
 					div.appendChild(heading);
 				}
-				
+
 				if (after) after.call(that,div);
 			});
-			
+
 		}
 
 
 
 		//Here starts the definition of the sidebar
-		
+
 		addDiv('functions',0,function(div){
 
 			//PREFILLING + CATALOG
@@ -147,14 +147,14 @@ game itself. Those are in Visual.js
 					case 1: addButton('partition','partition','LABEL_PARTITION',div,function(){pd.ui.startPartition()}); break;
 					case 2: addButton('partition','partition','LABEL_PARTITION',div,function(){pd.ui.visualPartitions()}); break;
 				}
-				
+
 			});
 
 			//TEACHER
 			addSection('teacher_functions','',function(div){
 
 				if (pd.config.heatmap) addButton('heatbutton','noinit','TOGGLE_HEAT',div,function(){pd.ui.switchHeat();});
-				
+
 				if (pd.config.loadsave){
 					addButton('savebutton','save','LABEL_SAVE',div,function(){pd.game.save();});
 					addButton('loadbutton','load','LABEL_LOAD',div,function(){pd.game.load();});
@@ -173,8 +173,8 @@ game itself. Those are in Visual.js
 			addSection('info_functions','',function(div){
 				if (pd.config.info) addButton('infobutton','info','LABEL_INFO',div,function(){location.href="help/info.php";});
 			});
-			
-			
+
+
 		});
 		// add an annotation bar
 
@@ -195,7 +195,7 @@ game itself. Those are in Visual.js
 
 
 		//here come all the other areas of the user interface which are filled with conten in the respective files
-		
+
 		addDiv('game',0,function(div){
 			addDiv('tray',div);
 			addDiv('field',div);
@@ -207,12 +207,14 @@ game itself. Those are in Visual.js
 		addDiv('overlay',0,function(div){ //this is the overlay for board chooser or splash screen
 			div.className='uiElement';
 		});
+		addDiv('documentroom');
 		addDiv('legend');
-		
+
 		//set all buttons to the state they are in at loading time
 		setTimeout(function(){
 			that.updateHeatButton();
 		},10);
+		// define Konva Stage for documentation mode in Play Room
 		this.stageWidth=window.innerWidth-(7*window.innerWidth/100); //7: function-area-width, tray-height
 		this.stageHeight=window.innerHeight-(7*window.innerHeight/100);
 		this.stage = new Konva.Stage({
@@ -221,30 +223,245 @@ game itself. Those are in Visual.js
 			height: this.stageHeight,
 		});
 		this.layer = new Konva.Layer();
-		//this.draggingLayer = new Konva.Layer();
 		this.stage.add(this.layer);
-		
+		this.loadDRpics();
+		this.windowWidth=window.innerWidth;
 	}
-	
+
     addDiv(id,parent,after){
 			if (!parent) parent=document.getElementsByTagName('body')[0];
-			
+
 			var div = document.createElement("div");
 			div.id=id;
-			parent.appendChild(div); 
-			
+			parent.appendChild(div);
+
 			if (after) after.call(this,div);
 	}
-	openDocumentRoom(){
-		var oReq = new XMLHttpRequest();
-		oReq.addEventListener("load",function(){
-			var text=this.responseText
-			text=text.split('¤');
-
-			console.log(text);
+	loadDRpics(){
+		//based on: //https://konvajs.org/docs/shapes/Image.html
+		let imageObj1 = new Image();
+		imageObj1.onload = function () {
+			let snowflake = new Konva.Image({
+				image: imageObj1,
+				listening: false,
+				perfectDrawEnabled: false,
+				shadowForStrokeEnabled: false,
 			});
-		oReq.open("GET", './loginsystem/reqhandler.php?type=documents');
-		oReq.send();
+			snowflake.cache();
+			DocumentDR.cashedSnowflake =snowflake;
+		};
+		imageObj1.src = './ico/freeze.png';
+
+		let imageObj2 = new Image();
+		imageObj2.onload = function () {
+			let checkMark = new Konva.Image({
+				image: imageObj2,
+				listening: false,
+				perfectDrawEnabled: false,
+				shadowForStrokeEnabled: false,
+			});
+			checkMark.cache();
+			DocumentDR.cashedCheckMark = checkMark;
+		};
+		imageObj2.src = './ico/dr_check.png';
+	}
+
+	openDocumentRoom(){
+		this.documentRoomOpened=true;
+		var that = this;
+		var documentroom = document.getElementById("documentroom");
+		documentroom.style.display = 'block';
+		documentroom.innerHTML = '<div id="documentroom_header"><h1>' + this.translate('HEADING_DOCUMENT_ROOM') + '</h1>'+ '<img onclick="pd.ui.closeDocumentsRoom();" src="./ico/dr_close.png">' +
+		 '</div><div id="documentroom_toolbar">' +
+			'</div>' +'<div id="DRbackground"><p>'+this.translate('STATUS_WAIT')+'</p>></div>'+'<div id="documentroom_content"><div id="scroll-container">'+ '<div id="large-container"><div id="DRcontainer"></div> </div></div>' + '</div>'
+		//'<div id="toolbar">'+'<h2>Draw.</h2>'+'<label htmlFor="stroke">Stroke</label>'
+		//this.translate('STATUS_LOADING')
+
+
+
+			var oReqDocs = new XMLHttpRequest();
+			oReqDocs.addEventListener("load", function () {
+				var documents = this.responseText
+				documents= documents.split('¤');
+
+				// define sizes
+				let documentWidth = that.pd.visual.cssConf('document-width');
+				let documentHeight = that.pd.visual.cssConf('document-height');
+				let numberDocumentsInRow = (Math.floor(95 / (documentWidth + 2.5)));
+				console.log("documents.length: ",documents.length);
+				console.log("numberDocumentsInRow: ",numberDocumentsInRow);
+				let rowsNumber = Math.ceil((documents.length-1) / numberDocumentsInRow);
+				console.log("rowsNumber: ",rowsNumber);
+				let numberDocumentsInLastRow = (documents.length-1) % numberDocumentsInRow;
+				let startOfLeftMargin = (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2;
+				console.log("numberDocumentsInLastRow: ",numberDocumentsInLastRow);
+				that.DRDocumentDefaultY = ( rowsNumber - 1 ) * ( documentHeight + 2.5 ) + 2.5;
+				if(numberDocumentsInLastRow!==0)that.DRDocumentDefaultX = startOfLeftMargin + (numberDocumentsInLastRow-1) * (documentWidth + 2.5);
+				else that.DRDocumentDefaultX  = startOfLeftMargin + (numberDocumentsInRow-1) * (documentWidth + 2.5);
+				console.log('DRDocumentDefaultX: ', that.DRDocumentDefaultX, 'DRDocumentDefaultY: ',that.DRDocumentDefaultY);
+				that.DRStageHeight = that.DRDocumentDefaultY + documentHeight + 2.5 + 2.5;
+				console.log("DRStageHeight: ",that.DRStageHeight)
+
+				//initilize stage and layer
+				// based on https://konvajs.org/docs/sandbox/Canvas_Scrolling.html
+
+				if(that.DRStageHeight/100*window.innerWidth<window.innerHeight-(6/100*window.innerWidth)-22) that.DRStageHeightPX= window.innerHeight-(6/100*window.innerWidth)-22
+				else that.DRStageHeightPX=that.DRStageHeight/100*window.innerWidth;
+				let largeContainer = document.getElementById('large-container')
+				largeContainer.style.width=(window.innerWidth-22)+"px";
+				largeContainer.style.height=that.DRStageHeightPX+"px";
+				let scrollContainer = document.getElementById('scroll-container')
+				let scrollContainerHeight=window.innerHeight-(6/100*window.innerWidth)-22;
+				scrollContainer.style.height= scrollContainerHeight+"px";
+				that.PADDING = 500;
+				that.DRstage = new Konva.Stage({
+					container: 'DRcontainer',
+					width:(window.innerWidth-(0/100*window.innerWidth))+ that.PADDING*2,
+					height:window.innerHeight-(6/100*window.innerWidth)+that.PADDING*2,
+				})
+
+				that.DRlayerShapes = new Konva.Layer();
+				that.DRlayerDocuments1 = new Konva.Layer();
+				that.DRlayerDocuments2 = new Konva.Layer();
+				that.DRlayerDocumentsDragging= new Konva.Layer();
+				that.DRlayerLabels = new Konva.Layer();
+				that.DRlayerTurn = 1;
+				that.DRstage.add(that.DRlayerShapes,that.DRlayerDocuments1,that.DRlayerDocuments2,that.DRlayerDocumentsDragging,that.DRlayerLabels);
+				window.stage=that.DRstage;
+				function repositionStage() {
+					var dx = scrollContainer.scrollLeft - that.PADDING;
+					var dy = scrollContainer.scrollTop - that.PADDING;
+					that.DRstage.container().style.transform =
+						'translate(' + dx + 'px, ' + dy + 'px)';
+					that.DRstage.x(-dx);
+					that.DRstage.y(-dy);
+				}
+				scrollContainer.addEventListener('scroll', repositionStage);
+				repositionStage();
+
+
+				// draw Documents
+				DocumentDR.createCashedElements(that.pd);
+				for (let i in documents){
+					if(!documents[i])continue;
+					else that.drawDocument(documents[documents.length-i],scrollContainer);
+				}
+				//console.log(documents);
+			});
+			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documents');
+			oReqDocs.send();
+		this.createDRtoolbar();
+
+
+
+	}
+
+
+
+	drawDocument(documentAttributes,scrollContainer){
+		documentAttributes = documentAttributes.split('&');
+		//console.log(documentAttributes);
+		var newDocument = new DocumentDR(this.pd,documentAttributes,scrollContainer);
+
+		this.pd.game.documents[newDocument.id]=newDocument;
+
+
+	}
+
+	createDRtoolbar(){
+		//todo: add labels to translation files
+		let that = this;
+		let DRtoolBar = document.getElementById("documentroom_toolbar");
+		DRtoolBar.innerHTML='<div id="documentroom_toolbar_general">' +
+			'<div id="DRtext_button"><img src="./ico/text_dr.png" id="" title=""><span>add label</span></div>' +
+			'<div id="DRrectangle_button"><img src="./ico/rectangle_dr.png" id="" title=""><span>add rectangle</span></div>' +
+			'<div id="arrow_button"><img src="./ico/arrow_dr.png" id="" title=""><span>add arrow</span></div>' +
+			'<div id="DRhighlight_button"><img src="./ico/highlight_dr.png" id="" title=""><span>highlight</span></div>' +
+			'<div id="DRcolor_button"><img src="./ico/color_dr.png" id="" title=""><span>highlighting color</span></div>' +
+			'<div id="DReraser_button"><img src="./ico/eraser_dr.png" id="" title=""><span>eraser</span></div>' +
+			'<div id="DRselectmode_button" onclick="pd.ui.activateSelectModeDR();"><img src="./ico/selectmode_dr.png" id="" title=""><span>select</span></div>' +
+			'</div>' +
+			'<div id="documentroom_toolbar_selectmode">' +
+			'<div id="DRselectall_button"><img src="./ico/selectall_dr.png" id="" title=""><span>select all</span></div>' +
+			'<div id="DRsend_button"><img src="./ico/send_dr.png" id="" title=""><span>send</span></div>' +
+			'<div id="DRdelete_button" onclick="pd.ui.deleteSelectedDocuments();"><img src="./ico/delete_dr.png" id="" title=""><span>delete</span></div>' +
+			'</div>'
+
+		document.querySelectorAll("#documentroom_toolbar_selectmode div")
+			.forEach(button=>{
+				button.style.opacity='20%';
+				//TODO:remove event listeners for select mode buttons
+			});
+
+	}
+	deleteSelectedDocuments(){
+		if(Object.keys(DocumentDR.selectedDocuments).length >= 1){
+			let text=this.translate('DELETE_CONFIRM');
+			let isSure = confirm(text);
+			if(isSure)this.pd.game.deleteSelectedDocuments();
+		}
+	}
+
+	activateSelectModeDR(){
+		console.log("called")
+		if(!this.selectModeActiveDR){
+			this.selectModeActiveDR=true;
+
+		document.querySelectorAll("#documentroom_toolbar_general div")
+			.forEach(button=>{
+				if(button.id!=="DRselectmode_button") {
+					button.style.opacity = '20%';
+					//TODO:remove event listeners for general mode buttons
+				}
+			});
+		let DRselectall_button = document.querySelector("#DRselectall_button")
+		DRselectall_button.style.opacity='100';
+		//TODO:activate event listeners for #DRselectall_button
+
+		let documents = this.pd.game.documents;
+		for(let id in documents){
+			documents[id].activateSelectMode();
+		}
+		}
+		else{
+			this.selectModeActiveDR=false;
+			document.querySelectorAll("#documentroom_toolbar_general div")
+				.forEach(button=>{
+					button.style.opacity='100%';
+					//TODO:activate event listeners for select mode buttons
+				});
+			document.querySelectorAll("#documentroom_toolbar_selectmode div")
+				.forEach(button=>{
+					button.style.opacity='20%';
+					//TODO:remove event listeners for select mode buttons
+				});
+			let documents = this.pd.game.documents;
+			for(let id in documents){
+				documents[id].deactivateSelectMode();
+			}
+		}
+
+	}
+
+	activateDeleteButtonDR(){
+		let DRdelete_button = document.querySelector("#DRdelete_button")
+		DRdelete_button.style.opacity='100%';
+		//TODO:activate event listeners for #DRselectall_button
+
+	}
+	deactivateDeleteButtonDR(){
+		console.log("called2");
+		let DRdelete_button = document.querySelector("#DRdelete_button")
+		DRdelete_button.style.opacity='20%';
+		//TODO:deactivate event listeners for #DRselectall_button
+
+	}
+
+	closeDocumentsRoom(){
+		var documentroom = document.getElementById("documentroom");
+		documentroom.style.display = 'none';
+		this.documentRoomOpened=false;
+		this.pd.game.documents={};
 	}
 
     // based on https://konvajs.org/docs/sandbox/Editable_Text.html
@@ -579,7 +796,7 @@ game itself. Those are in Visual.js
 	showQRCode(text){
 		var overlay=document.getElementById('overlay');
 		overlay.style.display='block';
-		
+
 		overlay.innerHTML='<div id="qrcodeDisplay"></div>';
 		overlay.innerHTML+='<p id="urlDisplay"></p>';
 		overlay.innerHTML+='<button onclick="pd.ui.closeOverlay();" class="closebutton">'+this.translate('BUTTON_CLOSE')+'</button>';
@@ -593,38 +810,38 @@ game itself. Those are in Visual.js
 		},10)
 
 		navigator.clipboard.writeText(text).then(function() {
-			
+
 		  }, function(err) {
 			console.error('Async: Could not copy text: ', err);
 		});
-		
+
 	}
-	
+
 	//displayin the board elector overview which allows players to select a board of their liking
 	showBoardSelector(){
-	
+
 		var overlay=document.getElementById('overlay');
 		overlay.style.display='block';
-		
+
 		overlay.innerHTML='<h1>'+this.translate('HEADING_BOARD_SELECTOR')+'</h1><div id="selector_content">'+this.translate('STATUS_LOADING')+'</id>';
 		overlay.innerHTML+='<button onclick="pd.ui.closeOverlay();">'+this.translate('BUTTON_CLOSE')+'</button>';
-		
+
 		//the boardlist is fetched from the server (direcly below this eventlistener)
 		var oReq = new XMLHttpRequest();
 		oReq.addEventListener("load",function(){
-			
+
 			var text=this.responseText.split('\n');
 			var el=document.getElementById('selector_content');
 			var out='';
-			
+
 			//process the list and convert it to local data structure
 			for (var i in text){
 				var line=text[i];
-				
+
 				if (!line) continue;
-				
+
 				line=line.split('#');
-				
+
 				//Format: 8x8e#74#8#8#4#FFIIIIIZ VFFPPZZZ VF.PPZWW VVV.PWWY LUUX.WYY LUXXX.TY LUUXNNTY LLNNNTTT
 				//        ID#Solutions#Rows#Cols#BlockedElements#Topology
 
@@ -637,21 +854,21 @@ game itself. Those are in Visual.js
 
 				//the topology is the first solution from the solution file. As it is only used to determine where
 				//blocked elements are in contrast to the actual board area, every single solution would suffice
-				
+
 				var size=Math.max(numRows,numCols);
 				var sizeString=(100/size)+'%';
-				
+
 				//all boards are displayed in a square. As most of them will not by themselves be squares,
 				//empty rows and empty columns are added accordingly
-				
+
 				var addRows=size-numRows;
 				var addCols=size-numCols;
 				var temp=[];
-				
+
 				var emptyRow=[];
 				for (var c=0;c<size;c++){emptyRow.push('.');}
 				for (var r=0;r<Math.floor(addRows/2);r++){temp.push(emptyRow);}
-				
+
 				for (var r=0;r<numRows;r++){
 					var row=[];
 					for (var c=0;c<Math.floor(addCols/2);c++){row.push('.');}
@@ -659,36 +876,36 @@ game itself. Those are in Visual.js
 					for (var c=0;c<Math.ceil(addCols/2);c++){row.push('.');}
 					temp.push(row);
 				}
-				
+
 				for (var r=0;r<Math.ceil(addRows/2);r++){
 					temp.push(emptyRow);
 				}
-				
+
 				var topology=temp;
 
 				//topoology now holds the necessary data which can be displayed.
-				
+
 				out+='<div class="board_prev" onclick="pd.game.loadBoardFromFile(\''+id+'\');" title="'+id+'">';
 				for (var r=0;r<size;r++){
 					for (var c=0;c<size;c++){
 						var element=topology[r][c];
 						var className=(element=='.')?'empty':'filled';
-						
+
 						out+='<div style="width:'+sizeString+';height:'+sizeString+'" class="'+className+'"></div>';
 					}
 				}
 				out+='</div>';
-				
+
 			} //for each element of the list (=for every board configuration)
-			
+
 			el.innerHTML=out;
-			
+
 		});
 		oReq.open("GET", 'boardlist.php');
-		oReq.send();		
-		
+		oReq.send();
+
 	}
-	
+
 	closeOverlay(){
 		document.getElementById('overlay').style.display='none';
 	}
@@ -698,14 +915,14 @@ game itself. Those are in Visual.js
 	}
 
 	// Button handling fo the function bar
-	
+
 	updateHeatButton(){
 		var heatbutton=document.getElementById('heatbutton');
 		if (!heatbutton) return;
 
 		heatbutton.src=(this.pd.hinter.heatMode)?'ico/heat_off.png':'ico/heat_on.png';
 	}
-	
+
 	switchHeat(){
 
 		if (!this.pd.hinter.heatMode){
@@ -714,7 +931,7 @@ game itself. Those are in Visual.js
 			this.pd.hinter.noHeatMap();
 		}
 
-		
+
 		var legend=document.getElementById('legend');
 		legend.style.display=(this.pd.hinter.heatMode)?'block':'none';
 		this.updateHeatButton();
@@ -724,24 +941,24 @@ game itself. Those are in Visual.js
 	setStyle(selection){
 		var element=document.getElementById('boardstyle');
 		element.href='boardstyles/'+selection+'.css';
-		
+
 		var that=this;
 		setTimeout(function(){
 			that.pd.visual.updatePieces();
 		},100);
-		
+
 	}
 
 	translate(text){
 		return this.pd.translate(text);
 	}
-	
+
 	//Logging function. This is for development puporses only. In the edn
 	//outputs need to be managed differently.
 	log(text,a,b,c,d,e){
-		
+
 		//text=new Date().toLocaleTimeString('de-DE')+' '+text;
-		
+
 		if (a!==undefined) text=text+' '+a;
 		if (b!==undefined) text=text+' '+b;
 		if (c!==undefined) text=text+' '+c;
@@ -752,7 +969,7 @@ game itself. Those are in Visual.js
 	}
 
 	clearHint(){
-		var element=document.getElementById('hint');	
+		var element=document.getElementById('hint');
 		element.innerHTML='';
 	}
 

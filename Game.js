@@ -31,6 +31,7 @@ class Game{
 		this.selected=false;
 		this.frozenPieces={};
 		this.highlightedPositions="";
+		this.documents={};
 		
 	    //dimensions of the game
 
@@ -773,6 +774,30 @@ class Game{
 		xhttp.send("type="+"storedocumentPR"+"&x="+"none"+"&y="+"none"+"&boardname="+gameState.n+"&piecestate1="+gameState.s+"&piecestate2="+piecesState+"&boardState="+boardState+"&TextStatePR="+TextStatePR+"&boardLayout="+this.layoutForDocument+"&url="+document.documentURI);
 	}
 
+	deleteSelectedDocuments(){
+		let documentIDs = "";
+		Object.keys(DocumentDR.selectedDocuments).forEach(ID =>{
+			documentIDs+="_"+ID
+			this.documents[ID].group.destroy();
+			delete this.documents[ID];
+		});
+		DocumentDR.selectedDocuments={};
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
+		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhttp.send("type="+"deletedocumentsDR"+"&documentIDs="+documentIDs);
+	}
+
+	updateDocumentCoordinates(id,x,y){
+		console.log("called!");
+		x=x*100/window.innerWidth;
+		y=y*100/window.innerWidth;
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
+		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhttp.send("type="+"updateDocumentCoordinates"+"&id="+id+"&x="+x+"&y="+y);
+
+	}
 	//*** partition handling ***
 
 	visualPartitions(){

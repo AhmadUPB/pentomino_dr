@@ -9,7 +9,35 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
         fwrite($fp, $db);
         fclose($fp);
-    }}
+    }
+
+    if($_POST['type']==='deletedocumentsDR'){
+        $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
+        $file = json_decode($file, true);
+        $documentIDs = $_POST['documentIDs'];
+        $documentIDs=explode('_',$documentIDs);
+        foreach ($documentIDs as $documentID){
+            if($documentID)unset($file["boards"][$documentID]);
+        }
+        $db =json_encode($file,JSON_FORCE_OBJECT);
+        $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
+        fwrite($fp, $db);
+        fclose($fp);
+    }
+
+    if($_POST['type']==='updateDocumentCoordinates'){
+        $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
+        $file = json_decode($file, true);
+        $documentID = $_POST['id'];
+        $file["boards"][$documentID]["x"]=$_POST['x'];
+        $file["boards"][$documentID]["y"]=$_POST['y'];
+        $db =json_encode($file,JSON_FORCE_OBJECT);
+        $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
+        fwrite($fp, $db);
+        fclose($fp);
+    }
+
+}
 if($_SERVER['REQUEST_METHOD'] == "GET"){
     if (isset($_GET['type']))
     {
@@ -19,17 +47,18 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
             $boards=$file["boards"];
             //echo var_dump($boards);
             foreach ($boards as $i=>$board){
-                echo '¤'.$board['x'].'&'.$board['y'].$board['boardname'].'&'.$board['piecestate1'].'&'.$board['piecestate2'].'&'.$board['boardState'].'$'.$board['TextStatePR'].'$'.$board["boardLayout"];
+                echo '¤'.$i.'&'.$board['x'].'&'.$board['y'].'&'.$board['boardname'].'&'.$board['piecestate1'].'&'.$board['piecestate2'].'&'.$board['boardState'].'&'.$board['TextStatePR'].'&'.$board["boardLayout"];
             };
+
+        }
+        if($_GET['type']=="lowestElement"){
+            $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
+            $file = json_decode($file, true);
+            $lowestElement=$file["lowestElement"];
+            echo $lowestElement['id'].'&'.$lowestElement['position'];
 
         }
     }
     }
 
-    //$name= $_POST['name'];
-    //$state = $_POST['state'];
-    //$history=$_POST['history'];
-    //$id=$_SESSION['id'];
-    //$query = "insert into boards (user_id,name,state,history) values ('$id','$name','$state','$history')";
-    //mysqli_query($con, $query);
-    //header("Location: ".$_POST['url']);
+

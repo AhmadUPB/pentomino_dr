@@ -44,8 +44,10 @@ TOGGLE_HEAT::Toggle Heatmap
 
 HEADING_BOARD_SELECTOR::Board Selection
 HEADING_QR_CODE::Hier is your QR code
+HEADING_DOCUMENT_ROOM::Document Room
 
 STATUS_LOADING::Loading...
+STATUS_WAIT::Please Wait...
 DOWNLOAD_QR::Download the QR code
 URL_COPIED::Die URL has been copied to the clipboard.
 
@@ -55,9 +57,8 @@ PROBLEM_UNSOLVABLE::Not solvable any more!
 PROBLEM_partial::Piece %1 only partially on board!
 PROBLEM_overlapping::%1 overlaps %2!
 PROBLEM_%5::Gaps not fillable by Pentominoes!
-
 WEBAPP_NOTICE::You can install Pentomino Digital as a web application by establishing a shortcut on the start screen. If you do that, you get more space for the pieces and for the board and are not distracted by the browser any more.
-
+DELETE_CONFIRM::Are you sure you want to delete the selected document(s) permanently?
 LEGEND_SINGLE_FIT::nonambiguous
 LEGEND_SENSIBLE_FIT::nonambiguous
 LEGEND_ALL_SENSIBLES_FIT::all fit

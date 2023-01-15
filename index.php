@@ -82,8 +82,10 @@ $t='?t='.time();
 
 <script type="text/javascript" src="qrcode.min.js"></script>
 
-<script src="config.js<?=$t?>"></script>
+    <script src="config.js<?=$t?>"></script>
 <script type="text/javascript"> var isLoggedIn=<?php echo(isset($_SESSION['id']));?></script>
+<script type="text/javascript"> var LoggedIn=<?php echo($_SESSION['id']);?>;
+console.log(LoggedIn);</script>
 
 
 <?php
@@ -104,6 +106,8 @@ $t='?t='.time();
 <script src="Hinter.js<?=$t?>"></script>
 <script src="PD.js<?=$t?>"></script>
 <script src="Konva.js<?=$t?>"></script>
+<script src="DocumentDR.js<?=$t?>"></script>
+
 
 
 <script>

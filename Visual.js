@@ -720,12 +720,32 @@ class Visual{
 
 		}
 
+		//resize the document room to fit the new window size
+		function resizeAction2(){
+			if(that.pd.ui.documentRoomOpened) {
+				that.pd.ui.DRstage.scaleX(window.innerWidth/that.pd.ui.windowWidth);
+				that.pd.ui.DRstage.scaleY(window.innerWidth/that.pd.ui.windowWidth);
+				that.pd.ui.DRstage.width((window.innerWidth-(0/100*window.innerWidth))+ that.pd.ui.PADDING*2);
+				that.pd.ui.DRstage.height(window.innerHeight-(6/100*window.innerWidth)+that.pd.ui.PADDING*2);
+				if(that.pd.ui.DRStageHeight/100*window.innerWidth<window.innerHeight-(6/100*window.innerWidth)-22) that.pd.ui.DRStageHeightPX= window.innerHeight-(6/100*window.innerWidth)-22
+				else that.pd.ui.DRStageHeightPX=that.pd.ui.DRStageHeight/100*window.innerWidth;
+				let largeContainer = document.getElementById('large-container')
+				largeContainer.style.width=(window.innerWidth-22)+"px";
+				largeContainer.style.height=that.pd.ui.DRStageHeightPX+"px";
+				let scrollContainer = document.getElementById('scroll-container')
+				let scrollContainerHeight=window.innerHeight-(6/100*window.innerWidth)-22;
+				scrollContainer.style.height= scrollContainerHeight+"px";
+				//that.pd.ui.DRstage.destroy();
+				//that.pd.ui.openDocumentRoom();
+			}
+		}
 
 		let toDo2;
 		window.onresize = function(){
 
 			clearTimeout(toDo2);
 			toDo2 = setTimeout(resizeAction, 100);
+			toDo2 = setTimeout(resizeAction2, 100);
 		}
 
 		//Differnt things have to happen in relation to different
