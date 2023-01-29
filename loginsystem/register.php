@@ -1,5 +1,9 @@
+
 <?php
+//Some aspects of login system based on both:https://www.youtube.com/watch?v=WYufSGgaCZ8&t=1s&ab_channel=QuickProgramming
+//https://steemit.com/utopian-io/@akintunde/how-to-build-a-login-registration-system-in-php-using-a-flat-file-database
 session_start();
+//todo:translation for german
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($_POST["email"]) && !empty($_POST["psw"])  && !empty($_POST["psw-repeat"])) {
         $email = trim($_POST["email"]);
@@ -36,10 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 //$file = file_get_contents('./user-documents/'.$id.'.txt');
                 //$file = json_decode($file, true);
                 $new = array(
-                    'lowestElement' => array(
-                        'id' => 'none',
-                        'position' => 'none'
-                    ),
                     'boards' => array()
                 );
                 $userDocuments =json_encode($new, JSON_FORCE_OBJECT);

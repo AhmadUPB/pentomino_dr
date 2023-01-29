@@ -51,13 +51,17 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
             };
 
         }
-        if($_GET['type']=="lowestElement"){
-            $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
+        if($_GET['type']=="document"){
+            $info=explode('.',$_GET['document']);
+            $userID=$info[0];
+            $documentId=$info[1];
+            $file = file_get_contents('./user-documents/'.$userID.'.txt');
             $file = json_decode($file, true);
-            $lowestElement=$file["lowestElement"];
-            echo $lowestElement['id'].'&'.$lowestElement['position'];
+            $board=$file["boards"][$documentId];
+            echo '&'.$board['boardname'].'&'.$board['piecestate1'].'&'.$board['piecestate2'].'&'.$board['boardState'].'&'.$board['TextStatePR'];
 
         }
+
     }
     }
 

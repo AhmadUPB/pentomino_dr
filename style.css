@@ -109,7 +109,7 @@ body {
 	position: fixed;
 	top:var(--tray-height);
 	left:var(--function-area-width);
-	z-index: 2147483647;
+	z-index: 2147483640;
 }
 
 #tray {
@@ -264,7 +264,7 @@ body {
 
 
 #documentroom_header{
-	z-index:2147483647;
+	z-index:2147483640;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -292,7 +292,7 @@ color:var(--toolbar-dr-color);
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
-	z-index:2147483647;
+	z-index:2147483640;
 	position: fixed;
 	width: 100vw;
 	height: 3vw;
@@ -308,7 +308,7 @@ color:var(--toolbar-dr-color);
 	top: 6vw;
 	left: 0;
 	background-color: var(--document-room-color);
-	z-index: 2147483647;
+	z-index: 2147483640;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;

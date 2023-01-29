@@ -383,7 +383,7 @@ game itself. Those are in Visual.js
 			'</div>' +
 			'<div id="documentroom_toolbar_selectmode">' +
 			'<div id="DRselectall_button"><img src="./ico/selectall_dr.png" id="" title=""><span>select all</span></div>' +
-			'<div id="DRsend_button"><img src="./ico/send_dr.png" id="" title=""><span>send</span></div>' +
+			'<div id="DRsend_button" onclick="pd.ui.sendSelectedDocuments();"><img src="./ico/send_dr.png" id="" title=""><span>send</span></div>' +
 			'<div id="DRdelete_button" onclick="pd.ui.deleteSelectedDocuments();"><img src="./ico/delete_dr.png" id="" title=""><span>delete</span></div>' +
 			'</div>'
 
@@ -393,6 +393,11 @@ game itself. Those are in Visual.js
 				//TODO:remove event listeners for select mode buttons
 			});
 
+	}
+	sendSelectedDocuments(){
+		if(Object.keys(DocumentDR.selectedDocuments).length === 1){
+			pd.game.showQRCode("annotated");
+		}
 	}
 	deleteSelectedDocuments(){
 		if(Object.keys(DocumentDR.selectedDocuments).length >= 1){
@@ -443,19 +448,20 @@ game itself. Those are in Visual.js
 
 	}
 
-	activateDeleteButtonDR(){
-		let DRdelete_button = document.querySelector("#DRdelete_button")
+	activateButtonDR(type){
+		let DRdelete_button = document.querySelector(type);
 		DRdelete_button.style.opacity='100%';
 		//TODO:activate event listeners for #DRselectall_button
 
 	}
-	deactivateDeleteButtonDR(){
+	deactivateButtonDR(type){
 		console.log("called2");
-		let DRdelete_button = document.querySelector("#DRdelete_button")
+		let DRdelete_button = document.querySelector(type);
 		DRdelete_button.style.opacity='20%';
 		//TODO:deactivate event listeners for #DRselectall_button
 
 	}
+
 
 	closeDocumentsRoom(){
 		var documentroom = document.getElementById("documentroom");
@@ -606,7 +612,6 @@ game itself. Those are in Visual.js
 				textarea.parentNode.removeChild(textarea);
 				window.removeEventListener('click', handleOutsideClick);
 				textNode.show();
-				tr.show();
 				tr.forceUpdate();
 				if(!textNode.text()){textNode.destroy(); tr.destroy();}
 				that.pd.game.storeTextStatePR();

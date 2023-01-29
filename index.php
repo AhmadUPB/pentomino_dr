@@ -82,10 +82,15 @@ $t='?t='.time();
 
 <script type="text/javascript" src="qrcode.min.js"></script>
 
-    <script src="config.js<?=$t?>"></script>
+<script src="config.js<?=$t?>"></script>
 <script type="text/javascript"> var isLoggedIn=<?php echo(isset($_SESSION['id']));?></script>
-<script type="text/javascript"> var LoggedIn=<?php echo($_SESSION['id']);?>;
-console.log(LoggedIn);</script>
+    <script type="text/javascript">
+        var LoggedIn = <?php echo json_encode($_SESSION['id']); ?>;
+        console.log(LoggedIn);
+    </script>
+    <script type="text/javascript">
+        var annotatedDocument = <?php echo (json_encode($_GET['d'])); ?>;
+    </script>
 
 
 <?php
@@ -95,6 +100,7 @@ console.log(LoggedIn);</script>
     if (isset($_GET['conf'])) {
         echo '<script src="configs/'.$_GET['conf'].'.js'.$t.'"></script>';
     }
+
 
 ?>
 

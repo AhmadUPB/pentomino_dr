@@ -49,6 +49,8 @@ class Game{
 			});
 			this.freezeState();
 		} else {
+			// in case a document is sent, then update the loaclstoarge with the sent document state
+			if(window.annotatedDocument) this.setAnnotatedDocument();
 			this.restore(function(){
 				that.loadBoardFromFile('a_6x10');
 			})   //reload the stored state or load the standard board.
@@ -328,7 +330,27 @@ class Game{
 		if (!this.pd.visual) return;
 		this.pd.visual.updatePieces(piece); 
 	}
-	
+
+
+	setAnnotatedDocument(){
+		let info = this.pd.annotatedDocument.split("&");
+		var stoarge = window.localStorage;
+		if(info[1]!=="none" && info[2]!=="none"){
+			stoarge.setItem('gameState','"n":"'+info[1]+'"."s":"'+info[2]+'"');
+			if(info[3]!=="none"){
+				stoarge.setItem('piecesState','{"pieces":"'+info[3]+'"}');
+			}
+			if(info[4]!=="none"){
+				stoarge.setItem('boardState','{"board":"'+info[4]+'"}');
+			}
+			if(info[5]!=="none"){
+				stoarge.setItem('TextStatePR','{"texts":"'+info[5]+'"}');
+			}
+
+		}
+
+
+	}
 	
 	//save the new state of a piece to history
 	memorize(object, what){
@@ -380,6 +402,7 @@ class Game{
 	}
 
 
+
 	
 	unstore(){
 		var storage=window.localStorage;
@@ -407,12 +430,10 @@ class Game{
 
 	updateHighlightingStateBoard(toUpdate,color){
 		var postions=this.highlightedPositions.split("_");
-		console.log(postions);
-		console.log(this.highlightedPositions);
+
 		this.highlightedPositions="";
 		for (var i in postions){
 			var postion=postions[i];
-			console.log(postion);
 			if(postion) {
 				//problem postion includes # somtimes and the condtion below will not be checked correctly
 				var hasOldColor=false;
@@ -424,7 +445,6 @@ class Game{
 					hasOldColor=true;
 				}
 				if (toUpdate == postion) {
-					console.log("!!!!!!!!!",postion)
 
 					if (color)// in this case an already highlighted postion is being highlighted with different color
 						// or in this case a none highlighted postion is being highlighted
@@ -437,8 +457,6 @@ class Game{
 			}
 		}
 		postions=this.highlightedPositions.split("_");
-		console.log(postions);
-		console.log(this.highlightedPositions);
 
 	}
 
@@ -533,17 +551,23 @@ class Game{
 		
 	}
 
-	showQRCode(){
+	showQRCode(type){
 		let url = new URL(location.href);
 		let params = new URLSearchParams();
 
 		var getUrl = window.location;
 		var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+		if(type){
+			var docmentId = Object.keys(DocumentDR.selectedDocuments)[0];
+			params.set('d', window.LoggedIn+"."+docmentId);
+			url = (baseUrl + '?' + params.toString());
 
-		params.set('s', this.getGameState());
-		params.set('conf', 'res');
-		url=(baseUrl+'?'+params.toString());
-
+		}
+		else {
+			params.set('s', this.getGameState());
+			params.set('conf', 'res');
+			url = (baseUrl + '?' + params.toString());
+		}
 		this.pd.ui.showQRCode(url);
 	}
 
@@ -782,6 +806,8 @@ class Game{
 			delete this.documents[ID];
 		});
 		DocumentDR.selectedDocuments={};
+		this.pd.ui.deactivateButtonDR("#DRdelete_button");
+		this.pd.ui.deactivateButtonDR("#DRsend_button");
 		var xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

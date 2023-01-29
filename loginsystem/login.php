@@ -1,9 +1,10 @@
 <?php
-
+//Some aspects of login system based on both:https://www.youtube.com/watch?v=WYufSGgaCZ8&t=1s&ab_channel=QuickProgramming
+//https://steemit.com/utopian-io/@akintunde/how-to-build-a-login-registration-system-in-php-using-a-flat-file-database
 
 session_start();
 
-
+//todo:translation for german
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];

@@ -65,19 +65,24 @@ class PD{
 
 			that.config[name]=(params.get(name)!==null)?param:standard;
 		}
-
-		this.loadTranslations(function(){
+		var afterwards= function(){
 
 			that.ui=new UI(that);
 			that.evaluator=new Evaluator(that);
 			that.hinter=new Hinter(that);
 			that.game=new Game(that);
 			that.visual=new Visual(that);
-			
+
 			window.evaluator=that.evaluator;
 			window.hinter=that.hinter;
-			
-		}); 
+
+		}
+
+		this.loadTranslations(window.annotatedDocument?"":afterwards);
+		if(window.annotatedDocument){
+			this.setAnnotatedDocument(afterwards);
+
+		}
 
 		//web worker for cache control
 		if ('serviceWorker' in navigator) {
@@ -117,8 +122,9 @@ class PD{
 				that.translations[line[0]]=line[1];
 				
 			}
-			
 			if (afterwards) afterwards.call(that);
+			
+
 			
 		});
 
@@ -148,5 +154,17 @@ class PD{
 		console.log('Missing translation in '+this.config.language+' for '+text);
 		return text;
 	}
+
+	setAnnotatedDocument(afterwards){
+		var that = this;
+		var oReqDocs = new XMLHttpRequest();
+		oReqDocs.addEventListener("load", function () {
+			that.annotatedDocument=this.responseText;
+			if (afterwards) afterwards.call(that);
+		});
+		oReqDocs.open("GET", './loginsystem/reqhandler.php?type=document&document='+window.annotatedDocument);
+		oReqDocs.send();
+
+	};
 	
 }

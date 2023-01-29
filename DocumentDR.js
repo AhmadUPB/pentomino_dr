@@ -94,12 +94,18 @@ class DocumentDR {
                     DocumentDR.selectedDocuments[that.id] = that;
                 }
 
-                if (Object.keys(DocumentDR.selectedDocuments).length >= 1) {
+                if (Object.keys(DocumentDR.selectedDocuments).length === 1) {
                     //console.log("Object.keys(DocumentDR.selectedDocuments).length", Object.keys(DocumentDR.selectedDocuments).length)
-                    pd.ui.activateDeleteButtonDR();
-                } else {
+                    pd.ui.activateButtonDR("#DRdelete_button");
+                    pd.ui.activateButtonDR("#DRsend_button");
+                } else if(Object.keys(DocumentDR.selectedDocuments).length > 1){
+                    pd.ui.activateButtonDR("#DRdelete_button");
+                    pd.ui.deactivateButtonDR("#DRsend_button");
+                }
+                else{
                     //console.log("Object.keys(DocumentDR.selectedDocuments).length", Object.keys(DocumentDR.selectedDocuments).length)
-                    pd.ui.deactivateDeleteButtonDR();
+                    pd.ui.deactivateButtonDR("#DRdelete_button");
+                    pd.ui.deactivateButtonDR("#DRsend_button");
                 }
             }
 
