@@ -336,6 +336,10 @@ class Game{
 		let info = this.pd.annotatedDocument.split("&");
 		var stoarge = window.localStorage;
 		if(info[1]!=="none" && info[2]!=="none"){
+			stoarge.setItem('gameState','');
+			stoarge.setItem('piecesState','');
+			stoarge.setItem('boardState','');
+			stoarge.setItem('TextStatePR','');
 			stoarge.setItem('gameState','"n":"'+info[1]+'"."s":"'+info[2]+'"');
 			if(info[3]!=="none"){
 				stoarge.setItem('piecesState','{"pieces":"'+info[3]+'"}');

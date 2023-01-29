@@ -42,16 +42,6 @@ class DocumentDR {
         this.drawTexts();
         this.drawCheckBox();
         this.drawTopFrame();
-        switch (PD.ui.DRlayerTurn) {
-            case 1: {
-                PD.ui.DRlayerTurn = 2;
-                break;
-            }
-            case 2: {
-                PD.ui.DRlayerTurn = 1;
-                break;
-            }
-        }
         let documentWidth = this.pd.visual.cssConf('document-width');
         let documentHeight = this.pd.visual.cssConf('document-height');
         //(documentWidth + 2.5): width of one document and the distance to the next document.
@@ -126,6 +116,7 @@ class DocumentDR {
             clearTimeout(that.activeHoldTimeoutID);
             that.group.scale({x: 1, y: 1});
             that.pd.game.updateDocumentCoordinates(that.id,that.group.x(),that.group.y());
+            that.group.moveTo(that.pd.ui.DRlayerDocuments2);
 
 
         });
@@ -166,6 +157,7 @@ class DocumentDR {
                             let z = Math. sqrt((Xpos-mousePos.x)**2+(Ypos-mousePos.y)**2)
                             //console.log(z)
                         if (dragOnMove && z<5){ that.group.startDrag();
+                            that.group.moveTo(that.pd.ui.DRlayerDocumentsDragging);
                             //console.log("dragging started")
                         }
                         else if(z>5){
@@ -183,6 +175,7 @@ class DocumentDR {
                         clearTimeout(that.activeHoldTimeoutID);
                         that.group.stopDrag();
                         that.group.scale({x: 1, y: 1});
+
                     }
                 }
             });
@@ -276,17 +269,8 @@ class DocumentDR {
     };
 
     createGroup(){
-        let layer;
-        switch (this.pd.ui.DRlayerTurn) {
-            case 1: {
-                layer = this.pd.ui.DRlayerDocuments1;
-                break;
-            }
-            case 2: {
-                layer = this.pd.ui.DRlayerDocuments2;
-                break;
-            }
-        }
+        let layer = this.pd.ui.DRlayerDocuments1;
+
         let x,y ;
         if(this.x==='none'){
             x=this.pd.ui.DRDocumentDefaultX / 100 * window.innerWidth;

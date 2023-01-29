@@ -4,7 +4,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     if($_POST['type']==='storedocumentPR'){
         $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
         $file = json_decode($file, true);
-        $file["boards"][uniqid()]=array('x' => $_POST['x'], 'y' => $_POST['y'], 'boardname' => $_POST['boardname'], 'piecestate1' => $_POST['piecestate1'],'piecestate2' => $_POST['piecestate2'],'boardState' => $_POST['boardState'], 'TextStatePR' => $_POST['TextStatePR'], 'boardLayout' => $_POST['boardLayout']);
+        $file["documents"][uniqid()]=array('x' => $_POST['x'], 'y' => $_POST['y'], 'boardname' => $_POST['boardname'], 'piecestate1' => $_POST['piecestate1'],'piecestate2' => $_POST['piecestate2'],'boardState' => $_POST['boardState'], 'TextStatePR' => $_POST['TextStatePR'], 'boardLayout' => $_POST['boardLayout']);
         $db =json_encode($file,JSON_FORCE_OBJECT);
         $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
         fwrite($fp, $db);
@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         $documentIDs = $_POST['documentIDs'];
         $documentIDs=explode('_',$documentIDs);
         foreach ($documentIDs as $documentID){
-            if($documentID)unset($file["boards"][$documentID]);
+            if($documentID)unset($file["documents"][$documentID]);
         }
         $db =json_encode($file,JSON_FORCE_OBJECT);
         $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
@@ -29,8 +29,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
         $file = json_decode($file, true);
         $documentID = $_POST['id'];
-        $file["boards"][$documentID]["x"]=$_POST['x'];
-        $file["boards"][$documentID]["y"]=$_POST['y'];
+        $file["documents"][$documentID]["x"]=$_POST['x'];
+        $file["documents"][$documentID]["y"]=$_POST['y'];
         $db =json_encode($file,JSON_FORCE_OBJECT);
         $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
         fwrite($fp, $db);
@@ -44,10 +44,10 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
         if($_GET['type']=="documents"){
             $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
             $file = json_decode($file, true);
-            $boards=$file["boards"];
+            $documents=$file["documents"];
             //echo var_dump($boards);
-            foreach ($boards as $i=>$board){
-                echo '¤'.$i.'&'.$board['x'].'&'.$board['y'].'&'.$board['boardname'].'&'.$board['piecestate1'].'&'.$board['piecestate2'].'&'.$board['boardState'].'&'.$board['TextStatePR'].'&'.$board["boardLayout"];
+            foreach ($documents as $i=>$document){
+                echo '¤'.$i.'&'.$document['x'].'&'.$document['y'].'&'.$document['boardname'].'&'.$document['piecestate1'].'&'.$document['piecestate2'].'&'.$document['boardState'].'&'.$document['TextStatePR'].'&'.$document["boardLayout"];
             };
 
         }
@@ -57,8 +57,8 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
             $documentId=$info[1];
             $file = file_get_contents('./user-documents/'.$userID.'.txt');
             $file = json_decode($file, true);
-            $board=$file["boards"][$documentId];
-            echo '&'.$board['boardname'].'&'.$board['piecestate1'].'&'.$board['piecestate2'].'&'.$board['boardState'].'&'.$board['TextStatePR'];
+            $document=$file["documents"][$documentId];
+            echo '&'.$document['boardname'].'&'.$document['piecestate1'].'&'.$document['piecestate2'].'&'.$document['boardState'].'&'.$document['TextStatePR'];
 
         }
 
