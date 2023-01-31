@@ -281,8 +281,12 @@ game itself. Those are in Visual.js
 
 			var oReqDocs = new XMLHttpRequest();
 			oReqDocs.addEventListener("load", function () {
-				var documents = this.responseText
-				documents= documents.split('¤');
+				var documentRoomData = this.responseText.split('%');
+				let rectangles= documentRoomData[0];
+				let arrows= documentRoomData[1];
+				let labels= documentRoomData[2];
+				let documents= documentRoomData[3].split('¤');
+
 
 				// define sizes
 				let documentWidth = that.pd.visual.cssConf('document-width');
@@ -346,9 +350,10 @@ game itself. Those are in Visual.js
 					if(!documents[i])continue;
 					else that.drawDocument(documents[documents.length-i],scrollContainer);
 				}
+				pd.game.setTextStateDR(labels);
 				//console.log(documents);
 			});
-			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documents');
+			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documentData');
 			oReqDocs.send();
 		this.createDRtoolbar();
 
@@ -373,7 +378,7 @@ game itself. Those are in Visual.js
 		let that = this;
 		let DRtoolBar = document.getElementById("documentroom_toolbar");
 		DRtoolBar.innerHTML='<div id="documentroom_toolbar_general">' +
-			'<div id="DRtext_button"><img src="./ico/text_dr.png" id="" title=""><span>add label</span></div>' +
+			'<div id="DRtext_button" onclick="pd.ui.addText(0,0,0,0,0,`DR`)"><img src="./ico/text_dr.png" id="" title=""><span>add label</span></div>' +
 			'<div id="DRrectangle_button"><img src="./ico/rectangle_dr.png" id="" title=""><span>add rectangle</span></div>' +
 			'<div id="arrow_button"><img src="./ico/arrow_dr.png" id="" title=""><span>add arrow</span></div>' +
 			'<div id="DRhighlight_button"><img src="./ico/highlight_dr.png" id="" title=""><span>highlight</span></div>' +
@@ -471,18 +476,35 @@ game itself. Those are in Visual.js
 	}
 
     // based on https://konvajs.org/docs/sandbox/Editable_Text.html
-	addText(text,x,y,fill,width){
-		var textNode = new Konva.Text({
+	addText(text,x,y,fill,width,where){
+		console.log("addText called!")
+		let textNode;
+		let PosX = window.innerWidth/20;
+		let PosY = window.innerWidth/20;
+		if(where) {
+			let stageDR=pd.ui.DRstage;
+			let scrollContainer = document.getElementById("scroll-container");
+			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
+			if(dy>0)PosY+=Math.abs(dy)+500;
+			else PosY+=500-Math.abs(dy);
+			console.log("stageDR.x(),stageDR.y(): ",stageDR.x(),stageDR.y())
+			console.log("dy: ",dy)
+		}
+
+		textNode = new Konva.Text({
 			text: text?text:'Some text here',
-			x: x?x:50,
-			y: y?y:80,
-			fontSize: 20,
-			draggable: true,
+			x: x?x:PosX,
+			y: y?y:PosY,
+			fontSize: 1.5/100 * window.innerWidth,
 			fill: fill?fill:"#000",
-			width: width?width:200,
+			width: width?width/(100*10) * window.innerWidth:200/(100*10) * window.innerWidth, //make width relative to the window size
+			preventDefault: false
 		});
 
-		this.layer.add(textNode);
+		if(!where)
+			this.layer.add(textNode);
+		else
+			this.DRlayerLabels.add(textNode);
 
 		var tr = new Konva.Transformer({
 			node: textNode,
@@ -502,46 +524,73 @@ game itself. Those are in Visual.js
 				scaleX: 1,
 			});
 		});
-
-		this.layer.add(tr);
+		let draggingOrTransforming=false;
+		if(!where)
+			this.layer.add(tr);
+		else
+			this.DRlayerLabels.add(tr);
         tr.hide();
-		if(!text) this.pd.game.storeTextStatePR(); //avoid open loop when text state is reconstructed when is opened
+		if(!text) {
+			if(!where)this.pd.game.storeTextStatePR();
+			else if (where==="DR")this.pd.game.postTextStateDR();
+		} //avoid open loop when text state is reconstructed when game is opened
 		textNode.on('pointerclick', () => {
-			if(!this.pd.visual.annotationMode)return;
+			if(!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened)return;
 			if(this.pd.visual.eraserActive){
 				textNode.destroy();
 				tr.destroy();
-				this.pd.game.storeTextStatePR();
+				if(!where)this.pd.game.storeTextStatePR();
+				else if (where==="DR")this.pd.game.postTextStateDR();
 				return;
 			}
 			else if(this.pd.visual.highlightActive){
 				let color=this.pd.visual.highlightColor?this.pd.visual.cssConf("highlighting-"+this.pd.visual.highlightColor)+"":this.pd.visual.cssConf("highlighting-color1")+"";
 				textNode.fill(color);
-				this.pd.game.storeTextStatePR();
+				if(!where)this.pd.game.storeTextStatePR();
+				else if (where==="DR")this.pd.game.postTextStateDR();
 				return;
 			}
 			tr.show();
+			textNode.draggable(true);
 			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
 			function  handleOutsideClick(){
-				tr.hide()
-				window.removeEventListener('click', handleOutsideClick);
-
+				if(!draggingOrTransforming) {
+					tr.hide()
+					textNode.draggable(false);
+					window.removeEventListener('click', handleOutsideClick);
+				}
+				draggingOrTransforming=false;
 			}
 		});
+
+		textNode.on('dragstart', () => {
+			draggingOrTransforming=true;
+		});
+		textNode.on('transformstart', () => {
+			draggingOrTransforming=true;
+		});
 		textNode.on('dragend', () => {
-			this.pd.game.storeTextStatePR();
+
+			if(!where)this.pd.game.storeTextStatePR();
+			else if (where==="DR")this.pd.game.postTextStateDR();
+			tr.show();
+			textNode.draggable(true);
 		});
 		textNode.on('transformend', () => {
-			this.pd.game.storeTextStatePR();
+			if(!where)this.pd.game.storeTextStatePR();
+			else if (where==="DR")this.pd.game.postTextStateDR();
+			console.log(textNode.width());
+
 		});
 
 		textNode.on('dblclick dbltap', () => {
-			if(!this.pd.visual.annotationMode)return;
+			if(!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened)return;
 			let that = this;
 			that.editingText=true;
 			// hide text node and transformer:
 			textNode.hide();
 			tr.hide();
+			textNode.draggable(false);
 
 			// create textarea over canvas with absolute position
 			// first we need to find position for textarea
@@ -551,9 +600,22 @@ game itself. Those are in Visual.js
 			var textPosition = textNode.absolutePosition();
 
 			// so position of textarea will be the sum of positions above:
+			let stageContainer;
+			let DRScrollPadding=0;
+			let titleAndToolbarHeight=0;
+			if(!where)
+				stageContainer=this.pd.ui.stage.container();
+			else {
+				stageContainer = this.pd.ui.DRstage.container();
+				DRScrollPadding=this.pd.ui.PADDING;
+				titleAndToolbarHeight=(6/100*window.innerWidth);
+			}
+			console.log(stageContainer.offsetLeft, stageContainer.offsetTop);
+			console.log(stageContainer );
+			console.log(textPosition.x, textPosition.y);
 			var areaPosition = {
-				x: this.stage.container().offsetLeft + textPosition.x,
-				y: this.stage.container().offsetTop + textPosition.y,
+				x: stageContainer.offsetLeft + textPosition.x - DRScrollPadding,
+				y: stageContainer.offsetTop + textPosition.y - DRScrollPadding + titleAndToolbarHeight,
 			};
 
 			// create textarea and style it
@@ -583,6 +645,7 @@ game itself. Those are in Visual.js
 			textarea.style.transformOrigin = 'left top';
 			textarea.style.textAlign = textNode.align();
 			textarea.style.color = textNode.fill();
+			textarea.style.zIndex=2147483647;
 			let rotation = textNode.rotation();
 			var transform = '';
 			if (rotation) {
@@ -614,7 +677,8 @@ game itself. Those are in Visual.js
 				textNode.show();
 				tr.forceUpdate();
 				if(!textNode.text()){textNode.destroy(); tr.destroy();}
-				that.pd.game.storeTextStatePR();
+				if(!where)pd.game.storeTextStatePR();
+				else if (where==="DR")pd.game.postTextStateDR();
 				setTimeout(function(){that.editingText=false;},100);
 			}
 
@@ -772,11 +836,11 @@ game itself. Those are in Visual.js
 		document.getElementById("hint").style.display='none';
 		let children=this.layer.getChildren();
 		console.log(this.layer.getChildren());
-		for(let i in children){
+		/*for(let i in children){
 			if(children[i].getClassName()==="Text"){
 				children[i].draggable(true);
 			}
-		}
+		}*/
 		this.pd.visual.annotationMode=true;
 	}
 

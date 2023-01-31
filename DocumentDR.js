@@ -490,10 +490,10 @@ class DocumentDR {
                     x: text[1] / 100 * documentWidth / 100 * window.innerWidth,
                     y: (text[2] / 100 * documentWidth + this.pd.visual.cssInt('document-tray-height')) / 100 * window.innerWidth,
                     text: text[0],
-                    fontSize: 5,
+                    fontSize: 5/(100*documentWidth) * window.innerWidth,
                     fontFamily: 'Calibri',
                     fill: text[3],
-                    width: text[4],
+                    width: text[4]/(100*4*documentWidth) * window.innerWidth,
                 });
                 this.group.add(textNode);
             }

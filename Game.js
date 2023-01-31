@@ -479,6 +479,20 @@ class Game{
 		return out;
 
 	}
+	getTextStateDR(){
+		let out='';
+
+		let layerChildren = this.pd.ui.DRlayerLabels.getChildren();
+		let stageWidth =this.pd.ui.DRstage.width();
+		for(let i in layerChildren){
+			if(layerChildren[i].getClassName()==="Text"){
+				out+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y())+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width());
+			}
+		}
+
+		return out;
+
+	}
 
 	getHighlightingStateBoard(){
 		var out={};
@@ -671,16 +685,20 @@ class Game{
 			this.pd.ui.addText(text[0],parseFloat(text[1]*stageWidth/100),parseFloat(text[2]*stageWidth/100),text[3],parseFloat(text[4]));
 
 		}
-		let that=this;
-		setTimeout(function(){
-			let children=that.pd.ui.layer.getChildren();
-			for(let i in children){
-				if(children[i].getClassName()==="Text"){
-					children[i].draggable(false);
-				}
-			}
-		},100);
+	}
+	setTextStateDR(content){
+		if(!content)return;
+		let texts=content.split('!');
+		let text="";
+		let stageWidth = this.pd.ui.DRstage.width();
+		//let stageHeight = this.pd.ui.stage.height();
+		for (let i in texts){
+			text=texts[i];
+			if (!text) continue;
+			text=text.split('_');
+			this.pd.ui.addText(text[0],parseFloat(text[1]*stageWidth/100),parseFloat(text[2]),text[3],parseFloat(text[4]),"DR");
 
+		}
 	}
 
 
@@ -827,6 +845,13 @@ class Game{
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("type="+"updateDocumentCoordinates"+"&id="+id+"&x="+x+"&y="+y);
 
+	}
+
+	postTextStateDR(){
+		let xhttp = new XMLHttpRequest();
+		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
+		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhttp.send("type="+"postTextStateDR"+"&state="+this.getTextStateDR());
 	}
 	//*** partition handling ***
 

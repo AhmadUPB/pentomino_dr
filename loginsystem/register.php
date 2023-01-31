@@ -10,11 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // validation for email
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
-                // Add validation for password length
+                //validation for password length
                 if (strlen($_POST["psw"]) >= 8) {
 
                     // validation for special characters, letters and numbers
-                    if (preg_match("#[0-9]+#", $_POST["psw"]) && preg_match("#[a-zA-Z]+#", $_POST["psw"]) && preg_match('/[!@#$%^&*(),.?":{}|<>]/', $_POST["psw"])) {
+                    if (preg_match("#[0-9]+#", $_POST["psw"]) && preg_match("#[a-zA-Z]+#", $_POST["psw"]) && preg_match('/[!@#(),$%^&*.?":{}|<>]/', $_POST["psw"])) {
 
                         $pw = password_hash($_POST["psw"], PASSWORD_DEFAULT);
                         $id = md5($_POST["email"]);
@@ -45,7 +45,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             //$file = file_get_contents('./user-documents/'.$id.'.txt');
                             //$file = json_decode($file, true);
                             $new = array(
-                                'documents' => array()
+                                'rectangles'=> array(),
+                                'arrows'=> array(),
+                                'documents' => array(),
+                                'texts' => array()
                             );
                             $userDocuments = json_encode($new, JSON_FORCE_OBJECT);
                             fwrite($fp, $userDocuments);
