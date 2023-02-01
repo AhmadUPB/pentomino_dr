@@ -481,18 +481,31 @@ class Game{
 	}
 	getTextStateDR(){
 		let out='';
-
 		let layerChildren = this.pd.ui.DRlayerLabels.getChildren();
-		let stageWidth =this.pd.ui.DRstage.width();
 		for(let i in layerChildren){
 			if(layerChildren[i].getClassName()==="Text"){
-				out+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y())+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width());
+				out+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].y()*100/window.innerWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width()*100/window.innerWidth);
 			}
 		}
 
 		return out;
 
 	}
+
+	getRectangleStateDR(width,height,theRectangle){
+		let out='';
+		let layerChildren = this.pd.ui.DRlayerShapes.getChildren();
+		for(let i in layerChildren){
+			if(layerChildren[i].getClassName()==="Rect"){
+				let findWidth=width&&theRectangle===layerChildren[i]?width:layerChildren[i].width();
+				let findHeight=width&&theRectangle===layerChildren[i]?height:layerChildren[i].height();
+				out+="!"+"_"+parseFloat(layerChildren[i].x()*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].y()*100/window.innerWidth)+"_"+layerChildren[i].stroke()+"_"+parseFloat(findWidth*100/window.innerWidth)+"_"+parseFloat(findHeight*100/window.innerWidth);
+			}
+		}
+
+		return out;
+	}
+
 
 	getHighlightingStateBoard(){
 		var out={};
@@ -690,13 +703,27 @@ class Game{
 		if(!content)return;
 		let texts=content.split('!');
 		let text="";
-		let stageWidth = this.pd.ui.DRstage.width();
 		//let stageHeight = this.pd.ui.stage.height();
 		for (let i in texts){
 			text=texts[i];
 			if (!text) continue;
 			text=text.split('_');
-			this.pd.ui.addText(text[0],parseFloat(text[1]*stageWidth/100),parseFloat(text[2]),text[3],parseFloat(text[4]),"DR");
+			this.pd.ui.addText(text[0],parseFloat(text[1]*window.innerWidth/100),parseFloat(text[2]*window.innerWidth/100),text[3],parseFloat(text[4]*window.innerWidth/100),"DR");
+
+		}
+	}
+	setRectangleStateDR(content){
+		if(!content)return;
+		let rectangles=content.split('!');
+		let rectangle="";
+		//let stageHeight = this.pd.ui.stage.height();
+		for (let i in rectangles){
+			rectangle=rectangles[i];
+			if (!rectangle) continue;
+			console.log("rectangle!!!!:",rectangle);
+			rectangle=rectangle.split('_');
+			console.log("rectangle!!!!:",rectangle);
+			this.pd.ui.addRectangleDR(parseFloat(rectangle[1]*window.innerWidth/100),parseFloat(rectangle[2]*window.innerWidth/100),rectangle[3],parseFloat(rectangle[4]*window.innerWidth/100),parseFloat(rectangle[5]*window.innerWidth/100),"DR");
 
 		}
 	}
@@ -852,6 +879,12 @@ class Game{
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("type="+"postTextStateDR"+"&state="+this.getTextStateDR());
+	}
+	postRectangleStateDR(width,height,theRectangle){
+		let xhttp = new XMLHttpRequest();
+		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
+		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhttp.send("type="+"postRectangleStateDR"+"&state="+this.getRectangleStateDR(width,height,theRectangle));
 	}
 	//*** partition handling ***
 

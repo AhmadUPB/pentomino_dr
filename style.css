@@ -332,6 +332,7 @@ color:var(--toolbar-dr-color);
 #documentroom_content #scroll-container {
 	width: calc(100% - 22px);
 	overflow: auto;
+	overflow-x: hidden;
 	margin: 10px;
 	border: 1px solid grey;
 

@@ -45,7 +45,15 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         fwrite($fp, $db);
         fclose($fp);
     }
-
+    if($_POST['type']==='postRectangleStateDR'){
+        $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
+        $file = json_decode($file, true);
+        $file["rectangles"]=$_POST['state'];
+        $db =json_encode($file,JSON_FORCE_OBJECT);
+        $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
+        fwrite($fp, $db);
+        fclose($fp);
+    }
 }
 if($_SERVER['REQUEST_METHOD'] == "GET"){
     if (isset($_GET['type']))
@@ -54,9 +62,16 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
             $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
             $file = json_decode($file, true);
             $toEcho="";
-            $toEcho=$file["rectangles"]."%".$file["arrows"]."%".$file["texts"]."%";
+            $rectangles="";
+            $arrows="";
+            $texts="";
+            if(!empty($file["rectangles"]))$rectangles=$file["rectangles"];
+            if(!empty($file["arrows"]))$arrows=$file["arrows"];
+            if(!empty($file["texts"]))$texts=$file["texts"];
+            $toEcho=$rectangles."%".$arrows."%".$texts."%";
             $documents=$file["documents"];
             //echo var_dump($boards);
+            if($documents)
             foreach ($documents as $i=>$document){
                 $toEcho.= '¤'.$i.'&'.$document['x'].'&'.$document['y'].'&'.$document['boardname'].'&'.$document['piecestate1'].'&'.$document['piecestate2'].'&'.$document['boardState'].'&'.$document['TextStatePR'].'&'.$document["boardLayout"];
             };

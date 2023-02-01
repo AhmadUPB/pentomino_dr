@@ -281,6 +281,7 @@ game itself. Those are in Visual.js
 
 			var oReqDocs = new XMLHttpRequest();
 			oReqDocs.addEventListener("load", function () {
+				console.log("this.response!", this.responseText)
 				var documentRoomData = this.responseText.split('%');
 				let rectangles= documentRoomData[0];
 				let arrows= documentRoomData[1];
@@ -351,6 +352,9 @@ game itself. Those are in Visual.js
 					else that.drawDocument(documents[documents.length-i],scrollContainer);
 				}
 				pd.game.setTextStateDR(labels);
+				console.log("rectangles!!!!!!!!!½: ",rectangles)
+
+				pd.game.setRectangleStateDR(rectangles);
 				//console.log(documents);
 			});
 			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documentData');
@@ -379,7 +383,7 @@ game itself. Those are in Visual.js
 		let DRtoolBar = document.getElementById("documentroom_toolbar");
 		DRtoolBar.innerHTML='<div id="documentroom_toolbar_general">' +
 			'<div id="DRtext_button" onclick="pd.ui.addText(0,0,0,0,0,`DR`)"><img src="./ico/text_dr.png" id="" title=""><span>add label</span></div>' +
-			'<div id="DRrectangle_button"><img src="./ico/rectangle_dr.png" id="" title=""><span>add rectangle</span></div>' +
+			'<div id="DRrectangle_button" onclick="pd.ui.addRectangleDR(0,0,0,0,0,`DRmain`,1)"><img src="./ico/rectangle_dr.png" id="" title=""><span>add rectangle</span></div>' +
 			'<div id="arrow_button"><img src="./ico/arrow_dr.png" id="" title=""><span>add arrow</span></div>' +
 			'<div id="DRhighlight_button"><img src="./ico/highlight_dr.png" id="" title=""><span>highlight</span></div>' +
 			'<div id="DRcolor_button"><img src="./ico/color_dr.png" id="" title=""><span>highlighting color</span></div>' +
@@ -474,16 +478,113 @@ game itself. Those are in Visual.js
 		this.documentRoomOpened=false;
 		this.pd.game.documents={};
 	}
+	// add rectangle to Document Room for spatially ordering
+	addRectangleDR(x,y,stroke,width,height,where,isNew){
+		let PosX = window.innerWidth/20;
+		let PosY = window.innerWidth/20;
+		let scrollContainer;
+		if(where) {
+			let stageDR=pd.ui.DRstage;
+			scrollContainer = document.getElementById("scroll-container");
+			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
+			if(dy>0)PosY+=Math.abs(dy)+500;
+			else PosY+=500-Math.abs(dy);
+			console.log("stageDR.x(),stageDR.y(): ",stageDR.x(),stageDR.y())
+			console.log("dy: ",dy)
+		}
+		let rectangle = new Konva.Rect({
+			x: x?x:PosX,
+			y: y?y:PosY,
+			stroke: stroke?stroke:"#FFF",
+			strokeWidth: Math.ceil(0.35/100*window.innerWidth),
+			width: width?width:15/100*window.innerWidth,
+			height: height?height:15/100*window.innerWidth,
+			preventDefault: false,
+		});
+		console.log("rectangle.stroke",rectangle.stroke());
+		if(!where)
+			this.layer.add(rectangle);
+		else
+			this.DRlayerShapes.add(rectangle);
+		let tr = new Konva.Transformer({
+			node: rectangle,
+			rotateEnabled: false,
+		});
+
+
+		let draggingOrTransforming=false;
+		if(!where)
+			this.layer.add(tr);
+		else
+			this.DRlayerShapes.add(tr);
+		tr.hide();
+		if(isNew) {
+			//if(!where)this.pd.game.storeTextStatePR();
+			this.pd.game.postRectangleStateDR();
+		} //avoid open loop when text state is reconstructed when game is opened
+		rectangle.on('pointerclick', () => {
+			if(!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened)return;
+			setTimeout(()=>{tr.show();
+				rectangle.draggable(true);
+				if(where){
+					scrollContainer.style.overflow="hidden"; // prevent scrolling while dragging in Document Room
+				}
+			},10);
+			draggingOrTransforming=true;
+			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
+			function  handleOutsideClick(){
+				if(!draggingOrTransforming) {
+					tr.hide()
+					rectangle.draggable(false);
+					window.removeEventListener('click', handleOutsideClick);
+					if(where){
+						scrollContainer.style.overflow="auto";
+					}
+				}
+				draggingOrTransforming=false;
+			}
+		});
+
+		rectangle.on('dragstart', () => {
+			draggingOrTransforming=true;
+		});
+		rectangle.on('dragend', () => {
+
+			//if(!where)this.pd.game.storeTextStatePR();
+			this.pd.game.postRectangleStateDR(tr.width(),tr.height(),rectangle);
+			tr.show();
+			rectangle.draggable(true);
+		});
+		rectangle.on('transformstart', () => {
+			draggingOrTransforming=true;
+		});
+		tr.on('transform', function() {
+			// set new size
+
+			// reset scale
+		});
+		rectangle.on('transformend', () => {
+			//if(!where)this.pd.game.storeTextStatePR();
+
+
+			console.log("rectangle.width(): ", rectangle.width());
+			console.log("rectangle.height(): ", rectangle.height());
+			this.pd.game.postRectangleStateDR(tr.width(),tr.height(),rectangle);
+
+
+		});
+
+	}
+
 
     // based on https://konvajs.org/docs/sandbox/Editable_Text.html
 	addText(text,x,y,fill,width,where){
-		console.log("addText called!")
-		let textNode;
 		let PosX = window.innerWidth/20;
 		let PosY = window.innerWidth/20;
+		let scrollContainer;
 		if(where) {
 			let stageDR=pd.ui.DRstage;
-			let scrollContainer = document.getElementById("scroll-container");
+			scrollContainer = document.getElementById("scroll-container");
 			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
 			if(dy>0)PosY+=Math.abs(dy)+500;
 			else PosY+=500-Math.abs(dy);
@@ -491,12 +592,12 @@ game itself. Those are in Visual.js
 			console.log("dy: ",dy)
 		}
 
-		textNode = new Konva.Text({
+		let textNode = new Konva.Text({
 			text: text?text:'Some text here',
 			x: x?x:PosX,
 			y: y?y:PosY,
 			fontSize: 1.5/100 * window.innerWidth,
-			fill: fill?fill:"#000",
+			fill: fill?fill:where?"#FFF":"#000",
 			width: width?width/(100*10) * window.innerWidth:200/(100*10) * window.innerWidth, //make width relative to the window size
 			preventDefault: false
 		});
@@ -506,7 +607,7 @@ game itself. Those are in Visual.js
 		else
 			this.DRlayerLabels.add(textNode);
 
-		var tr = new Konva.Transformer({
+		let tr = new Konva.Transformer({
 			node: textNode,
 			enabledAnchors: ['middle-left', 'middle-right'],
 			rotateEnabled: false,
@@ -550,14 +651,22 @@ game itself. Those are in Visual.js
 				else if (where==="DR")this.pd.game.postTextStateDR();
 				return;
 			}
-			tr.show();
-			textNode.draggable(true);
+			setTimeout(()=>{tr.show();
+				textNode.draggable(true);
+				if(where){
+					scrollContainer.style.overflow="hidden"; // prevent scrolling while dragging in Document Room
+				}
+				},10);
+			draggingOrTransforming=true;
 			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
 			function  handleOutsideClick(){
 				if(!draggingOrTransforming) {
 					tr.hide()
 					textNode.draggable(false);
 					window.removeEventListener('click', handleOutsideClick);
+					if(where){
+					scrollContainer.style.overflow="auto";
+					}
 				}
 				draggingOrTransforming=false;
 			}
