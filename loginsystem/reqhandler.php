@@ -70,7 +70,6 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
             if(!empty($file["texts"]))$texts=$file["texts"];
             $toEcho=$rectangles."%".$arrows."%".$texts."%";
             $documents=$file["documents"];
-            //echo var_dump($boards);
             if($documents)
             foreach ($documents as $i=>$document){
                 $toEcho.= '¤'.$i.'&'.$document['x'].'&'.$document['y'].'&'.$document['boardname'].'&'.$document['piecestate1'].'&'.$document['piecestate2'].'&'.$document['boardState'].'&'.$document['TextStatePR'].'&'.$document["boardLayout"];

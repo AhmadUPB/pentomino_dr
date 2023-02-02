@@ -319,6 +319,14 @@ game itself. Those are in Visual.js
 				let scrollContainerHeight=window.innerHeight-(6/100*window.innerWidth)-22;
 				scrollContainer.style.height= scrollContainerHeight+"px";
 				that.PADDING = 500;
+				// destroy old stages to avoid memory leaks and better performance
+				if(that.DRstage){
+					that.DRstage.clearCache();
+					that.DRstage.destroy();}
+				if(window.stage){
+					window.stage.clearCache();
+					window.stage.destroy();}
+
 				that.DRstage = new Konva.Stage({
 					container: 'DRcontainer',
 					width:(window.innerWidth-(0/100*window.innerWidth))+ that.PADDING*2,
@@ -345,17 +353,14 @@ game itself. Those are in Visual.js
 				repositionStage();
 
 
-				// draw Documents
+				// draw Document Room content
 				DocumentDR.createCashedElements(that.pd);
 				for (let i in documents){
 					if(!documents[i])continue;
 					else that.drawDocument(documents[documents.length-i],scrollContainer);
 				}
 				pd.game.setTextStateDR(labels);
-				console.log("rectangles!!!!!!!!!½: ",rectangles)
-
 				pd.game.setRectangleStateDR(rectangles);
-				//console.log(documents);
 			});
 			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documentData');
 			oReqDocs.send();
@@ -475,6 +480,13 @@ game itself. Those are in Visual.js
 	closeDocumentsRoom(){
 		var documentroom = document.getElementById("documentroom");
 		documentroom.style.display = 'none';
+		// destroy old stages to avoid memory leaks and better performance
+		if(pd.ui.DRstage){
+			pd.ui.DRstage.clearCache();
+			pd.ui.DRstage.destroy();}
+		if(window.stage){
+			window.stage.clearCache();
+			window.stage.destroy();}
 		this.documentRoomOpened=false;
 		this.pd.game.documents={};
 	}

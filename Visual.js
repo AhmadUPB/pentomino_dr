@@ -691,6 +691,7 @@ class Visual{
 			if(that.pd.ui.editingText) return;// avoid resizing the konva stage when editing text in Annotation mode.
 			                                  // this is meant when window size changes after appearing the keyboard on touch devices and the window size changes
 			                                  // the keyboard appear when the text is double clicked to edit it
+			if(!that.pd.ui.documentRoomOpened)that.pd.ui.windowWidth=window.innerWidth;
 			that.pd.ui.layer.destroy();
 			that.pd.ui.stage.destroy();
 			that.pd.ui.stageWidth=window.innerWidth-(7*window.innerWidth/100); //7: function-area-width, tray-height
@@ -706,7 +707,6 @@ class Visual{
 			var storage=window.localStorage;
 			var TextStatePR = storage.getItem("TextStatePR");
 			that.pd.game.setTextStatePR(TextStatePR);
-			;
 			if(that.pd.visual.annotationMode){
 				clearTimeout(toDo1);
 				toDo1 = setTimeout(function (){  // on touch devices make the texts draggable again after editing them
@@ -722,9 +722,7 @@ class Visual{
 
 		//resize the document room to fit the new window size
 		function resizeAction2(){
-			if(that.pd.ui.documentRoomOpened) {
-				that.pd.ui.DRstage.scaleX(window.innerWidth/that.pd.ui.windowWidth);
-				that.pd.ui.DRstage.scaleY(window.innerWidth/that.pd.ui.windowWidth);
+			if(that.pd.ui.documentRoomOpened ) {
 				that.pd.ui.DRstage.width((window.innerWidth-(0/100*window.innerWidth))+ that.pd.ui.PADDING*2);
 				that.pd.ui.DRstage.height(window.innerHeight-(6/100*window.innerWidth)+that.pd.ui.PADDING*2);
 				if(that.pd.ui.DRStageHeight/100*window.innerWidth<window.innerHeight-(6/100*window.innerWidth)-22) that.pd.ui.DRStageHeightPX= window.innerHeight-(6/100*window.innerWidth)-22
@@ -735,17 +733,19 @@ class Visual{
 				let scrollContainer = document.getElementById('scroll-container')
 				let scrollContainerHeight=window.innerHeight-(6/100*window.innerWidth)-22;
 				scrollContainer.style.height= scrollContainerHeight+"px";
-				//that.pd.ui.DRstage.destroy();
-				//that.pd.ui.openDocumentRoom();
+				that.pd.ui.DRstage.scaleX(window.innerWidth/that.pd.ui.windowWidth);
+				that.pd.ui.DRstage.scaleY(window.innerWidth/that.pd.ui.windowWidth);
 			}
 		}
 
 		let toDo2;
+		let toDo3;
 		window.onresize = function(){
 
 			clearTimeout(toDo2);
+			clearTimeout(toDo3);
 			toDo2 = setTimeout(resizeAction, 100);
-			toDo2 = setTimeout(resizeAction2, 100);
+			toDo3 = setTimeout(resizeAction2, 100);
 		}
 
 		//Differnt things have to happen in relation to different
