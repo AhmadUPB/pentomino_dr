@@ -1,1 +1,1 @@
-{"documents":"","rectangles":"","arrows":"","texts":""}
+{"documents":{},"rectangles":"","arrows":"","texts":""}

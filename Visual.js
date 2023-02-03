@@ -691,7 +691,6 @@ class Visual{
 			if(that.pd.ui.editingText) return;// avoid resizing the konva stage when editing text in Annotation mode.
 			                                  // this is meant when window size changes after appearing the keyboard on touch devices and the window size changes
 			                                  // the keyboard appear when the text is double clicked to edit it
-			if(!that.pd.ui.documentRoomOpened)that.pd.ui.windowWidth=window.innerWidth;
 			that.pd.ui.layer.destroy();
 			that.pd.ui.stage.destroy();
 			that.pd.ui.stageWidth=window.innerWidth-(7*window.innerWidth/100); //7: function-area-width, tray-height
@@ -737,6 +736,9 @@ class Visual{
 				that.pd.ui.DRstage.scaleY(window.innerWidth/that.pd.ui.windowWidth);
 			}
 		}
+		function resizeAction3(){
+			if(!that.pd.ui.documentRoomOpened)that.pd.ui.windowWidth=window.innerWidth;
+		}
 
 		let toDo2;
 		let toDo3;
@@ -744,8 +746,9 @@ class Visual{
 
 			clearTimeout(toDo2);
 			clearTimeout(toDo3);
-			toDo2 = setTimeout(resizeAction, 100);
-			toDo3 = setTimeout(resizeAction2, 100);
+			toDo2 = setTimeout(resizeAction, 50);
+			toDo2 = setTimeout(resizeAction3, 50);
+			toDo3 = setTimeout(resizeAction2, 50);
 		}
 
 		//Differnt things have to happen in relation to different
@@ -868,7 +871,7 @@ class Visual{
 
 				}
 				else {
-					if(pieceObject.frozen)continue;//ignore frozen pieces but continue for none frozen others
+					if(pieceObject.frozen || that.pd.ui.documentRoomOpened)continue;//ignore frozen pieces but continue for none frozen others
 					//the surrounding area must only be a valid target in the tray
 					if (!that.pd.game.get(piece).inTray && check == 'bmAround') continue;
 

@@ -361,6 +361,7 @@ game itself. Those are in Visual.js
 				}
 				pd.game.setTextStateDR(labels);
 				pd.game.setRectangleStateDR(rectangles);
+				pd.game.setArrowStateDR(arrows);
 			});
 			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documentData');
 			oReqDocs.send();
@@ -388,11 +389,11 @@ game itself. Those are in Visual.js
 		let DRtoolBar = document.getElementById("documentroom_toolbar");
 		DRtoolBar.innerHTML='<div id="documentroom_toolbar_general">' +
 			'<div id="DRtext_button" onclick="pd.ui.addText(0,0,0,0,0,`DR`)"><img src="./ico/text_dr.png" id="" title=""><span>add label</span></div>' +
-			'<div id="DRrectangle_button" onclick="pd.ui.addRectangleDR(0,0,0,0,0,`DRmain`,1)"><img src="./ico/rectangle_dr.png" id="" title=""><span>add rectangle</span></div>' +
-			'<div id="arrow_button"><img src="./ico/arrow_dr.png" id="" title=""><span>add arrow</span></div>' +
-			'<div id="DRhighlight_button"><img src="./ico/highlight_dr.png" id="" title=""><span>highlight</span></div>' +
-			'<div id="DRcolor_button"><img src="./ico/color_dr.png" id="" title=""><span>highlighting color</span></div>' +
-			'<div id="DReraser_button"><img src="./ico/eraser_dr.png" id="" title=""><span>eraser</span></div>' +
+			'<div id="DRrectangle_button" onclick="pd.ui.addRectangleDR(0,0,0,0,0,1)"><img src="./ico/rectangle_dr.png" id="" title=""><span>add rectangle</span></div>' +
+			'<div id="arrow_button" onclick="pd.ui.addArrowDR(0,0,0,0,0,1)"><img src="./ico/arrow_dr.png" id="" title=""><span>add arrow</span></div>' +
+			'<div id="DRhighlight_button" onclick="pd.ui.activateHighlighting(`DR`)"><img src="./ico/highlight_dr.png" id="" title=""><span>highlight</span></div>' +
+			'<div id="DRcolor_button" onclick="pd.ui.showHighlightingColourBox(`DR`)"><img src="./ico/color_dr.png" id="" title=""><span>highlighting color</span></div>' +
+			'<div id="DReraser_button" onclick="pd.ui.activateEraser(`DR`);"><img src="./ico/eraser_dr.png" id="" title=""><span>eraser</span></div>' +
 			'<div id="DRselectmode_button" onclick="pd.ui.activateSelectModeDR();"><img src="./ico/selectmode_dr.png" id="" title=""><span>select</span></div>' +
 			'</div>' +
 			'<div id="documentroom_toolbar_selectmode">' +
@@ -422,10 +423,11 @@ game itself. Those are in Visual.js
 	}
 
 	activateSelectModeDR(){
-		console.log("called")
 		if(!this.selectModeActiveDR){
 			this.selectModeActiveDR=true;
-
+			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser('DR');
+			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting('DR');
+			document.getElementById('DRselectmode_button').style.backgroundColor=this.pd.visual.cssConf('activated-button');
 		document.querySelectorAll("#documentroom_toolbar_general div")
 			.forEach(button=>{
 				if(button.id!=="DRselectmode_button") {
@@ -454,6 +456,7 @@ game itself. Those are in Visual.js
 					button.style.opacity='20%';
 					//TODO:remove event listeners for select mode buttons
 				});
+			document.getElementById('DRselectmode_button').style.backgroundColor="";
 			let documents = this.pd.game.documents;
 			for(let id in documents){
 				documents[id].deactivateSelectMode();
@@ -480,6 +483,10 @@ game itself. Those are in Visual.js
 	closeDocumentsRoom(){
 		var documentroom = document.getElementById("documentroom");
 		documentroom.style.display = 'none';
+		if(document.getElementById("highlightingBox")){pd.ui.closeHighlightingColorBox();}
+		if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting("DR"); //unactivate Highlighting actually
+		if(this.pd.visual.eraserActive)this.pd.ui.activateEraser("DR"); //unactivate eraser actually
+		if(this.selectModeActiveDR)this.selectModeActiveDR=false;
 		// destroy old stages to avoid memory leaks and better performance
 		if(pd.ui.DRstage){
 			pd.ui.DRstage.clearCache();
@@ -489,13 +496,152 @@ game itself. Those are in Visual.js
 			window.stage.destroy();}
 		this.documentRoomOpened=false;
 		this.pd.game.documents={};
+		pd.ui.windowWidth=window.innerWidth;
 	}
+	addArrowDR(x1,y1,x2,y2,stroke,isNew){
+		if(this.documentRoomOpened && this.selectModeActiveDR && isNew)return;
+        let scrollContainer;
+        let PosY = window.innerWidth/20;
+        scrollContainer = document.getElementById("scroll-container");
+        let dy = scrollContainer.scrollTop - pd.ui.PADDING;
+        if(dy>0)PosY+=Math.abs(dy)+500;
+        else PosY+=500-Math.abs(dy);
+
+
+        var arrow = new Konva.Arrow({
+            points: [x1?x1:3/100*this.windowWidth, y1?y1:PosY, x2?x2:10/100*this.windowWidth, y2?y2:PosY+(10/100*this.windowWidth)],
+            stroke: stroke?stroke:'white',
+            strokeWidth: 8,
+
+        });
+
+        var handleTop = new Konva.Circle({
+            x: arrow.points()[2],
+            y: arrow.points()[3],
+            stroke: '#0fa1f7',
+            fill: 'white',
+            strokeWidth: 2,
+            radius: 8,
+            draggable: true
+        });
+
+        var handleMiddle = new Konva.Circle({
+            x: (arrow.points()[0]+arrow.points()[2])/2,
+            y: (arrow.points()[1]+arrow.points()[3])/2,
+            stroke: '#0fa1f7',
+            fill: 'white',
+            strokeWidth: 2,
+            radius: 10,
+            draggable: true
+        });
+        var handleBottom = new Konva.Circle({
+            x: arrow.points()[0],
+            y: arrow.points()[1],
+            stroke: '#0fa1f7',
+            fill: 'white',
+            strokeWidth: 2,
+            radius: 8,
+            draggable: true
+        });
+        pd.ui.DRlayerShapes.add(arrow,handleTop,handleMiddle,handleBottom);
+
+        let middleTopDifferenceX,middleTopDifferenceY,middleBottomDifferenceX,middleBottomDifferenceY,arrowHead;
+
+        handleBottom.on('dragmove', function() {
+            arrow.points([ handleBottom.x(), handleBottom.y(),arrow.points()[2], arrow.points()[3]]);
+            handleMiddle.x((arrow.points()[0]+arrow.points()[2])/2);
+            handleMiddle.y((arrow.points()[1]+arrow.points()[3])/2);
+        });
+        handleBottom.on('dragend', function() {
+            draggingOrTransforming=true;
+			pd.game.postArrowStateDR();
+        });
+
+        handleTop.on('dragmove', function() {
+            arrow.points([arrow.points()[0], arrow.points()[1], handleTop.x(), handleTop.y()]);
+            handleMiddle.x((arrow.points()[0]+arrow.points()[2])/2);
+            handleMiddle.y((arrow.points()[1]+arrow.points()[3])/2);
+
+        });
+        handleTop.on('dragend', function() {
+            draggingOrTransforming=true;
+			pd.game.postArrowStateDR();
+        });
+
+
+        handleMiddle.on('dragstart', function() {
+            middleBottomDifferenceX=handleBottom.x()-handleMiddle.x();
+            middleBottomDifferenceY=handleBottom.y()-handleMiddle.y();
+            middleTopDifferenceX=handleTop.x()-handleMiddle.x();
+            middleTopDifferenceY=handleTop.y()-handleMiddle.y();
+        });
+
+        handleMiddle.on('dragmove', function() {
+            handleBottom.x(handleMiddle.x()+middleBottomDifferenceX);
+            handleBottom.y(handleMiddle.y()+middleBottomDifferenceY);
+            handleTop.x(handleMiddle.x()+middleTopDifferenceX);
+            handleTop.y(handleMiddle.y()+middleTopDifferenceY);
+            arrow.points([ handleBottom.x(), handleBottom.y(), handleTop.x(), handleTop.y()]);
+        });
+        handleMiddle.on('dragend', function() {
+            handleMiddle.x((handleBottom.x()+handleTop.x())/2);
+            handleMiddle.y((handleBottom.y()+handleTop.y())/2);
+            draggingOrTransforming=true;
+			pd.game.postArrowStateDR();
+        });
+
+        handleTop.hide();
+        handleMiddle.hide();
+        handleBottom.hide();
+        if(isNew) {
+            //if(!where)this.pd.game.storeTextStatePR();
+			pd.game.postArrowStateDR();
+        }
+        let draggingOrTransforming=false;
+        arrow.on('pointerclick', () => {
+			if(this.pd.visual.eraserActive){
+				arrow.destroy();
+				handleBottom.destroy();
+				handleMiddle.destroy();
+				handleTop.destroy();
+				pd.game.postArrowStateDR();
+				return;
+			}
+			else if(this.pd.visual.highlightActive){
+				let color=this.pd.visual.highlightColor?this.pd.visual.cssConf("highlighting-"+this.pd.visual.highlightColor)+"":this.pd.visual.cssConf("highlighting-color1")+"";
+				arrow.stroke(color);
+				pd.game.postArrowStateDR();
+				return;
+			}
+            setTimeout(()=>{
+                handleTop.show();
+                handleMiddle.show();
+                handleBottom.show();
+                scrollContainer.style.overflow="hidden"; // prevent scrolling while dragging in Document Room
+            },10);
+            draggingOrTransforming=true;
+            setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
+            function  handleOutsideClick(){
+                if(!draggingOrTransforming) {
+                    handleTop.hide();
+                    handleMiddle.hide();
+                    handleBottom.hide();
+                    window.removeEventListener('click', handleOutsideClick);
+                    scrollContainer.style.overflow="auto";
+                    scrollContainer.style.overflowX="hidden";
+
+                }
+                draggingOrTransforming=false;
+            }
+        });
+
+    }
 	// add rectangle to Document Room for spatially ordering
-	addRectangleDR(x,y,stroke,width,height,where,isNew){
+	addRectangleDR(x,y,stroke,width,height,isNew){
+		if(this.documentRoomOpened && this.selectModeActiveDR && isNew)return;
 		let PosX = window.innerWidth/20;
 		let PosY = window.innerWidth/20;
 		let scrollContainer;
-		if(where) {
 			let stageDR=pd.ui.DRstage;
 			scrollContainer = document.getElementById("scroll-container");
 			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
@@ -503,7 +649,7 @@ game itself. Those are in Visual.js
 			else PosY+=500-Math.abs(dy);
 			console.log("stageDR.x(),stageDR.y(): ",stageDR.x(),stageDR.y())
 			console.log("dy: ",dy)
-		}
+
 		let rectangle = new Konva.Rect({
 			x: x?x:PosX,
 			y: y?y:PosY,
@@ -514,9 +660,7 @@ game itself. Those are in Visual.js
 			preventDefault: false,
 		});
 		console.log("rectangle.stroke",rectangle.stroke());
-		if(!where)
-			this.layer.add(rectangle);
-		else
+
 			this.DRlayerShapes.add(rectangle);
 		let tr = new Konva.Transformer({
 			node: rectangle,
@@ -525,9 +669,7 @@ game itself. Those are in Visual.js
 
 
 		let draggingOrTransforming=false;
-		if(!where)
-			this.layer.add(tr);
-		else
+
 			this.DRlayerShapes.add(tr);
 		tr.hide();
 		if(isNew) {
@@ -535,12 +677,23 @@ game itself. Those are in Visual.js
 			this.pd.game.postRectangleStateDR();
 		} //avoid open loop when text state is reconstructed when game is opened
 		rectangle.on('pointerclick', () => {
-			if(!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened)return;
+			if(this.pd.visual.eraserActive){
+				rectangle.destroy();
+				tr.destroy();
+				pd.game.postRectangleStateDR();
+				return;
+			}
+			else if(this.pd.visual.highlightActive){
+				let color=this.pd.visual.highlightColor?this.pd.visual.cssConf("highlighting-"+this.pd.visual.highlightColor)+"":this.pd.visual.cssConf("highlighting-color1")+"";
+				rectangle.stroke(color);
+				pd.game.postRectangleStateDR();
+				return;
+			}
 			setTimeout(()=>{tr.show();
 				rectangle.draggable(true);
-				if(where){
+
 					scrollContainer.style.overflow="hidden"; // prevent scrolling while dragging in Document Room
-				}
+
 			},10);
 			draggingOrTransforming=true;
 			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
@@ -549,9 +702,10 @@ game itself. Those are in Visual.js
 					tr.hide()
 					rectangle.draggable(false);
 					window.removeEventListener('click', handleOutsideClick);
-					if(where){
+
 						scrollContainer.style.overflow="auto";
-					}
+						scrollContainer.style.overflowX="hidden";
+
 				}
 				draggingOrTransforming=false;
 			}
@@ -570,19 +724,9 @@ game itself. Those are in Visual.js
 		rectangle.on('transformstart', () => {
 			draggingOrTransforming=true;
 		});
-		tr.on('transform', function() {
-			// set new size
-
-			// reset scale
-		});
 		rectangle.on('transformend', () => {
-			//if(!where)this.pd.game.storeTextStatePR();
 
-
-			console.log("rectangle.width(): ", rectangle.width());
-			console.log("rectangle.height(): ", rectangle.height());
 			this.pd.game.postRectangleStateDR(tr.width(),tr.height(),rectangle);
-
 
 		});
 
@@ -591,6 +735,7 @@ game itself. Those are in Visual.js
 
     // based on https://konvajs.org/docs/sandbox/Editable_Text.html
 	addText(text,x,y,fill,width,where){
+		if(this.documentRoomOpened && this.selectModeActiveDR)return;
 		let PosX = window.innerWidth/20;
 		let PosY = window.innerWidth/20;
 		let scrollContainer;
@@ -678,6 +823,7 @@ game itself. Those are in Visual.js
 					window.removeEventListener('click', handleOutsideClick);
 					if(where){
 					scrollContainer.style.overflow="auto";
+					scrollContainer.style.overflowX="hidden";
 					}
 				}
 				draggingOrTransforming=false;
@@ -872,35 +1018,50 @@ game itself. Those are in Visual.js
 
 	}
 
-	activateEraser(){
+	activateEraser(where){
+		if(!pd.ui.selectModeActiveDR){
 		if(!this.pd.visual.eraserActive){
-			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
-			if(this.pd.visual.freezeActive)this.pd.ui.activateFreezing();
+			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(where); //unactivate Highlighting actually
+			if(this.pd.visual.freezeActive && !(where==="DR"))this.pd.ui.activateFreezing();
 			this.pd.visual.eraserActive=true;
-			document.getElementById('eraser').style.backgroundColor=this.pd.visual.cssConf('activated-button');
+			if(where)
+				document.getElementById('DReraser_button').style.backgroundColor=this.pd.visual.cssConf('activated-button');
+			else
+				document.getElementById('eraser').style.backgroundColor=this.pd.visual.cssConf('activated-button');
 		}
 		else{
 			this.pd.visual.eraserActive=false;
-			document.getElementById('eraser').style.backgroundColor="";
+			if(where)
+				document.getElementById('DReraser_button').style.backgroundColor="";
+			else
+				document.getElementById('eraser').style.backgroundColor="";
+		}
 		}
 
 	}
 
-	activateHighlighting(){
-		if(!this.pd.visual.highlightActive){
-			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
-			if(this.pd.visual.freezeActive)this.pd.ui.activateFreezing();
-			this.pd.visual.highlightActive=true;
-			document.getElementById('highlight').style.backgroundColor=this.pd.visual.cssConf('activated-button');;
+	activateHighlighting(where){
+		if(!pd.ui.selectModeActiveDR) {
+			if (!this.pd.visual.highlightActive) {
+				if (this.pd.visual.eraserActive) this.pd.ui.activateEraser(where); //unactivate eraser actually
+				if (this.pd.visual.freezeActive && !(where === "DR")) this.pd.ui.activateFreezing();
+				this.pd.visual.highlightActive = true;
+				if (where === "DR")
+					document.getElementById('DRhighlight_button').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+				else
+					document.getElementById('highlight').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+			} else {
+				this.pd.visual.highlightActive = false;
+				if (where === "DR")
+					document.getElementById('DRhighlight_button').style.backgroundColor = "";
+				else
+					document.getElementById('highlight').style.backgroundColor = "";
+			}
 		}
-		else{
-			this.pd.visual.highlightActive=false;
-			document.getElementById('highlight').style.backgroundColor="";
-		}
-
 	}
 
-	showHighlightingColourBox(){
+	showHighlightingColourBox(where){
+		if(!pd.ui.selectModeActiveDR) {
 		if(document.getElementById("highlightingBox")){return;}
 		var that = this;
 		var parent=document.getElementsByTagName('body')[0];
@@ -921,7 +1082,8 @@ game itself. Those are in Visual.js
 			"        </div>\n" +
 			"        <div  id=\"highlightingColorButton\">\n" +
 			`            <span >${that.translate("BUTTON_CLOSE")}</span>\n` +
-			"        </div>"
+			"        </div>";
+		if(where==="DR")highlightingBox.style.left="30vw";
 		parent.appendChild(highlightingBox);
 		document.getElementById("highlightingColorButton").onpointerdown=function(event){
 			//event.preventDefault();
@@ -942,7 +1104,7 @@ game itself. Those are in Visual.js
 			that.pd.visual.highlightColor=id;
 
 
-		}
+		}}
 	}
 
 	closeHighlightingColorBox(){
@@ -969,6 +1131,7 @@ game itself. Those are in Visual.js
 		if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
 		if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
 		if(this.pd.visual.freezeActive)this.pd.ui.activateFreezing();
+		if(document.getElementById("highlightingBox")){pd.ui.closeHighlightingColorBox();}
 		document.getElementById('annotation').style.display='none';
 		document.getElementById('functions').style.display='';
 		document.getElementById("hint").style.display='';

@@ -4,6 +4,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     if($_POST['type']==='storedocumentPR'){
         $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
         $file = json_decode($file, true);
+        echo $_POST['x'].",".$_POST['y'].",".$_POST["boardname"].",".$_POST['piecestate1'].",".$_POST['piecestate2'];
         $file["documents"][uniqid()]=array('x' => $_POST['x'], 'y' => $_POST['y'], 'boardname' => $_POST['boardname'], 'piecestate1' => $_POST['piecestate1'],'piecestate2' => $_POST['piecestate2'],'boardState' => $_POST['boardState'], 'TextStatePR' => $_POST['TextStatePR'], 'boardLayout' => $_POST['boardLayout']);
         $db =json_encode($file,JSON_FORCE_OBJECT);
         $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
@@ -49,6 +50,15 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
         $file = json_decode($file, true);
         $file["rectangles"]=$_POST['state'];
+        $db =json_encode($file,JSON_FORCE_OBJECT);
+        $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
+        fwrite($fp, $db);
+        fclose($fp);
+    }
+    if($_POST['type']==='postArrowStateDR'){
+        $file = file_get_contents('./user-documents/'.$_SESSION['id'].'.txt');
+        $file = json_decode($file, true);
+        $file["arrows"]=$_POST['state'];
         $db =json_encode($file,JSON_FORCE_OBJECT);
         $fp = fopen('./user-documents/'.$_SESSION['id'].'.txt', 'w');
         fwrite($fp, $db);
