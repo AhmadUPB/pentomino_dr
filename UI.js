@@ -397,7 +397,7 @@ game itself. Those are in Visual.js
 			'<div id="DRselectmode_button" onclick="pd.ui.activateSelectModeDR();"><img src="./ico/selectmode_dr.png" id="" title=""><span>select</span></div>' +
 			'</div>' +
 			'<div id="documentroom_toolbar_selectmode">' +
-			'<div id="DRselectall_button"><img src="./ico/selectall_dr.png" id="" title=""><span>select all</span></div>' +
+			'<div id="DRselectall_button" onclick="DocumentDR.selectAll();"><img src="./ico/selectall_dr.png" id="" title=""><span>select all</span></div>' +
 			'<div id="DRsend_button" onclick="pd.ui.sendSelectedDocuments();"><img src="./ico/send_dr.png" id="" title=""><span>send</span></div>' +
 			'<div id="DRdelete_button" onclick="pd.ui.deleteSelectedDocuments();"><img src="./ico/delete_dr.png" id="" title=""><span>delete</span></div>' +
 			'</div>'
@@ -424,9 +424,9 @@ game itself. Those are in Visual.js
 
 	activateSelectModeDR(){
 		if(!this.selectModeActiveDR){
-			this.selectModeActiveDR=true;
 			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser('DR');
 			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting('DR');
+			this.selectModeActiveDR=true;
 			document.getElementById('DRselectmode_button').style.backgroundColor=this.pd.visual.cssConf('activated-button');
 		document.querySelectorAll("#documentroom_toolbar_general div")
 			.forEach(button=>{
@@ -461,6 +461,7 @@ game itself. Those are in Visual.js
 			for(let id in documents){
 				documents[id].deactivateSelectMode();
 			}
+			DocumentDR.selectedDocuments={};
 		}
 
 	}
@@ -495,6 +496,7 @@ game itself. Those are in Visual.js
 			window.stage.clearCache();
 			window.stage.destroy();}
 		this.documentRoomOpened=false;
+		DocumentDR.selectedDocuments={};
 		this.pd.game.documents={};
 		pd.ui.windowWidth=window.innerWidth;
 	}

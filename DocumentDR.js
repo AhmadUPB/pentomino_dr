@@ -8,6 +8,7 @@ class DocumentDR {
     static widthOfOneFieldSquare;
     static helpPieceObjects = {};
     static selectedDocuments= {};
+    static allSelected;
 
     constructor(PD, documentAttributes,scrollContainer) {
 
@@ -182,6 +183,32 @@ class DocumentDR {
         });
 
 
+    }
+
+    static selectAll(){
+        let documents = pd.game.documents;
+        if(pd.ui.selectModeActiveDR && Object.keys(documents).length > 0){
+        if(!DocumentDR.allSelected){
+            DocumentDR.allSelected=true;
+        for(let id in documents){
+            if(DocumentDR.selectedDocuments[id]) continue;
+            documents[id].selected = true;
+            documents[id].checkMark.visible(true);
+            DocumentDR.selectedDocuments[id] = documents[id];
+        }
+            pd.ui.activateButtonDR("#DRdelete_button");
+            pd.ui.deactivateButtonDR("#DRsend_button");
+        }
+        else{
+            DocumentDR.allSelected=false;
+            DocumentDR.selectedDocuments={};
+            for(let id in documents) {
+                documents[id].selected = false;
+                documents[id].checkMark.visible(false);
+            }
+            pd.ui.deactivateButtonDR("#DRdelete_button");
+            pd.ui.deactivateButtonDR("#DRsend_button");
+        }}
     }
 
     static createCashedElements(pd) {
@@ -583,7 +610,6 @@ class DocumentDR {
         this.selected = false;
         this.checkBox.visible(false);
         this.checkMark.visible(false);
-        DocumentDR.selectedDocuments={};
     }
 
 }
