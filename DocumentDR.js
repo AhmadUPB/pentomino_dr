@@ -71,7 +71,10 @@ class DocumentDR {
             setTimeout(function() {that.group.scale({x: 1, y: 1});},5000);
         });*/
         //this.group.cache();
+        this.group.on("pointerdblclick",function () {
+            that.pd.game.showQRCode("playDocument",that.id);
 
+        });
         //click event
         this.group.on("pointerclick", function () {
             if(that.selectModeActive) {

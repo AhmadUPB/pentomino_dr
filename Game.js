@@ -593,7 +593,7 @@ class Game{
 		
 	}
 
-	showQRCode(type){
+	showQRCode(type,id){
 		let url = new URL(location.href);
 		let params = new URLSearchParams();
 
@@ -601,6 +601,7 @@ class Game{
 		var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
 		if(type){
 			var docmentId = Object.keys(DocumentDR.selectedDocuments)[0];
+			if(type==="playDocument")docmentId=id;
 			params.set('d', window.LoggedIn+"."+docmentId);
 			url = (baseUrl + '?' + params.toString());
 
@@ -610,6 +611,9 @@ class Game{
 			params.set('conf', 'res');
 			url = (baseUrl + '?' + params.toString());
 		}
+		if(type && type==="playDocument") window.location.href = url;
+
+		else
 		this.pd.ui.showQRCode(url);
 	}
 
