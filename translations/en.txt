@@ -37,6 +37,16 @@ LABEL_HIGHLIGHT::Highlight
 LABEL_COLOR::Highlighting Color
 LABEL_FREEZE::Freeze Pieces
 LABEL_ERASER::Erase Notes or Highlighting
+LABEL_DR_LABEL::add label
+LABEL_DR_RECTANGLE::add rectangle
+LABEL_DR_ARROW::add arrow
+LABEL_DR_HIGHLIGHT::highlight
+LABEL_DR_COLOR::highlighting color
+LABEL_DR_ERASER::eraser
+LABEL_DR_SELECT::select
+LABEL_DR_SELECTALL:: select all
+LABEL_DR_SEND::send
+LABEL_DR_DELETE::delete
 LABEL_CONFIG::Configuration
 LABEL_QR::QR-Code
 TOGGLE_SOUND::Toggle Sound
@@ -77,6 +87,7 @@ SUGGEST_REMOVAL::Revomove pieces
 
 UNAMBIGOUS_PIECES::Nonambiguous pieces: 
 CLICK_FOR_HELP::Klick the ? button for a hint!
+NEW_TEXT::Some text here
 
 ***** CONFIGURATION PAGE *****
 

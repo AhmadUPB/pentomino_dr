@@ -37,6 +37,16 @@ LABEL_HIGHLIGHT::Markieren
 LABEL_COLOR::Markierfarbe
 LABEL_FREEZE::Spielsteine fixieren
 LABEL_ERASER::Notizen oder Markierung löschen.
+LABEL_DR_LABEL::Label
+LABEL_DR_RECTANGLE::Rechteck
+LABEL_DR_ARROW::Pfeil
+LABEL_DR_HIGHLIGHT::Markieren
+LABEL_DR_COLOR::Markierfarbe
+LABEL_DR_ERASER::Radierer
+LABEL_DR_SELECT::Auswählen
+LABEL_DR_SELECTALL:: Alles auswählen
+LABEL_DR_SEND::Senden
+LABEL_DR_DELETE::Löschen
 LABEL_CONFIG::Konfiguration
 LABEL_QR::QR-Code
 TOGGLE_SOUND::Sound ein/ausschalten
@@ -80,6 +90,7 @@ SUGGEST_REMOVAL::Entferne Steine
 UNAMBIGOUS_PIECES::Eindeutige Steine: 
 CLICK_FOR_HELP::Klicke den ?-Knopf für einen Tipp!
 CONGRATULATIONS::Toll! Du hast es geschafft!
+NEW_TEXT::Hier ist ein Text
 
 ***** CONFIGURATION PAGE *****
 

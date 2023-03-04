@@ -372,18 +372,18 @@ game itself. Those are in Visual.js
 		let that = this;
 		let DRtoolBar = document.getElementById("documentroom_toolbar");
 		DRtoolBar.innerHTML='<div id="documentroom_toolbar_general">' +
-			'<div id="DRtext_button" onclick="pd.ui.addText(0,0,0,0,0,`DR`)"><img src="./ico/text_dr.png" id="" title=""><span>add label</span></div>' +
-			'<div id="DRrectangle_button" onclick="pd.ui.addRectangleDR(0,0,0,0,0,1)"><img src="./ico/rectangle_dr.png" id="" title=""><span>add rectangle</span></div>' +
-			'<div id="arrow_button" onclick="pd.ui.addArrowDR(0,0,0,0,0,1)"><img src="./ico/arrow_dr.png" id="" title=""><span>add arrow</span></div>' +
-			'<div id="DRhighlight_button" onclick="pd.ui.activateHighlighting(`DR`)"><img src="./ico/highlight_dr.png" id="" title=""><span>highlight</span></div>' +
-			'<div id="DRcolor_button" onclick="pd.ui.showHighlightingColourBox(`DR`)"><img src="./ico/color_dr.png" id="" title=""><span>highlighting color</span></div>' +
-			'<div id="DReraser_button" onclick="pd.ui.activateEraser(`DR`);"><img src="./ico/eraser_dr.png" id="" title=""><span>eraser</span></div>' +
-			'<div id="DRselectmode_button" onclick="pd.ui.activateSelectModeDR();"><img src="./ico/selectmode_dr.png" id="" title=""><span>select</span></div>' +
+			'<div id="DRtext_button" onclick="pd.ui.addText(0,0,0,0,0,`DR`)"><img src="./ico/text_dr.png" id="" title=""><span id="label_dr">add label</span></div>' +
+			'<div id="DRrectangle_button" onclick="pd.ui.addRectangleDR(0,0,0,0,0,1)"><img src="./ico/rectangle_dr.png" id="" title=""><span id="rectangle_dr">add rectangle</span></div>' +
+			'<div id="arrow_button" onclick="pd.ui.addArrowDR(0,0,0,0,0,1)"><img src="./ico/arrow_dr.png" id="" title=""><span id="arrow_dr">add arrow</span></div>' +
+			'<div id="DRhighlight_button" onclick="pd.ui.activateHighlighting(`DR`)"><img src="./ico/highlight_dr.png" id="" title=""><span id="highlight_dr">highlight</span></div>' +
+			'<div id="DRcolor_button" onclick="pd.ui.showHighlightingColourBox(`DR`)"><img src="./ico/color_dr.png" id="" title=""><span id="color_dr">highlighting color</span></div>' +
+			'<div id="DReraser_button" onclick="pd.ui.activateEraser(`DR`);"><img src="./ico/eraser_dr.png" id="" title=""><span id="eraser_dr">eraser</span></div>' +
+			'<div id="DRselectmode_button" onclick="pd.ui.activateSelectModeDR();"><img src="./ico/selectmode_dr.png" id="" title=""><span id="select_dr">select</span></div>' +
 			'</div>' +
 			'<div id="documentroom_toolbar_selectmode">' +
-			'<div id="DRselectall_button" onclick="DocumentDR.selectAll();"><img src="./ico/selectall_dr.png" id="" title=""><span>select all</span></div>' +
-			'<div id="DRsend_button" onclick="pd.ui.sendSelectedDocuments();"><img src="./ico/send_dr.png" id="" title=""><span>send</span></div>' +
-			'<div id="DRdelete_button" onclick="pd.ui.deleteSelectedDocuments();"><img src="./ico/delete_dr.png" id="" title=""><span>delete</span></div>' +
+			'<div id="DRselectall_button" onclick="DocumentDR.selectAll();"><img src="./ico/selectall_dr.png" id="" title=""><span id="selectall_dr">select all</span></div>' +
+			'<div id="DRsend_button" onclick="pd.ui.sendSelectedDocuments();"><img src="./ico/send_dr.png" id="" title=""><span id="send_dr">send</span></div>' +
+			'<div id="DRdelete_button" onclick="pd.ui.deleteSelectedDocuments();"><img src="./ico/delete_dr.png" id="" title=""><span id="delete_dr">delete</spanid></div>' +
 			'</div>'
 
 		document.querySelectorAll("#documentroom_toolbar_selectmode div")
@@ -391,7 +391,16 @@ game itself. Those are in Visual.js
 				button.style.opacity='20%';
 				//TODO:remove event listeners for select mode buttons
 			});
-
+		document.getElementById("label_dr").textContent=pd.ui.translate('LABEL_DR_LABEL');
+		document.getElementById("rectangle_dr").textContent=pd.ui.translate('LABEL_DR_RECTANGLE');
+		document.getElementById("arrow_dr").textContent=pd.ui.translate('LABEL_DR_ARROW');
+		document.getElementById("highlight_dr").textContent=pd.ui.translate('LABEL_DR_HIGHLIGHT');
+		document.getElementById("color_dr").textContent=pd.ui.translate('LABEL_DR_COLOR');
+		document.getElementById("eraser_dr").textContent=pd.ui.translate('LABEL_DR_ERASER');
+		document.getElementById("select_dr").textContent=pd.ui.translate('LABEL_DR_SELECT');
+		document.getElementById("selectall_dr").textContent=pd.ui.translate('LABEL_DR_SELECTALL');
+		document.getElementById("send_dr").textContent=pd.ui.translate('LABEL_DR_SEND');
+		document.getElementById("delete_dr").textContent=pd.ui.translate('LABEL_DR_DELETE');
 	}
 	sendSelectedDocuments(){
 		if(Object.keys(DocumentDR.selectedDocuments).length === 1){
@@ -727,9 +736,10 @@ game itself. Those are in Visual.js
 			if(dy>0)PosY+=Math.abs(dy)+500;
 			else PosY+=500-Math.abs(dy);
 		}
+		let newText= this.translate("NEW_TEXT");
 
 		let textNode = new Konva.Text({
-			text: text?text:'Some text here',
+			text: text?text:newText,
 			x: x?x:PosX,
 			y: y?y:PosY,
 			fontSize: 1.5/100 * window.innerWidth,
