@@ -160,6 +160,12 @@ class PD{
 		var oReqDocs = new XMLHttpRequest();
 		oReqDocs.addEventListener("load", function () {
 			that.annotatedDocument=this.responseText;
+			//delete the parameter referencing the loaded document
+			// to avoid losing changes when updating the page after modifying the game situation in the Play Room
+			//based on: https://developer.mozilla.org/en-US/docs/Web/API/History/pushState
+			let newUrl = new URL(window.location.href);
+			newUrl.searchParams.delete('d');
+			window.history.pushState({}, '', newUrl);
 			if (afterwards) afterwards.call(that);
 		});
 		oReqDocs.open("GET", './loginsystem/reqhandler.php?type=document&document='+window.annotatedDocument);
