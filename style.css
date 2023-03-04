@@ -65,6 +65,7 @@
 	--highlighting-color3: #3598fa;
 	--highlighting-color4: #8065fa;
 	--highlighting-color5: #000;
+	--highlighting-color6:#FFF;
 	--highlighting-color-standard:#f5d75e;
 
 	--activated-button: #abeeeb;
@@ -359,7 +360,7 @@ color:var(--toolbar-dr-color);
 	flex-direction: column;
 	align-items: center;
 	width: 5vw;
-	height: 2.5vw;
+	height: 3vw;
 	cursor: pointer;
 
 }
@@ -369,7 +370,7 @@ color:var(--toolbar-dr-color);
 }
 #documentroom_toolbar_general div span, #documentroom_toolbar_selectmode div span {
 	position: absolute;
-	top: 2.1vw;
+	top: 1.9vw;
 	font-size: 0.9vw;
 	font-weight: bold;
 }
@@ -479,7 +480,7 @@ color:var(--toolbar-dr-color);
 	top:var(--tray-height);
 	left :var(--function-area-width);
 	display: flex;
-	width: 200px;
+	width: 215px;
 	height: 200px;
 	justify-content: space-around;
 	flex-direction: column;

@@ -117,7 +117,7 @@ class DocumentDR {
             clearTimeout(that.activeHoldTimeoutID);
             that.group.scale({x: 1, y: 1});
             that.pd.game.updateDocumentCoordinates(that.id,that.group.x(),that.group.y());
-            that.group.moveTo(that.pd.ui.DRlayerDocuments2);
+            that.group.moveTo(that.pd.ui.DRlayerDocuments1);
 
 
         });
@@ -159,6 +159,7 @@ class DocumentDR {
                             //console.log(z)
                         if (dragOnMove && z<5){ that.group.startDrag();
                             that.group.moveTo(that.pd.ui.DRlayerDocumentsDragging);
+                            that.group.moveToBottom();
                             //console.log("dragging started")
                         }
                         else if(z>5){
@@ -198,6 +199,7 @@ class DocumentDR {
         }
             pd.ui.activateButtonDR("#DRdelete_button");
             pd.ui.deactivateButtonDR("#DRsend_button");
+            if(Object.keys(documents).length === 1)pd.ui.activateButtonDR("#DRsend_button");
         }
         else{
             DocumentDR.allSelected=false;
@@ -505,14 +507,12 @@ class DocumentDR {
     }
 
     drawTexts() {
-        console.log(this.texts);
         let documentWidth = this.pd.visual.cssConf('document-width');
         if (this.texts !== "none") {
             let texts = this.texts.split('!');
             for (let i in texts) {
                 if (!texts[i]) continue;
                 let text = texts[i].split("_");
-                console.log(text[0])
                 let textNode = new Konva.Text({
                     x: text[1] / 100 * documentWidth / 100 * window.innerWidth,
                     y: (text[2] / 100 * documentWidth + this.pd.visual.cssInt('document-tray-height')) / 100 * window.innerWidth,

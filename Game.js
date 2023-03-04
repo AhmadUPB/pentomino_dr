@@ -731,9 +731,7 @@ class Game{
 		for (let i in rectangles){
 			rectangle=rectangles[i];
 			if (!rectangle) continue;
-			console.log("rectangle!!!!:",rectangle);
 			rectangle=rectangle.split('_');
-			console.log("rectangle!!!!:",rectangle);
 			this.pd.ui.addRectangleDR(parseFloat(rectangle[1]*window.innerWidth/100),parseFloat(rectangle[2]*window.innerWidth/100),rectangle[3],parseFloat(rectangle[4]*window.innerWidth/100),parseFloat(rectangle[5]*window.innerWidth/100));
 
 		}
@@ -746,9 +744,7 @@ class Game{
 		for (let i in arrows){
 			arrow=arrows[i];
 			if (!arrow) continue;
-			console.log("rectangle!!!!:",arrow);
 			arrow=arrow.split('_');
-			console.log("rectangle!!!!:",arrow);
 			this.pd.ui.addArrowDR(parseFloat(arrow[1]*window.innerWidth/100),parseFloat(arrow[2]*window.innerWidth/100),parseFloat(arrow[3]*window.innerWidth/100),parseFloat(arrow[4]*window.innerWidth/100),arrow[5]);
 
 		}
@@ -850,26 +846,18 @@ class Game{
 		if (!gameState.includes("{")) {gameState='{'+gameState+'}';}
 		gameState=gameState.replaceAll('.',',');
 		gameState = JSON.parse(gameState);
-		console.log("add: ",gameState);
 		let piecesState = stoarge.getItem('piecesState')
 		if(piecesState) piecesState= JSON.parse(piecesState).pieces; else piecesState='none'
-		console.log("add: ",piecesState);
 		let boardState = stoarge.getItem('boardState')
 		if(boardState) boardState= JSON.parse(boardState).board; else boardState='none';
-		console.log("add: ",boardState);
 		let TextStatePR = stoarge.getItem('TextStatePR')
 		if(TextStatePR){
 			TextStatePR= JSON.parse(TextStatePR);
 			TextStatePR=TextStatePR.texts;
-			console.log(TextStatePR);
 		}
 		else TextStatePR = 'none';
-		console.log("add: ",TextStatePR);
 		let boardLayout= this.layoutForDocument;
-		console.log("add: ",boardLayout);
 		var xhttp = new XMLHttpRequest();
-		xhttp.addEventListener("load", function () {
-			console.log("this.response!", this.responseText)});
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("type="+"storedocumentPR"+"&x="+"none"+"&y="+"none"+"&boardname="+gameState.n+"&piecestate1="+gameState.s+"&piecestate2="+piecesState+"&boardState="+boardState+"&TextStatePR="+TextStatePR+"&boardLayout="+this.layoutForDocument+"&url="+document.documentURI);
@@ -892,7 +880,6 @@ class Game{
 	}
 
 	updateDocumentCoordinates(id,x,y){
-		console.log("called!");
 		x=x*100/window.innerWidth;
 		y=y*100/window.innerWidth;
 		var xhttp = new XMLHttpRequest();

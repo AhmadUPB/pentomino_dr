@@ -685,6 +685,22 @@ class Visual{
 			e.preventDefault();
 			return false;
 		}
+		//destroy the stages when updating or closing the window to avoid memory leaks
+		window.addEventListener("beforeunload", function(event) {
+			clearMemory();
+		});
+
+		window.addEventListener("unload", function(event) {
+			clearMemory();
+		});
+		function clearMemory(){
+			if(that.pd.ui.DRstage){
+				that.pd.ui.DRstage.clearCache()
+				that.pd.ui.DRstage.destroy();
+			}
+			that.pd.ui.stage.clearCache()
+			that.pd.ui.stage.destroy();
+		}
 		// based on https://stackoverflow.com/questions/5489946/how-to-wait-for-the-end-of-resize-event-and-only-then-perform-an-action
 		let toDo1;
 		function resizeAction(){
@@ -852,7 +868,6 @@ class Visual{
 					if(that.freezeActive && check=='bmPoint'){
 						if (!pieceObject.frozen){
 							that.toTop(container);
-							console.log("freeze piece")
 							pieceObject.frozen=true;
 							that.updatePiece(pieceObject);
 							that.pd.game.storeAnnotationStatePieces();
@@ -860,7 +875,6 @@ class Visual{
 						}
 						else{
 							that.toTop(container);
-							console.log("unfreeze piece")
 							pieceObject.frozen=false;
 							that.updatePiece(pieceObject);
 							that.pd.game.storeAnnotationStatePieces();

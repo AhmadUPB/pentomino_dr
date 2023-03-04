@@ -237,6 +237,7 @@ game itself. Those are in Visual.js
 
 			if (after) after.call(this,div);
 	}
+
 	loadDRpics(){
 		//based on: //https://konvajs.org/docs/shapes/Image.html
 		let imageObj1 = new Image();
@@ -268,8 +269,8 @@ game itself. Those are in Visual.js
 
 	openDocumentRoom(){
 		this.documentRoomOpened=true;
-		var that = this;
-		var documentroom = document.getElementById("documentroom");
+		let that = this;
+		let documentroom = document.getElementById("documentroom");
 		documentroom.style.display = 'block';
 		documentroom.innerHTML = '<div id="documentroom_header"><h1>' + this.translate('HEADING_DOCUMENT_ROOM') + '</h1>'+ '<img onclick="pd.ui.closeDocumentsRoom();" src="./ico/dr_close.png">' +
 		 '</div><div id="documentroom_toolbar">' +
@@ -281,37 +282,29 @@ game itself. Those are in Visual.js
 
 			var oReqDocs = new XMLHttpRequest();
 			oReqDocs.addEventListener("load", function () {
-				console.log("this.response!", this.responseText)
-				var documentRoomData = this.responseText.split('%');
+				let documentRoomData = this.responseText.split('%');
 				let rectangles= documentRoomData[0];
 				let arrows= documentRoomData[1];
 				let labels= documentRoomData[2];
 				let documents= documentRoomData[3].split('¤');
 
 
-				// define sizes
+				// compute the adequate Konva stage dimensions to suffice all documents
 				let documentWidth = that.pd.visual.cssConf('document-width');
 				let documentHeight = that.pd.visual.cssConf('document-height');
 				let numberDocumentsInRow = (Math.floor(95 / (documentWidth + 2.5)));
-				console.log("documents.length: ",documents.length);
-				console.log("numberDocumentsInRow: ",numberDocumentsInRow);
 				let rowsNumber = Math.ceil((documents.length-1) / numberDocumentsInRow);
-				console.log("rowsNumber: ",rowsNumber);
 				let numberDocumentsInLastRow = (documents.length-1) % numberDocumentsInRow;
 				let startOfLeftMargin = (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2;
-				console.log("numberDocumentsInLastRow: ",numberDocumentsInLastRow);
 				that.DRDocumentDefaultY = ( rowsNumber - 1 ) * ( documentHeight + 2.5 ) + 2.5;
 				if(numberDocumentsInLastRow!==0)that.DRDocumentDefaultX = startOfLeftMargin + (numberDocumentsInLastRow-1) * (documentWidth + 2.5);
 				else that.DRDocumentDefaultX  = startOfLeftMargin + (numberDocumentsInRow-1) * (documentWidth + 2.5);
-				console.log('DRDocumentDefaultX: ', that.DRDocumentDefaultX, 'DRDocumentDefaultY: ',that.DRDocumentDefaultY);
 				that.DRStageHeight = that.DRDocumentDefaultY + documentHeight + 2.5 + 2.5;
-				console.log("DRStageHeight: ",that.DRStageHeight)
-
-				//initilize stage and layer
-				// based on https://konvajs.org/docs/sandbox/Canvas_Scrolling.html
-
 				if(that.DRStageHeight/100*window.innerWidth<window.innerHeight-(6/100*window.innerWidth)-22) that.DRStageHeightPX= window.innerHeight-(6/100*window.innerWidth)-22
 				else that.DRStageHeightPX=that.DRStageHeight/100*window.innerWidth;
+
+				//Initialize stage and layers
+				// based on https://konvajs.org/docs/sandbox/Canvas_Scrolling.html
 				let largeContainer = document.getElementById('large-container')
 				largeContainer.style.width=(window.innerWidth-22)+"px";
 				largeContainer.style.height=that.DRStageHeightPX+"px";
@@ -319,14 +312,6 @@ game itself. Those are in Visual.js
 				let scrollContainerHeight=window.innerHeight-(6/100*window.innerWidth)-22;
 				scrollContainer.style.height= scrollContainerHeight+"px";
 				that.PADDING = 500;
-				// destroy old stages to avoid memory leaks and better performance
-				if(that.DRstage){
-					that.DRstage.clearCache();
-					that.DRstage.destroy();}
-				if(window.stage){
-					window.stage.clearCache();
-					window.stage.destroy();}
-
 				that.DRstage = new Konva.Stage({
 					container: 'DRcontainer',
 					width:(window.innerWidth-(0/100*window.innerWidth))+ that.PADDING*2,
@@ -335,15 +320,13 @@ game itself. Those are in Visual.js
 
 				that.DRlayerShapes = new Konva.Layer();
 				that.DRlayerDocuments1 = new Konva.Layer();
-				that.DRlayerDocuments2 = new Konva.Layer();
+				//that.DRlayerDocuments2 = new Konva.Layer();
 				that.DRlayerDocumentsDragging= new Konva.Layer();
-				that.DRlayerLabels = new Konva.Layer();
-				that.DRlayerTurn = 1;
-				that.DRstage.add(that.DRlayerShapes,that.DRlayerDocuments1,that.DRlayerDocuments2,that.DRlayerDocumentsDragging,that.DRlayerLabels);
-				window.stage=that.DRstage;
+				that.DRlayerLabels = that.DRlayerDocumentsDragging;
+				that.DRstage.add(that.DRlayerShapes,that.DRlayerDocuments1,that.DRlayerDocumentsDragging);
 				function repositionStage() {
-					var dx = scrollContainer.scrollLeft - that.PADDING;
-					var dy = scrollContainer.scrollTop - that.PADDING;
+					let dx = scrollContainer.scrollLeft - that.PADDING;
+					let dy = scrollContainer.scrollTop - that.PADDING;
 					that.DRstage.container().style.transform =
 						'translate(' + dx + 'px, ' + dy + 'px)';
 					that.DRstage.x(-dx);
@@ -362,6 +345,7 @@ game itself. Those are in Visual.js
 				pd.game.setTextStateDR(labels);
 				pd.game.setRectangleStateDR(rectangles);
 				pd.game.setArrowStateDR(arrows);
+
 			});
 			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documentData');
 			oReqDocs.send();
@@ -462,6 +446,7 @@ game itself. Those are in Visual.js
 				documents[id].deactivateSelectMode();
 			}
 			DocumentDR.selectedDocuments={};
+			DocumentDR.allSelected=false;
 		}
 
 	}
@@ -473,7 +458,6 @@ game itself. Those are in Visual.js
 
 	}
 	deactivateButtonDR(type){
-		console.log("called2");
 		let DRdelete_button = document.querySelector(type);
 		DRdelete_button.style.opacity='20%';
 		//TODO:deactivate event listeners for #DRselectall_button
@@ -488,18 +472,16 @@ game itself. Those are in Visual.js
 		if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting("DR"); //unactivate Highlighting actually
 		if(this.pd.visual.eraserActive)this.pd.ui.activateEraser("DR"); //unactivate eraser actually
 		if(this.selectModeActiveDR)this.selectModeActiveDR=false;
-		// destroy old stages to avoid memory leaks and better performance
-		if(pd.ui.DRstage){
-			pd.ui.DRstage.clearCache();
-			pd.ui.DRstage.destroy();}
-		if(window.stage){
-			window.stage.clearCache();
-			window.stage.destroy();}
+		// destroy old stage to avoid memory leaks and better performance
+		pd.ui.DRstage.clearCache();
+		pd.ui.DRstage.destroy()
+
 		this.documentRoomOpened=false;
 		DocumentDR.selectedDocuments={};
 		this.pd.game.documents={};
 		pd.ui.windowWidth=window.innerWidth;
 	}
+
 	addArrowDR(x1,y1,x2,y2,stroke,isNew){
 		if(this.documentRoomOpened && this.selectModeActiveDR && isNew)return;
         let scrollContainer;
@@ -649,8 +631,6 @@ game itself. Those are in Visual.js
 			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
 			if(dy>0)PosY+=Math.abs(dy)+500;
 			else PosY+=500-Math.abs(dy);
-			console.log("stageDR.x(),stageDR.y(): ",stageDR.x(),stageDR.y())
-			console.log("dy: ",dy)
 
 		let rectangle = new Konva.Rect({
 			x: x?x:PosX,
@@ -661,7 +641,6 @@ game itself. Those are in Visual.js
 			height: height?height:15/100*window.innerWidth,
 			preventDefault: false,
 		});
-		console.log("rectangle.stroke",rectangle.stroke());
 
 			this.DRlayerShapes.add(rectangle);
 		let tr = new Konva.Transformer({
@@ -719,9 +698,9 @@ game itself. Those are in Visual.js
 		rectangle.on('dragend', () => {
 
 			//if(!where)this.pd.game.storeTextStatePR();
-			this.pd.game.postRectangleStateDR(tr.width(),tr.height(),rectangle);
 			tr.show();
 			rectangle.draggable(true);
+			this.pd.game.postRectangleStateDR(tr.width(),tr.height(),rectangle);
 		});
 		rectangle.on('transformstart', () => {
 			draggingOrTransforming=true;
@@ -747,8 +726,6 @@ game itself. Those are in Visual.js
 			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
 			if(dy>0)PosY+=Math.abs(dy)+500;
 			else PosY+=500-Math.abs(dy);
-			console.log("stageDR.x(),stageDR.y(): ",stageDR.x(),stageDR.y())
-			console.log("dy: ",dy)
 		}
 
 		let textNode = new Konva.Text({
@@ -1074,6 +1051,7 @@ game itself. Those are in Visual.js
 		let color3= this.pd.visual.cssConf("highlighting-color3");
 		let color4= this.pd.visual.cssConf("highlighting-color4");
 		let color5= this.pd.visual.cssConf("highlighting-color5");
+		let color6= this.pd.visual.cssConf("highlighting-color6");
 		highlightingBox.innerHTML=`<h3>${that.translate("LABEL_COLOR")}</h3>\n` +
 			"        <div id=\"colors\">\n" +
 			`            <div id='color1' style=\"background: ${color1}\"></div>\n` +
@@ -1081,6 +1059,7 @@ game itself. Those are in Visual.js
 			`            <div id='color3' style=\"background: ${color3}\"></div>\n` +
 			`            <div id='color4' style=\"background: ${color4}\"></div>\n` +
 			`            <div id='color5' style=\"background: ${color5}\"></div>\n` +
+			`            <div id='color6' style=\"background: ${color6}\"></div>\n` +
 			"        </div>\n" +
 			"        <div  id=\"highlightingColorButton\">\n" +
 			`            <span >${that.translate("BUTTON_CLOSE")}</span>\n` +
@@ -1098,8 +1077,9 @@ game itself. Those are in Visual.js
 		document.getElementById("color3").onclick=function (){selectColor("color3");}
 		document.getElementById("color4").onclick=function (){selectColor("color4");}
 		document.getElementById("color5").onclick=function (){selectColor("color5");}
+		document.getElementById("color6").onclick=function (){selectColor("color6");}
 		function selectColor(id){
-			for(let i=1; i<6;i++){
+			for(let i=1; i<7;i++){
 				document.getElementById(`color${i}`).style.border="";
 			}
 			document.getElementById(id).style.border = `2px solid white`;
@@ -1120,7 +1100,6 @@ game itself. Those are in Visual.js
 		document.getElementById('functions').style.display='none';
 		document.getElementById("hint").style.display='none';
 		let children=this.layer.getChildren();
-		console.log(this.layer.getChildren());
 		/*for(let i in children){
 			if(children[i].getClassName()==="Text"){
 				children[i].draggable(true);
@@ -1138,7 +1117,6 @@ game itself. Those are in Visual.js
 		document.getElementById('functions').style.display='';
 		document.getElementById("hint").style.display='';
 		let children=this.layer.getChildren();
-		console.log(this.layer.getChildren());
 		for(let i in children){
 			if(children[i].getClassName()==="Text"){
 				children[i].draggable(false);
@@ -1163,7 +1141,7 @@ game itself. Those are in Visual.js
 		window.setTimeout(function(){ // set URL for download button after image rendering
 			document.getElementById('downloadLink').href=document.getElementById('overlay').getElementsByTagName('img')[0].src;
 		},10)
-
+		console.log(text);
 		navigator.clipboard.writeText(text).then(function() {
 
 		  }, function(err) {
