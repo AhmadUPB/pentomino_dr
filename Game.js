@@ -492,13 +492,26 @@ class Game{
 
 	}
 
-	getRectangleStateDR(width,height,theRectangle){
+	getRectangleStateDR(){
 		let out='';
 		let layerChildren = this.pd.ui.DRlayerShapes.getChildren();
+		// find the konva transformers of the rectangles to assign each rectangle its actual width and height
+		// the actual width and height of rectangles are those of the transformer
+		let transformers=[];
+		let index=0;
+		for(let i in layerChildren){
+			if(layerChildren[i].getClassName()==="Transformer"){
+				//add only rectangle transformers
+				if(layerChildren[i].nodes()[0].getClassName()==="Rect")transformers.push(layerChildren[i]);
+			}
+		}
 		for(let i in layerChildren){
 			if(layerChildren[i].getClassName()==="Rect"){
-				let findWidth=width&&theRectangle===layerChildren[i]?width:layerChildren[i].width();
-				let findHeight=width&&theRectangle===layerChildren[i]?height:layerChildren[i].height();
+				console.log(transformers[index].getClassName());
+				let findWidth=transformers[index].width();
+				let findHeight=transformers[index].height();
+				index++;
+
 				out+="!"+"_"+parseFloat(layerChildren[i].x()*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].y()*100/window.innerWidth)+"_"+layerChildren[i].stroke()+"_"+parseFloat(findWidth*100/window.innerWidth)+"_"+parseFloat(findHeight*100/window.innerWidth);
 			}
 		}
@@ -899,11 +912,11 @@ class Game{
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("type="+"postTextStateDR"+"&state="+this.getTextStateDR());
 	}
-	postRectangleStateDR(width,height,theRectangle){
+	postRectangleStateDR(){
 		let xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send("type="+"postRectangleStateDR"+"&state="+this.getRectangleStateDR(width,height,theRectangle));
+		xhttp.send("type="+"postRectangleStateDR"+"&state="+this.getRectangleStateDR());
 	}
 	postArrowStateDR(){
 		let xhttp = new XMLHttpRequest();

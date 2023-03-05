@@ -632,6 +632,7 @@ game itself. Those are in Visual.js
 	// add rectangle to Document Room for spatially ordering
 	addRectangleDR(x,y,stroke,width,height,isNew){
 		if(this.documentRoomOpened && this.selectModeActiveDR && isNew)return;
+		// calculate where to add new rectangle per default and consider scrolling state too
 		let PosX = window.innerWidth/20;
 		let PosY = window.innerWidth/20;
 		let scrollContainer;
@@ -709,14 +710,14 @@ game itself. Those are in Visual.js
 			//if(!where)this.pd.game.storeTextStatePR();
 			tr.show();
 			rectangle.draggable(true);
-			this.pd.game.postRectangleStateDR(tr.width(),tr.height(),rectangle);
+			this.pd.game.postRectangleStateDR();
 		});
 		rectangle.on('transformstart', () => {
 			draggingOrTransforming=true;
 		});
 		rectangle.on('transformend', () => {
 
-			this.pd.game.postRectangleStateDR(tr.width(),tr.height(),rectangle);
+			this.pd.game.postRectangleStateDR();
 
 		});
 
