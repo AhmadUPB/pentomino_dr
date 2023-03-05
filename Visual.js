@@ -701,16 +701,19 @@ class Visual{
 			that.pd.ui.stage.clearCache()
 			that.pd.ui.stage.destroy();
 		}
+
 		// based on https://stackoverflow.com/questions/5489946/how-to-wait-for-the-end-of-resize-event-and-only-then-perform-an-action
 		let toDo1;
-		function resizeAction(){
-			if(that.pd.ui.editingText) return;// avoid resizing the konva stage when editing text in Annotation mode.
-			                                  // this is meant when window size changes after appearing the keyboard on touch devices and the window size changes
-			                                  // the keyboard appear when the text is double clicked to edit it
+
+		//resize the stage in Play Room when window size changes
+		function resizeAction() {
+			if (that.pd.ui.editingText) return;// avoid resizing the konva stage when editing text in Annotation mode.
+											   // this is meant when window size changes after appearing the keyboard on touch devices and the window size changes
+											   // the keyboard appear when the text is double clicked to edit it
 			that.pd.ui.layer.destroy();
 			that.pd.ui.stage.destroy();
-			that.pd.ui.stageWidth=window.innerWidth-(7*window.innerWidth/100); //7: function-area-width, tray-height
-			that.pd.ui.stageHeight=window.innerHeight-(7*window.innerHeight/100);
+			that.pd.ui.stageWidth = window.innerWidth - (7 * window.innerWidth / 100); //7: function-area-width, tray-height
+			that.pd.ui.stageHeight = window.innerHeight - (7 * window.innerHeight / 100);
 			that.pd.ui.stage = new Konva.Stage({
 				container: 'stageContainerPR',
 				width: that.pd.ui.stageWidth,
@@ -718,48 +721,47 @@ class Visual{
 			});
 			that.pd.ui.layer = new Konva.Layer();
 			that.pd.ui.stage.add(that.pd.ui.layer);
-
-			var storage=window.localStorage;
+			var storage = window.localStorage;
 			var TextStatePR = storage.getItem("TextStatePR");
 			that.pd.game.setTextStatePR(TextStatePR);
-			if(that.pd.visual.annotationMode){
+			if (that.pd.visual.annotationMode) {
 				clearTimeout(toDo1);
-				toDo1 = setTimeout(function (){  // on touch devices make the texts draggable again after editing them
-				let children=that.pd.ui.layer.getChildren();
-				for(let i in children){
-					if(children[i].getClassName()==="Text"){
-						children[i].draggable(true);
+				toDo1 = setTimeout(function () {  // on touch devices make the texts draggable again after editing them
+					let children = that.pd.ui.layer.getChildren();
+					for (let i in children) {
+						if (children[i].getClassName() === "Text") {
+							children[i].draggable(true);
+						}
 					}
-				}},100);}
-
-
+				}, 100);
+			}
 		}
 
 		//resize the document room to fit the new window size
-		function resizeAction2(){
-			if(that.pd.ui.documentRoomOpened ) {
-				that.pd.ui.DRstage.width((window.innerWidth-(0/100*window.innerWidth))+ that.pd.ui.PADDING*2);
-				that.pd.ui.DRstage.height(window.innerHeight-(6/100*window.innerWidth)+that.pd.ui.PADDING*2);
-				if(that.pd.ui.DRStageHeight/100*window.innerWidth<window.innerHeight-(6/100*window.innerWidth)-22) that.pd.ui.DRStageHeightPX= window.innerHeight-(6/100*window.innerWidth)-22
-				else that.pd.ui.DRStageHeightPX=that.pd.ui.DRStageHeight/100*window.innerWidth;
+		function resizeAction2() {
+			if (that.pd.ui.documentRoomOpened) {
+				that.pd.ui.DRstage.width((window.innerWidth - (0 / 100 * window.innerWidth)) + that.pd.ui.PADDING * 2);
+				that.pd.ui.DRstage.height(window.innerHeight - (6 / 100 * window.innerWidth) + that.pd.ui.PADDING * 2);
+				if (that.pd.ui.DRStageHeight / 100 * window.innerWidth < window.innerHeight - (6 / 100 * window.innerWidth) - 22) that.pd.ui.DRStageHeightPX = window.innerHeight - (6 / 100 * window.innerWidth) - 22
+				else that.pd.ui.DRStageHeightPX = that.pd.ui.DRStageHeight / 100 * window.innerWidth;
 				let largeContainer = document.getElementById('large-container')
-				largeContainer.style.width=(window.innerWidth-22)+"px";
-				largeContainer.style.height=that.pd.ui.DRStageHeightPX+"px";
+				largeContainer.style.width = (window.innerWidth - 22) + "px";
+				largeContainer.style.height = that.pd.ui.DRStageHeightPX + "px";
 				let scrollContainer = document.getElementById('scroll-container')
-				let scrollContainerHeight=window.innerHeight-(6/100*window.innerWidth)-22;
-				scrollContainer.style.height= scrollContainerHeight+"px";
-				that.pd.ui.DRstage.scaleX(window.innerWidth/that.pd.ui.windowWidth);
-				that.pd.ui.DRstage.scaleY(window.innerWidth/that.pd.ui.windowWidth);
+				let scrollContainerHeight = window.innerHeight - (6 / 100 * window.innerWidth) - 22;
+				scrollContainer.style.height = scrollContainerHeight + "px";
+				that.pd.ui.DRstage.scaleX(window.innerWidth / that.pd.ui.windowWidth);
+				that.pd.ui.DRstage.scaleY(window.innerWidth / that.pd.ui.windowWidth);
 			}
 		}
-		function resizeAction3(){
-			if(!that.pd.ui.documentRoomOpened)that.pd.ui.windowWidth=window.innerWidth;
+		// update the stored window size when window size changes while the Document Room closed
+		// to avoid wrong resizing of Document Room
+		function resizeAction3() {
+			if (!that.pd.ui.documentRoomOpened) that.pd.ui.windowWidth = window.innerWidth;
 		}
-
 		let toDo2;
 		let toDo3;
-		window.onresize = function(){
-
+		window.onresize = function () {
 			clearTimeout(toDo2);
 			clearTimeout(toDo3);
 			toDo2 = setTimeout(resizeAction, 50);
