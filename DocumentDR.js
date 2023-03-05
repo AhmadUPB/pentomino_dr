@@ -1,4 +1,5 @@
 // methods for drawing board and pieces are based heavily on similar methods in the Visual.js class
+// this class represents a document in the Document Room and contains mainly methods for drawing them
 class DocumentDR {
     static cashedFrame;
     static cashedTray;
@@ -10,15 +11,8 @@ class DocumentDR {
     static selectedDocuments= {};
     static allSelected;
 
-    constructor(PD, documentAttributes,scrollContainer) {
-
+    constructor(PD, documentAttributes, scrollContainer) {
         this.pd = PD;
-        //this.position={x:0,y:0};
-        //this.name="";
-        //this.state="";
-        //this.id="";
-        //this.exersiceText="";
-        //this.Painiting="";
         this.boardDimensions = [];
         this.boardLayout = [];
         this.boardX = 0;
@@ -28,7 +22,6 @@ class DocumentDR {
         this.id = documentAttributes[0];
         this.x = documentAttributes[1];
         this.y = documentAttributes[2];
-        //this.boardName = documentAttributes[3];
         this.pieceState1 = documentAttributes[4];
         this.pieceState2 = documentAttributes[5];
         this.boardstate = documentAttributes[6];
@@ -45,39 +38,28 @@ class DocumentDR {
         this.drawTopFrame();
         let documentWidth = this.pd.visual.cssConf('document-width');
         let documentHeight = this.pd.visual.cssConf('document-height');
-        //(documentWidth + 2.5): width of one document and the distance to the next document.
-        // (Math.floor(95 / (documentWidth + 2.5))): How many documents fit in the window width taking the margin in account.
-        //(100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2 : the end of the left margin.
-        /**if ((this.pd.ui.DRDocumentDefaultX + 2 * documentWidth + 2.5) >= 100 - (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2) {
-            this.pd.ui.DRDocumentDefaultX = (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2;
-            this.pd.ui.DRDocumentDefaultY += documentHeight + 2.5;
+        // if document was not repositioned before then update the coordinates for next none-repositioned documents
+        if (this.x === 'none') {
+            let numberDocumentsInRow = (Math.floor(95 / (documentWidth + 2.5)));
+            let startOfLeftMargin = (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2
+            if ((this.pd.ui.DRDocumentDefaultX - documentWidth - 2.5) < startOfLeftMargin) {
+                this.pd.ui.DRDocumentDefaultX = startOfLeftMargin + (numberDocumentsInRow - 1) * (documentWidth + 2.5);
+                this.pd.ui.DRDocumentDefaultY -= documentHeight + 2.5;
 
-        } else {
-            this.pd.ui.DRDocumentDefaultX += documentWidth + 2.5;
-        }**/
-        if(this.x==='none'){
-        let numberDocumentsInRow = (Math.floor(95 / (documentWidth + 2.5)));
-        let startOfLeftMargin = (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2
-        if ((this.pd.ui.DRDocumentDefaultX - documentWidth - 2.5) < startOfLeftMargin) {
-            this.pd.ui.DRDocumentDefaultX = startOfLeftMargin + (numberDocumentsInRow-1) * (documentWidth + 2.5);
-            this.pd.ui.DRDocumentDefaultY -= documentHeight + 2.5;
+            } else {
+                this.pd.ui.DRDocumentDefaultX -= documentWidth + 2.5;
+            }
+        }
 
-        } else {
-            this.pd.ui.DRDocumentDefaultX -= documentWidth + 2.5;
-        }}
         let that = this;
-        /*this.group.on('pointerclick',function(){
-            that.group.scale({x: 2, y: 2});
-            setTimeout(function() {that.group.scale({x: 1, y: 1});},5000);
-        });*/
-        //this.group.cache();
-        this.group.on("pointerdblclick",function () {
-            that.pd.game.showQRCode("playDocument",that.id);
+        // Continue playing the document on a double pointer click
+        this.group.on("pointerdblclick", function () {
+            that.pd.game.showQRCode("playDocument", that.id);
 
         });
-        //click event
+        //click event mainly for selecting process of documents in Select Mode of the Document Room
         this.group.on("pointerclick", function () {
-            if(that.selectModeActive) {
+            if (that.selectModeActive) {
                 if (that.selected) {
                     that.selected = false;
                     that.checkMark.visible(false);
@@ -87,17 +69,14 @@ class DocumentDR {
                     that.checkMark.visible(true);
                     DocumentDR.selectedDocuments[that.id] = that;
                 }
-
+                // depending on the number of selected document activate or deactivate send and delete buttons
                 if (Object.keys(DocumentDR.selectedDocuments).length === 1) {
-                    //console.log("Object.keys(DocumentDR.selectedDocuments).length", Object.keys(DocumentDR.selectedDocuments).length)
                     pd.ui.activateButtonDR("#DRdelete_button");
                     pd.ui.activateButtonDR("#DRsend_button");
-                } else if(Object.keys(DocumentDR.selectedDocuments).length > 1){
+                } else if (Object.keys(DocumentDR.selectedDocuments).length > 1) {
                     pd.ui.activateButtonDR("#DRdelete_button");
                     pd.ui.deactivateButtonDR("#DRsend_button");
-                }
-                else{
-                    //console.log("Object.keys(DocumentDR.selectedDocuments).length", Object.keys(DocumentDR.selectedDocuments).length)
+                } else {
                     pd.ui.deactivateButtonDR("#DRdelete_button");
                     pd.ui.deactivateButtonDR("#DRsend_button");
                 }
@@ -112,34 +91,31 @@ class DocumentDR {
         let Xpos;
         let Ypos;
 
-
         that.group.on("dragend", function () {
             //console.log("dragend")
             that.isHeld = false;
             dragOnMove = false;
             clearTimeout(that.activeHoldTimeoutID);
             that.group.scale({x: 1, y: 1});
-            that.pd.game.updateDocumentCoordinates(that.id,that.group.x(),that.group.y());
+            that.pd.game.updateDocumentCoordinates(that.id, that.group.x(), that.group.y());
             that.group.moveTo(that.pd.ui.DRlayerDocuments1);
 
 
         });
-
-        scrollContainer.addEventListener('scroll', ()=>{
+        scrollContainer.addEventListener('scroll', () => {
             that.isHeld = false;
             clearTimeout(that.activeHoldTimeoutID);
         });
-        //TODO:test excluding and including 'pointercancel', 'pointerout', 'pointerleave',
         let mousePos;
-        ['pointerdown', 'touchstart', 'pointermove','pointerout',  'pointerup'].forEach(type => {
+        ['pointerdown', 'touchstart', 'pointermove', 'pointerout', 'pointerup'].forEach(type => {
             this.documentTopFrame.on(type, function () {
                 switch (type) {
                     case 'pointerdown':
                     case 'touchstart' : {
                         //console.log(type)
                         mousePos = pd.ui.DRstage.getPointerPosition();
-                        Xpos=mousePos.x;
-                        Ypos=mousePos.y;
+                        Xpos = mousePos.x;
+                        Ypos = mousePos.y;
                         that.group.scale({x: 1, y: 1});
                         dragOnMove = false;
                         that.isHeld = true;
@@ -152,25 +128,25 @@ class DocumentDR {
                         }, 600);
                         break;
                     }
-
                     case 'pointermove' : {
                         //console.log("pointermove")
 
-                        if(that.isHeld){
+                        if (that.isHeld) {
                             mousePos = pd.ui.DRstage.getPointerPosition();
-                            let z = Math. sqrt((Xpos-mousePos.x)**2+(Ypos-mousePos.y)**2)
+                            let z = Math.sqrt((Xpos - mousePos.x) ** 2 + (Ypos - mousePos.y) ** 2)
                             //console.log(z)
-                        if (dragOnMove && z<5){ that.group.startDrag();
-                            that.group.moveTo(that.pd.ui.DRlayerDocumentsDragging);
-                            that.group.moveToBottom();
-                            //console.log("dragging started")
+                            if (dragOnMove && z < 5) {
+                                that.group.startDrag();
+                                that.group.moveTo(that.pd.ui.DRlayerDocumentsDragging);
+                                that.group.moveToBottom();
+                                //console.log("dragging started")
+                            } else if (z > 5) {
+                                that.isHeld = false;
+                                dragOnMove = false;
+                                clearTimeout(that.activeHoldTimeoutID);
+                                that.group.scale({x: 1, y: 1});
+                            }
                         }
-                        else if(z>5){
-                            that.isHeld = false;
-                            dragOnMove = false;
-                            clearTimeout(that.activeHoldTimeoutID);
-                            that.group.scale({x: 1, y: 1});
-                        }}
                         break;
                     }
                     default: {
@@ -185,10 +161,8 @@ class DocumentDR {
                 }
             });
         });
-
-
     }
-
+    //select or deselect all documents
     static selectAll(){
         let documents = pd.game.documents;
         if(pd.ui.selectModeActiveDR && Object.keys(documents).length > 0){
@@ -216,12 +190,13 @@ class DocumentDR {
         }}
     }
 
+    //performance tip: create cached version of elements that are drawn repeatedly on documents in this method
+    //later in other methods lone the cached copies when drawing the documents
     static createCashedElements(pd) {
         let documentWidth = pd.visual.cssConf('document-width');
         let documentHeight = pd.visual.cssConf('document-height');
         let that = this;
         DocumentDR.widthOfOneFieldSquare = documentWidth / pd.game.width;
-        //let group = new Konva.Group({});
         let documentFrame = new Konva.Rect({
 
             width: documentWidth / 100 * window.innerWidth,
@@ -244,7 +219,7 @@ class DocumentDR {
             //preventDefault: false,
         });
 
-        let  boardField = new Konva.Rect({
+        let boardField = new Konva.Rect({
             width: DocumentDR.widthOfOneFieldSquare / 100 * window.innerWidth,
             height: DocumentDR.widthOfOneFieldSquare / 100 * window.innerWidth,
             fill: pd.visual.cssConf('board-color'),
@@ -252,7 +227,6 @@ class DocumentDR {
             perfectDrawEnabled: false,
             shadowForStrokeEnabled: false,
             //preventDefault: false,
-
         });
 
         let checkBox = new Konva.Rect({
@@ -268,10 +242,6 @@ class DocumentDR {
 
         });
 
-
-
-
-
         documentTray.cache();
         documentFrame.cache();
         boardField.cache();
@@ -281,10 +251,7 @@ class DocumentDR {
         DocumentDR.cashedFrame = documentFrame;
         DocumentDR.cashedBoardField = boardField;
 
-
-
-
-
+        // create helpPieceObjects to help by drawing the pieces of document
         DocumentDR.helpPieceObjects["F"] = new Piece("F");
         DocumentDR.helpPieceObjects["I"] = new Piece("I");
         DocumentDR.helpPieceObjects["L"] = new Piece("L");
@@ -300,17 +267,17 @@ class DocumentDR {
 
     };
 
-    createGroup(){
+    // each document is basically a group of konva nodes
+    createGroup() {
         let layer = this.pd.ui.DRlayerDocuments1;
-
-        let x,y ;
-        if(this.x==='none'){
-            x=this.pd.ui.DRDocumentDefaultX / 100 * window.innerWidth;
-            y=this.pd.ui.DRDocumentDefaultY / 100 * window.innerWidth;
-        }
-        else{
-            x=this.x*window.innerWidth/100;
-            y=this.y*window.innerWidth/100;
+        // depending on whether the document was repositioned before or not, decide to give default postion or not
+        let x, y;
+        if (this.x === 'none') {
+            x = this.pd.ui.DRDocumentDefaultX / 100 * window.innerWidth;
+            y = this.pd.ui.DRDocumentDefaultY / 100 * window.innerWidth;
+        } else {
+            x = this.x * window.innerWidth / 100;
+            y = this.y * window.innerWidth / 100;
         }
         let group = new Konva.Group({
             x: x,
@@ -318,14 +285,11 @@ class DocumentDR {
         });
         this.group = group;
         layer.add(group);
-
     }
 
     drawFrameAndTray() {
         this.frame = DocumentDR.cashedFrame.clone();
         let tray = DocumentDR.cashedTray.clone()
-        //this.frame.cache();
-        //tray.cache();
         this.group.add(this.frame, tray)
     };
 
@@ -333,38 +297,25 @@ class DocumentDR {
     drawBoard() {
         let boardHighlighting = this.boardstate.split("_");
         let index = 0;
-        let layer;
-        switch (this.pd.ui.DRlayerTurn) {
-            case 1: {
-                layer = this.pd.ui.DRlayerDocuments1;
-                break;
-            }
-            case 2: {
-                layer = this.pd.ui.DRlayerDocuments2;
-                break;
-            }
-        }
+        let layer= this.pd.ui.DRlayerDocuments1;
         for (var row = 0; row < this.pd.game.height; row++) { //2x height to allow for portrait usage
             for (var col = 0; col < this.pd.game.width; col++) {
 
                 var isBoard = true;
                 var isBlocked = false;
 
-                //indicate where on the field the board is
-
                 if (col < this.boardX) isBoard = false;
                 if (col >= this.boardX + this.boardDimensions[0]) isBoard = false;
                 if (row < this.boardY) isBoard = false;
                 if (row >= this.boardY + this.boardDimensions[1]) isBoard = false;
 
-
                 if (isBoard) {
                     index++;
                     var bR = row - this.boardY;
                     var bC = col - this.boardX;
-
                     if (this.boardLayout[bR][bC] === 0) isBlocked = true;
                 }
+
                 if (isBoard && !isBlocked) {
                     let color = "";
 
@@ -373,10 +324,10 @@ class DocumentDR {
                     }
                     color = color ? color : pd.visual.cssConf('board-grid-color');
                     let boardField = DocumentDR.cashedBoardField.clone({
-                        x:  (col * DocumentDR.widthOfOneFieldSquare) / 100 * window.innerWidth,
-                        y:  (row * DocumentDR.widthOfOneFieldSquare + this.pd.visual.cssInt('document-tray-height')) / 100 * window.innerWidth,
+                        x: (col * DocumentDR.widthOfOneFieldSquare) / 100 * window.innerWidth,
+                        y: (row * DocumentDR.widthOfOneFieldSquare + this.pd.visual.cssInt('document-tray-height')) / 100 * window.innerWidth,
                         stroke: color,
-                        strokeWidth:1,
+                        strokeWidth: 1,
                     });
                     //boardField.cache();
                     this.group.add(boardField);
@@ -384,24 +335,24 @@ class DocumentDR {
                     if (boardHighlighting[0] !== "none" && boardHighlighting[index].includes("#")) {
                         this.highlightedFields.push(boardField);
                     }
-
-
                 }
 
             }
         }
+        // after finishing drawing the board move all the highlighted postions to top to not be covered by other
+        // not highlighted positions
         while (this.highlightedFields.length !== 0) this.highlightedFields.pop().moveToTop();
     }
 
     drawPieces() {
-
         let stateArray1 = this.pieceState1.split('_');
         let stateArray2;
         if (this.pieceState2 && this.pieceState2 !== "none") {
             this.pieceState2 = this.pieceState2.replaceAll('.', ',');
             stateArray2 = this.pieceState2.split('_');
         }
-
+        // similar to the methods of drawing in Visual class, load the state of the piece rotation first
+        // extract the information about highlighting and freezing state too and bypass it to drawPiece()
         for (let i in stateArray1) {
             let pieceData = stateArray1[i];
             if (!pieceData) continue;
@@ -428,7 +379,7 @@ class DocumentDR {
         }
     }
 
-
+    // implemented similar to method updatePiece() from the Visualclass
     drawPiece(p, piece, frozen, highlightingColor) {
         for (let i = 0; i < piece.bitMap.length; i++) {
 
@@ -442,7 +393,7 @@ class DocumentDR {
                     if (highlightingColor && highlightingColor !== 'none') strokeColor = this.pd.visual.cssConf('highlighting-' + highlightingColor);
                     let x = ((j + (piece.trayPosition * 3.3)) * 0.65 * DocumentDR.widthOfOneFieldSquare) / 100 * window.innerWidth;
                     let y = (((i * 0.65) * DocumentDR.widthOfOneFieldSquare)) / 100 * window.innerWidth;
-
+                    // if the piece is on the tray then draw it there
                     if (p == "T") {
                         let pieceFeld = new Konva.Rect({
                             x: x,
@@ -462,7 +413,6 @@ class DocumentDR {
                         if (frozen === 'f') {
                             this.drawFreezingPic(x, y, widthAndHeight, true);
                         }
-
 
                     } else {
                         if (j + parseInt(p[0]) - 1 > this.pd.game.width || i + parseInt(p[1]) - 1 > this.pd.game.height || j + parseInt(p[0]) - 2 < 0) continue; //ignore part of pieces or full pieces out of screenshot
@@ -487,29 +437,28 @@ class DocumentDR {
                         }
                     }
                 }
-
-
             }
         }
     }
 
+    // Draw snowflake  on frozen pieces
     drawFreezingPic(x, y, widthAndHeight, Tray) {
         //based on: //https://konvajs.org/docs/shapes/Image.html
-
         let snowflake = DocumentDR.cashedSnowflake.clone({
             x: x,
             y: y,
             width: widthAndHeight,
             height: widthAndHeight,
         });
-
         this.group.add(snowflake);
         if (Tray) {
             snowflake.scale({x: 0.65, y: 0.65});
         }
     }
 
+    //draw the notes of the document
     drawTexts() {
+        // text size and position must be relative to the document width
         let documentWidth = this.pd.visual.cssConf('document-width');
         if (this.texts !== "none") {
             let texts = this.texts.split('!');
@@ -520,37 +469,39 @@ class DocumentDR {
                     x: text[1] / 100 * documentWidth / 100 * window.innerWidth,
                     y: (text[2] / 100 * documentWidth + this.pd.visual.cssInt('document-tray-height')) / 100 * window.innerWidth,
                     text: text[0],
-                    fontSize: 5/(100*documentWidth) * window.innerWidth,
+                    fontSize: 5 / (100 * documentWidth) * window.innerWidth,
                     fontFamily: 'Calibri',
                     fill: text[3],
-                    width: text[4]/(100*(documentWidth*0.35)) * window.innerWidth,
-                    //width: text[4]/(100*4*documentWidth) * window.innerWidth,
+                    width: text[4] / 100 * documentWidth / 100 * window.innerWidth,
+                    //width: text[4]/(100*(documentWidth*0.35)) * window.innerWidth,
                 });
                 this.group.add(textNode);
             }
-
         }
     }
-    drawCheckBox(){
+
+    // draw chack box, needed when select mode active, so hide it first ;)
+    drawCheckBox() {
         let documentWidth = pd.visual.cssConf('document-width');
         let widthOfOneFieldSquare = documentWidth / pd.game.width;
         let checkbox = DocumentDR.cashedCheckbox.clone({
-            x:  1/ 100 * window.innerWidth,
-            y:  1/100 * window.innerWidth,
-            visible:false,
+            x: 1 / 100 * window.innerWidth,
+            y: 1 / 100 * window.innerWidth,
+            visible: false,
         });
         let checkMark = DocumentDR.cashedCheckMark.clone({
-            x:  1.1/ 100 * window.innerWidth,
-            y:  1.1/100 * window.innerWidth,
+            x: 1.1 / 100 * window.innerWidth,
+            y: 1.1 / 100 * window.innerWidth,
             width: 1.5 * widthOfOneFieldSquare / 100 * window.innerWidth,
             height: 1.5 * widthOfOneFieldSquare / 100 * window.innerWidth,
             visible: false,
         });
-        this.checkBox=checkbox;
-        this.checkMark=checkMark;
-        this.group.add(checkbox,checkMark);
+        this.checkBox = checkbox;
+        this.checkMark = checkMark;
+        this.group.add(checkbox, checkMark);
     }
 
+    // draw a frame on the top to drag document properly
     drawTopFrame() {
         let documentWidth = pd.visual.cssConf('document-width');
         let documentHeight = pd.visual.cssConf('document-height');
@@ -566,11 +517,11 @@ class DocumentDR {
             preventDefault: false,
         });
 
-
         this.documentTopFrame = documentTopFrame;
         this.group.add(documentTopFrame)
     };
 
+    // board layout help by drawing the board, this is based on old methods from other classes
     computeBoardLayout() {
         var line = this.boardLayoutText;
         var lines = line.split(' ');
@@ -604,13 +555,14 @@ class DocumentDR {
 
     }
 
-    activateSelectMode(){
-        this.selectModeActive=true;
+    activateSelectMode() {
+        this.selectModeActive = true;
         this.checkBox.visible(true);
 
     }
-    deactivateSelectMode(){
-        this.selectModeActive=false;
+
+    deactivateSelectMode() {
+        this.selectModeActive = false;
         this.selected = false;
         this.checkBox.visible(false);
         this.checkMark.visible(false);
