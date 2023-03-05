@@ -618,512 +618,532 @@ game itself. Those are in Visual.js
         });
 
     }
-	// add rectangle to Document Room(for both from old sessions or new one)
-	addRectangleDR(x,y,stroke,width,height,isNew){
-		if(this.documentRoomOpened && this.selectModeActiveDR && isNew)return;
-		// calculate where to add new rectangle per default and consider scrolling state too
-		let PosX = window.innerWidth/20;
-		let PosY = window.innerWidth/20;
-		let scrollContainer;
-			let stageDR=pd.ui.DRstage;
-			scrollContainer = document.getElementById("scroll-container");
-			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
-			if(dy>0)PosY+=Math.abs(dy)+500;
-			else PosY+=500-Math.abs(dy);
 
-		let rectangle = new Konva.Rect({
-			x: x?x:PosX,
-			y: y?y:PosY,
-			stroke: stroke?stroke:"#FFF",
-			strokeWidth: Math.ceil(0.35/100*window.innerWidth),
-			width: width?width:15/100*window.innerWidth,
-			height: height?height:15/100*window.innerWidth,
-			preventDefault: false,
-		});
-
-			this.DRlayerShapes.add(rectangle);
-		let tr = new Konva.Transformer({
-			node: rectangle,
-			rotateEnabled: false,
-		});
-
-
-		let draggingOrTransforming=false;
-
-			this.DRlayerShapes.add(tr);
-		tr.hide();
-		if(isNew) {
-			//if(!where)this.pd.game.storeTextStatePR();
-			this.pd.game.postRectangleStateDR();
-		} //avoid open loop when text state is reconstructed when game is opened
-		rectangle.on('pointerclick', () => {
-			if(this.pd.visual.eraserActive){
-				rectangle.destroy();
-				tr.destroy();
-				pd.game.postRectangleStateDR();
-				return;
-			}
-			else if(this.pd.visual.highlightActive){
-				let color=this.pd.visual.highlightColor?this.pd.visual.cssConf("highlighting-"+this.pd.visual.highlightColor)+"":this.pd.visual.cssConf("highlighting-color1")+"";
-				rectangle.stroke(color);
-				pd.game.postRectangleStateDR();
-				return;
-			}
-			setTimeout(()=>{tr.show();
-				rectangle.draggable(true);
-
-					scrollContainer.style.overflow="hidden"; // prevent scrolling while dragging in Document Room
-
-			},10);
-			draggingOrTransforming=true;
-			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
-			function  handleOutsideClick(){
-				if(!draggingOrTransforming) {
-					tr.hide()
-					rectangle.draggable(false);
-					window.removeEventListener('click', handleOutsideClick);
-
-						scrollContainer.style.overflow="auto";
-						scrollContainer.style.overflowX="hidden";
-
-				}
-				draggingOrTransforming=false;
-			}
-		});
-
-		rectangle.on('dragstart', () => {
-			draggingOrTransforming=true;
-		});
-		rectangle.on('dragend', () => {
-
-			//if(!where)this.pd.game.storeTextStatePR();
-			tr.show();
-			rectangle.draggable(true);
-			this.pd.game.postRectangleStateDR();
-		});
-		rectangle.on('transformstart', () => {
-			draggingOrTransforming=true;
-		});
-		rectangle.on('transformend', () => {
-
-			this.pd.game.postRectangleStateDR();
-
-		});
-
-	}
-
-
-    // based on https://konvajs.org/docs/sandbox/Editable_Text.html
-	addText(text,x,y,fill,width,where){
-		if(this.documentRoomOpened && this.selectModeActiveDR)return;
-		let PosX = window.innerWidth/20;
-		let PosY = window.innerWidth/20;
-		let scrollContainer;
-		if(where) {
-			let stageDR=pd.ui.DRstage;
-			scrollContainer = document.getElementById("scroll-container");
-			let dy = scrollContainer.scrollTop - pd.ui.PADDING;
-			if(dy>0)PosY+=Math.abs(dy)+500;
-			else PosY+=500-Math.abs(dy);
-		}
-		let newText= this.translate("NEW_TEXT");
-
-		let textNode = new Konva.Text({
-			text: text?text:newText,
-			x: x?x:PosX,
-			y: y?y:PosY,
-			fontSize: 1.5/100 * window.innerWidth,
-			fill: fill?fill:where?"#FFF":"#000",
-			width: width?width:200/(100*10) * window.innerWidth, //make width relative to the window size
-			preventDefault: false
-		});
-
-		if(!where)
-			this.layer.add(textNode);
-		else
-			this.DRlayerLabels.add(textNode);
-
-		let tr = new Konva.Transformer({
-			node: textNode,
-			enabledAnchors: ['middle-left', 'middle-right'],
-			rotateEnabled: false,
-			// set minimum width of text
-			boundBoxFunc: function (oldBox, newBox) {
-				newBox.width = Math.max(30, newBox.width);
-				return newBox;
-			},
-		});
-
-		textNode.on('transform', function () {
-			// reset scale, so only with is changing by transformer
-			textNode.setAttrs({
-				width: textNode.width() * textNode.scaleX(),
-				scaleX: 1,
-			});
-		});
-		let draggingOrTransforming=false;
-		if(!where)
-			this.layer.add(tr);
-		else
-			this.DRlayerLabels.add(tr);
+    // add rectangle to Document Room(for both from old sessions or new one)
+    addRectangleDR(x, y, stroke, width, height, isNew) {
+        if (this.documentRoomOpened && this.selectModeActiveDR && isNew) return;
+        // calculate where to add new rectangle per default and consider scrolling state too
+        let PosX = window.innerWidth / 20;
+        let PosY = window.innerWidth / 20;
+        let scrollContainer;
+        let stageDR = pd.ui.DRstage;
+        scrollContainer = document.getElementById("scroll-container");
+        let dy = scrollContainer.scrollTop - pd.ui.PADDING;
+        if (dy > 0) PosY += Math.abs(dy) + 500;
+        else PosY += 500 - Math.abs(dy);
+        let rectangle = new Konva.Rect({
+            x: x ? x : PosX,
+            y: y ? y : PosY,
+            stroke: stroke ? stroke : "#FFF",
+            strokeWidth: Math.ceil(0.35 / 100 * window.innerWidth),
+            width: width ? width : 15 / 100 * window.innerWidth,
+            height: height ? height : 15 / 100 * window.innerWidth,
+            preventDefault: false,
+        });
+        this.DRlayerShapes.add(rectangle);
+        let tr = new Konva.Transformer({
+            node: rectangle,
+            rotateEnabled: false,
+        });
+        let draggingOrTransforming = false;
+        this.DRlayerShapes.add(tr);
         tr.hide();
-		if(!text) {
-			if(!where)this.pd.game.storeTextStatePR();
-			else if (where==="DR")this.pd.game.postTextStateDR();
-		} //avoid open loop when text state is reconstructed when game is opened
-		textNode.on('pointerclick', () => {
-			if(!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened)return;
-			if(this.pd.visual.eraserActive){
-				textNode.destroy();
-				tr.destroy();
-				if(!where)this.pd.game.storeTextStatePR();
-				else if (where==="DR")this.pd.game.postTextStateDR();
-				return;
-			}
-			else if(this.pd.visual.highlightActive){
-				let color=this.pd.visual.highlightColor?this.pd.visual.cssConf("highlighting-"+this.pd.visual.highlightColor)+"":this.pd.visual.cssConf("highlighting-color1")+"";
-				textNode.fill(color);
-				if(!where)this.pd.game.storeTextStatePR();
-				else if (where==="DR")this.pd.game.postTextStateDR();
-				return;
-			}
-			setTimeout(()=>{tr.show();
-				textNode.draggable(true);
-				if(where){
-					scrollContainer.style.overflow="hidden"; // prevent scrolling while dragging in Document Room
-				}
-				},10);
-			draggingOrTransforming=true;
-			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
-			function  handleOutsideClick(){
-				if(!draggingOrTransforming) {
-					tr.hide()
-					textNode.draggable(false);
-					window.removeEventListener('click', handleOutsideClick);
-					if(where){
-					scrollContainer.style.overflow="auto";
-					scrollContainer.style.overflowX="hidden";
-					}
-				}
-				draggingOrTransforming=false;
-			}
-		});
+        if (isNew) {
+            //if(!where)this.pd.game.storeTextStatePR();
+            this.pd.game.postRectangleStateDR();
+        } //avoid open loop when text state is reconstructed when game is opened
+        rectangle.on('pointerclick', () => {
+            if (this.pd.visual.eraserActive) {
+                rectangle.destroy();
+                tr.destroy();
+                pd.game.postRectangleStateDR();
+                return;
+            } else if (this.pd.visual.highlightActive) {
+                let color = this.pd.visual.highlightColor ? this.pd.visual.cssConf("highlighting-" + this.pd.visual.highlightColor) + "" : this.pd.visual.cssConf("highlighting-color1") + "";
+                rectangle.stroke(color);
+                pd.game.postRectangleStateDR();
+                return;
+            }
+            setTimeout(() => {
+                tr.show();
+                rectangle.draggable(true);
 
-		textNode.on('dragstart', () => {
-			draggingOrTransforming=true;
-		});
-		textNode.on('transformstart', () => {
-			draggingOrTransforming=true;
-		});
-		textNode.on('dragend', () => {
+                scrollContainer.style.overflow = "hidden"; // prevent scrolling while dragging in Document Room
 
-			if(!where)this.pd.game.storeTextStatePR();
-			else if (where==="DR")this.pd.game.postTextStateDR();
-			tr.show();
-			textNode.draggable(true);
-		});
-		textNode.on('transformend', () => {
-			if(!where)this.pd.game.storeTextStatePR();
-			else if (where==="DR")this.pd.game.postTextStateDR();
-			console.log(textNode.width());
+            }, 10);
+            draggingOrTransforming = true;
+            setTimeout(() => {
+                window.addEventListener('click', handleOutsideClick);
+            });
+            function handleOutsideClick() {
+                if (!draggingOrTransforming) {
+                    tr.hide()
+                    rectangle.draggable(false);
+                    window.removeEventListener('click', handleOutsideClick);
+                    scrollContainer.style.overflow = "auto";
+                    scrollContainer.style.overflowX = "hidden";
+                }
+                draggingOrTransforming = false;
+            }
+        });
+        rectangle.on('dragstart', () => {
+            draggingOrTransforming = true;
+        });
+        rectangle.on('dragend', () => {
+            tr.show();
+            rectangle.draggable(true);
+            this.pd.game.postRectangleStateDR();
+        });
+        rectangle.on('transformstart', () => {
+            draggingOrTransforming = true;
+        });
+        rectangle.on('transformend', () => {
+            this.pd.game.postRectangleStateDR();
+        });
+    }
 
-		});
+    // add text to Document Room or Play Room(for both from old sessions or new one)
+    // based on https://konvajs.org/docs/sandbox/Editable_Text.html
+    addText(text, x, y, fill, width, where) {
+        if (this.documentRoomOpened && this.selectModeActiveDR) return;
+        // calculate where to add new text per default and consider scrolling state of Document Room too
+        let PosX = window.innerWidth / 20;
+        let PosY = window.innerWidth / 20;
+        let scrollContainer;
+        if (where) {
+            let stageDR = pd.ui.DRstage;
+            scrollContainer = document.getElementById("scroll-container");
+            let dy = scrollContainer.scrollTop - pd.ui.PADDING;
+            if (dy > 0) PosY += Math.abs(dy) + 500;
+            else PosY += 500 - Math.abs(dy);
+        }
+        let newText = this.translate("NEW_TEXT");
+        let textNode = new Konva.Text({
+            text: text ? text : newText,
+            x: x ? x : PosX,
+            y: y ? y : PosY,
+            fontSize: 1.5 / 100 * window.innerWidth,
+            fill: fill ? fill : where ? "#FFF" : "#000",
+            width: width ? width : 200 / (100 * 10) * window.innerWidth, //make width relative to the window size
+            preventDefault: false
+        });
 
-		textNode.on('dblclick dbltap', () => {
-			if(!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened)return;
-			let that = this;
-			that.editingText=true;
-			// hide text node and transformer:
-			textNode.hide();
-			tr.hide();
-			textNode.draggable(false);
+        if (!where)
+            this.layer.add(textNode);
+        else
+            this.DRlayerLabels.add(textNode);
 
-			// create textarea over canvas with absolute position
-			// first we need to find position for textarea
-			// how to find it?
+        let tr = new Konva.Transformer({
+            node: textNode,
+            enabledAnchors: ['middle-left', 'middle-right'],
+            rotateEnabled: false,
+            // set minimum width of text
+            boundBoxFunc: function (oldBox, newBox) {
+                newBox.width = Math.max(30, newBox.width);
+                return newBox;
+            },
+        });
 
-			// at first lets find position of text node relative to the stage:
-			var textPosition = textNode.absolutePosition();
+        textNode.on('transform', function () {
+            // reset scale, so only with is changing by transformer
+            textNode.setAttrs({
+                width: textNode.width() * textNode.scaleX(),
+                scaleX: 1,
+            });
+        });
+        let draggingOrTransforming = false;
+        if (!where)
+            this.layer.add(tr);
+        else
+            this.DRlayerLabels.add(tr);
+        tr.hide();
+        if (!text) {
+            if (!where) this.pd.game.storeTextStatePR();
+            else if (where === "DR") this.pd.game.postTextStateDR();
+        } //avoid open loop when text state is reconstructed when game is opened
+        textNode.on('pointerclick', () => {
+            if (!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened) return;
+            if (this.pd.visual.eraserActive) {
+                textNode.destroy();
+                tr.destroy();
+                if (!where) this.pd.game.storeTextStatePR();
+                else if (where === "DR") this.pd.game.postTextStateDR();
+                return;
+            } else if (this.pd.visual.highlightActive) {
+                let color = this.pd.visual.highlightColor ? this.pd.visual.cssConf("highlighting-" + this.pd.visual.highlightColor) + "" : this.pd.visual.cssConf("highlighting-color1") + "";
+                textNode.fill(color);
+                if (!where) this.pd.game.storeTextStatePR();
+                else if (where === "DR") this.pd.game.postTextStateDR();
+                return;
+            }
+            setTimeout(() => {
+                tr.show();
+                textNode.draggable(true);
+                if (where) {
+                    scrollContainer.style.overflow = "hidden"; // prevent scrolling while dragging in Document Room
+                }
+            }, 10);
+            draggingOrTransforming = true;
+            setTimeout(() => {
+                window.addEventListener('click', handleOutsideClick);
+            });
 
-			// so position of textarea will be the sum of positions above:
-			let stageContainer;
-			let DRScrollPadding=0;
-			let titleAndToolbarHeight=0;
-			if(!where)
-				stageContainer=this.pd.ui.stage.container();
-			else {
-				stageContainer = this.pd.ui.DRstage.container();
-				DRScrollPadding=this.pd.ui.PADDING;
-				titleAndToolbarHeight=(6/100*window.innerWidth);
-			}
-			console.log(stageContainer.offsetLeft, stageContainer.offsetTop);
-			console.log(stageContainer );
-			console.log(textPosition.x, textPosition.y);
-			var areaPosition = {
-				x: stageContainer.offsetLeft + textPosition.x - DRScrollPadding,
-				y: stageContainer.offsetTop + textPosition.y - DRScrollPadding + titleAndToolbarHeight,
-			};
+            function handleOutsideClick() {
+                if (!draggingOrTransforming) {
+                    tr.hide()
+                    textNode.draggable(false);
+                    window.removeEventListener('click', handleOutsideClick);
+                    if (where) {
+                        scrollContainer.style.overflow = "auto";
+                        scrollContainer.style.overflowX = "hidden";
+                    }
+                }
+                draggingOrTransforming = false;
+            }
+        });
 
-			// create textarea and style it
-			var textarea = document.createElement('textarea');
-			document.body.appendChild(textarea);
+        textNode.on('dragstart', () => {
+            draggingOrTransforming = true;
+        });
+        textNode.on('transformstart', () => {
+            draggingOrTransforming = true;
+        });
+        textNode.on('dragend', () => {
 
-			// apply many styles to match text on canvas as close as possible
-			// remember that text rendering on canvas and on the textarea can be different
-			// and sometimes it is hard to make it 100% the same. But we will try...
-			textarea.value = textNode.text();
-			textarea.style.position = 'absolute';
-			textarea.style.top = areaPosition.y + 'px';
-			textarea.style.left = areaPosition.x + 'px';
-			textarea.style.width = textNode.width() - textNode.padding() * 2 + 'px';
-			textarea.style.height =
-				textNode.height() - textNode.padding() * 2 + 5 + 'px';
-			textarea.style.fontSize = textNode.fontSize() + 'px';
-			textarea.style.border = 'none';
-			textarea.style.padding = '0px';
-			textarea.style.margin = '0px';
-			textarea.style.overflow = 'hidden';
-			textarea.style.background = 'none';
-			textarea.style.outline = 'none';
-			textarea.style.resize = 'none';
-			textarea.style.lineHeight = textNode.lineHeight();
-			textarea.style.fontFamily = textNode.fontFamily();
-			textarea.style.transformOrigin = 'left top';
-			textarea.style.textAlign = textNode.align();
-			textarea.style.color = textNode.fill();
-			textarea.style.zIndex=2147483647;
-			let rotation = textNode.rotation();
-			var transform = '';
-			if (rotation) {
-				transform += 'rotateZ(' + rotation + 'deg)';
-			}
+            if (!where) this.pd.game.storeTextStatePR();
+            else if (where === "DR") this.pd.game.postTextStateDR();
+            tr.show();
+            textNode.draggable(true);
+        });
+        textNode.on('transformend', () => {
+            if (!where) this.pd.game.storeTextStatePR();
+            else if (where === "DR") this.pd.game.postTextStateDR();
+            console.log(textNode.width());
 
-			var px = 0;
-			// also we need to slightly move textarea on firefox
-			// because it jumps a bit
-			var isFirefox =
-				navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-			if (isFirefox) {
-				px += 2 + Math.round(textNode.fontSize() / 20);
-			}
-			transform += 'translateY(-' + px + 'px)';
+        });
 
-			textarea.style.transform = transform;
+        textNode.on('dblclick dbltap', () => {
+            if (!this.pd.visual.annotationMode && !this.pd.ui.documentRoomOpened) return;
+            let that = this;
+            that.editingText = true;
+            // hide text node and transformer:
+            textNode.hide();
+            setTimeout(function () {
+                tr.hide();
+            }, 10);
+            textNode.draggable(false);
 
-			// reset height
-			textarea.style.height = 'auto';
-			// after browsers resized it we can set actual value
-			textarea.style.height = textarea.scrollHeight + 3 + 'px';
+            // create textarea over canvas with absolute position
+            // first we need to find position for textarea
+            // how to find it?
 
-			textarea.focus();
+            // at first lets find position of text node relative to the stage:
+            var textPosition = textNode.absolutePosition();
 
-			function removeTextarea() {
-				textarea.parentNode.removeChild(textarea);
-				window.removeEventListener('click', handleOutsideClick);
-				textNode.show();
-				tr.forceUpdate();
-				if(!textNode.text()){textNode.destroy(); tr.destroy();}
-				if(!where)pd.game.storeTextStatePR();
-				else if (where==="DR")pd.game.postTextStateDR();
-				setTimeout(function(){that.editingText=false;},100);
-			}
+            // so position of textarea will be the sum of positions above:
+            let stageContainer;
+            let DRScrollPadding = 0;
+            let titleAndToolbarHeight = 0;
+            if (!where)
+                stageContainer = this.pd.ui.stage.container();
+            else {
+                stageContainer = this.pd.ui.DRstage.container();
+                DRScrollPadding = this.pd.ui.PADDING;
+                titleAndToolbarHeight = (6 / 100 * window.innerWidth);
+            }
+            console.log(stageContainer.offsetLeft, stageContainer.offsetTop);
+            console.log(stageContainer);
+            console.log(textPosition.x, textPosition.y);
+            var areaPosition = {
+                x: stageContainer.offsetLeft + textPosition.x - DRScrollPadding,
+                y: stageContainer.offsetTop + textPosition.y - DRScrollPadding + titleAndToolbarHeight,
+            };
 
-			function setTextareaWidth(newWidth) {
-				if (!newWidth) {
-					// set width for placeholder
-					newWidth = textNode.placeholder.length * textNode.fontSize();
-				}
-				// some extra fixes on different browsers
-				var isSafari = /^((?!chrome|android).)*safari/i.test(
-					navigator.userAgent
-				);
-				var isFirefox =
-					navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-				if (isSafari || isFirefox) {
-					newWidth = Math.ceil(newWidth);
-				}
+            // create textarea and style it
+            var textarea = document.createElement('textarea');
+            document.body.appendChild(textarea);
 
-				var isEdge =
-					document.documentMode || /Edge/.test(navigator.userAgent);
-				if (isEdge) {
-					newWidth += 1;
-				}
-				textarea.style.width = newWidth + 'px';
-			}
+            // apply many styles to match text on canvas as close as possible
+            // remember that text rendering on canvas and on the textarea can be different
+            // and sometimes it is hard to make it 100% the same. But we will try...
+            textarea.value = textNode.text();
+            textarea.style.position = 'absolute';
+            textarea.style.top = areaPosition.y + 'px';
+            textarea.style.left = areaPosition.x + 'px';
+            textarea.style.width = textNode.width() - textNode.padding() * 2 + 'px';
+            textarea.style.height =
+                textNode.height() - textNode.padding() * 2 + 5 + 'px';
+            textarea.style.fontSize = textNode.fontSize() + 'px';
+            textarea.style.border = 'none';
+            textarea.style.padding = '0px';
+            textarea.style.margin = '0px';
+            textarea.style.overflow = 'hidden';
+            textarea.style.background = 'none';
+            textarea.style.outline = 'none';
+            textarea.style.resize = 'none';
+            textarea.style.lineHeight = textNode.lineHeight();
+            textarea.style.fontFamily = textNode.fontFamily();
+            textarea.style.transformOrigin = 'left top';
+            textarea.style.textAlign = textNode.align();
+            textarea.style.color = textNode.fill();
+            textarea.style.zIndex = 2147483647;
+            let rotation = textNode.rotation();
+            var transform = '';
+            if (rotation) {
+                transform += 'rotateZ(' + rotation + 'deg)';
+            }
 
-			textarea.addEventListener('keydown', function (e) {
-				// hide on enter
-				// but don't hide on shift + enter
-				console.log("event!!")
-				if (e.keyCode === 13 && !e.shiftKey) {
-					console.log("event enter!!!")
-					textNode.text(textarea.value);
-					removeTextarea();
-				}
-				// on esc do not set value back to node
-				if (e.keyCode === 27) {
-					removeTextarea();
-				}
-			});
+            var px = 0;
+            // also we need to slightly move textarea on firefox
+            // because it jumps a bit
+            var isFirefox =
+                navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+            if (isFirefox) {
+                px += 2 + Math.round(textNode.fontSize() / 20);
+            }
+            transform += 'translateY(-' + px + 'px)';
 
-			textarea.addEventListener('keydown', function (e) {
-				let scale = textNode.getAbsoluteScale().x;
-				setTextareaWidth(textNode.width() * scale);
-				textarea.style.height = 'auto';
-				textarea.style.height =
-					textarea.scrollHeight + textNode.fontSize() + 'px';
-			});
+            textarea.style.transform = transform;
 
-			function handleOutsideClick(e) {
-				if (e.target !== textarea) {
-					textNode.text(textarea.value);
-					removeTextarea();
-				}
-			}
-			setTimeout(() => { window.addEventListener('click', handleOutsideClick); });
-		});
-	}
-	activateFreezing(){
-		if(!this.pd.visual.freezeActive){
-			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
-			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
-			this.pd.visual.freezeActive=true;
-			document.getElementById('freeze').style.backgroundColor=this.pd.visual.cssConf('activated-button');
-		}
-		else{
-			this.pd.visual.freezeActive=false;
-			document.getElementById('freeze').style.backgroundColor="";
-		}
+            // reset height
+            textarea.style.height = 'auto';
+            // after browsers resized it we can set actual value
+            textarea.style.height = textarea.scrollHeight + 3 + 'px';
 
-	}
+            textarea.focus();
 
-	activateEraser(where){
-		if(!pd.ui.selectModeActiveDR){
-		if(!this.pd.visual.eraserActive){
-			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(where); //unactivate Highlighting actually
-			if(this.pd.visual.freezeActive && !(where==="DR"))this.pd.ui.activateFreezing();
-			this.pd.visual.eraserActive=true;
-			if(where)
-				document.getElementById('DReraser_button').style.backgroundColor=this.pd.visual.cssConf('activated-button');
-			else
-				document.getElementById('eraser').style.backgroundColor=this.pd.visual.cssConf('activated-button');
-		}
-		else{
-			this.pd.visual.eraserActive=false;
-			if(where)
-				document.getElementById('DReraser_button').style.backgroundColor="";
-			else
-				document.getElementById('eraser').style.backgroundColor="";
-		}
-		}
+            function removeTextarea() {
+                textarea.parentNode.removeChild(textarea);
+                window.removeEventListener('click', handleOutsideClick);
+                textNode.show();
+                tr.forceUpdate();
+                if (!textNode.text()) {
+                    textNode.destroy();
+                    tr.destroy();
+                }
+                if (!where) pd.game.storeTextStatePR();
+                else if (where === "DR") pd.game.postTextStateDR();
+                setTimeout(function () {
+                    that.editingText = false;
+                }, 100);
+            }
 
-	}
+            function setTextareaWidth(newWidth) {
+                if (!newWidth) {
+                    // set width for placeholder
+                    newWidth = textNode.placeholder.length * textNode.fontSize();
+                }
+                // some extra fixes on different browsers
+                var isSafari = /^((?!chrome|android).)*safari/i.test(
+                    navigator.userAgent
+                );
+                var isFirefox =
+                    navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+                if (isSafari || isFirefox) {
+                    newWidth = Math.ceil(newWidth);
+                }
 
-	activateHighlighting(where){
-		if(!pd.ui.selectModeActiveDR) {
-			if (!this.pd.visual.highlightActive) {
-				if (this.pd.visual.eraserActive) this.pd.ui.activateEraser(where); //unactivate eraser actually
-				if (this.pd.visual.freezeActive && !(where === "DR")) this.pd.ui.activateFreezing();
-				this.pd.visual.highlightActive = true;
-				if (where === "DR")
-					document.getElementById('DRhighlight_button').style.backgroundColor = this.pd.visual.cssConf('activated-button');
-				else
-					document.getElementById('highlight').style.backgroundColor = this.pd.visual.cssConf('activated-button');
-			} else {
-				this.pd.visual.highlightActive = false;
-				if (where === "DR")
-					document.getElementById('DRhighlight_button').style.backgroundColor = "";
-				else
-					document.getElementById('highlight').style.backgroundColor = "";
-			}
-		}
-	}
+                var isEdge =
+                    document.documentMode || /Edge/.test(navigator.userAgent);
+                if (isEdge) {
+                    newWidth += 1;
+                }
+                textarea.style.width = newWidth + 'px';
+            }
 
-	showHighlightingColourBox(where){
-		if(!pd.ui.selectModeActiveDR) {
-		if(document.getElementById("highlightingBox")){return;}
-		var that = this;
-		var parent=document.getElementsByTagName('body')[0];
-		var highlightingBox=document.createElement("div");
-		highlightingBox.id="highlightingBox";
-		let color1= this.pd.visual.cssConf("highlighting-color1");
-		let color2= this.pd.visual.cssConf("highlighting-color2");
-		let color3= this.pd.visual.cssConf("highlighting-color3");
-		let color4= this.pd.visual.cssConf("highlighting-color4");
-		let color5= this.pd.visual.cssConf("highlighting-color5");
-		let color6= this.pd.visual.cssConf("highlighting-color6");
-		highlightingBox.innerHTML=`<h3>${that.translate("LABEL_COLOR")}</h3>\n` +
-			"        <div id=\"colors\">\n" +
-			`            <div id='color1' style=\"background: ${color1}\"></div>\n` +
-			`            <div id='color2' style=\"background: ${color2}\"></div>\n` +
-			`            <div id='color3' style=\"background: ${color3}\"></div>\n` +
-			`            <div id='color4' style=\"background: ${color4}\"></div>\n` +
-			`            <div id='color5' style=\"background: ${color5}\"></div>\n` +
-			`            <div id='color6' style=\"background: ${color6}\"></div>\n` +
-			"        </div>\n" +
-			"        <div  id=\"highlightingColorButton\">\n" +
-			`            <span >${that.translate("BUTTON_CLOSE")}</span>\n` +
-			"        </div>";
-		if(where==="DR")highlightingBox.style.left="30vw";
-		parent.appendChild(highlightingBox);
-		document.getElementById("highlightingColorButton").onpointerdown=function(event){
-			//event.preventDefault();
-			that.closeHighlightingColorBox();
-		}
-        if(that.pd.visual.highlightColor)document.getElementById(that.pd.visual.highlightColor).style.border = `2px solid white`
-		else document.getElementById("color1").style.border = `2px solid white`
-		document.getElementById("color1").onclick=function (){selectColor("color1");}
-		document.getElementById("color2").onclick=function (){selectColor("color2");}
-		document.getElementById("color3").onclick=function (){selectColor("color3");}
-		document.getElementById("color4").onclick=function (){selectColor("color4");}
-		document.getElementById("color5").onclick=function (){selectColor("color5");}
-		document.getElementById("color6").onclick=function (){selectColor("color6");}
-		function selectColor(id){
-			for(let i=1; i<7;i++){
-				document.getElementById(`color${i}`).style.border="";
-			}
-			document.getElementById(id).style.border = `2px solid white`;
-			that.pd.visual.highlightColor=id;
+            textarea.addEventListener('keydown', function (e) {
+                // hide on enter
+                // but don't hide on shift + enter
+                console.log("event!!")
+                if (e.keyCode === 13 && !e.shiftKey) {
+                    console.log("event enter!!!")
+                    textNode.text(textarea.value);
+                    removeTextarea();
+                }
+                // on esc do not set value back to node
+                if (e.keyCode === 27) {
+                    removeTextarea();
+                }
+            });
+
+            textarea.addEventListener('keydown', function (e) {
+                let scale = textNode.getAbsoluteScale().x;
+                setTextareaWidth(textNode.width() * scale);
+                textarea.style.height = 'auto';
+                textarea.style.height =
+                    textarea.scrollHeight + textNode.fontSize() + 'px';
+            });
+
+            function handleOutsideClick(e) {
+                if (e.target !== textarea) {
+                    textNode.text(textarea.value);
+                    removeTextarea();
+                }
+            }
+
+            setTimeout(() => {
+                window.addEventListener('click', handleOutsideClick);
+            });
+        });
+    }
+
+    //activate if it was activated and vice versa.
+    activateFreezing() {
+        if (!this.pd.visual.freezeActive) {
+            if (this.pd.visual.highlightActive) this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
+            if (this.pd.visual.eraserActive) this.pd.ui.activateEraser(); //unactivate eraser actually
+            this.pd.visual.freezeActive = true;
+            document.getElementById('freeze').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+        } else {
+            this.pd.visual.freezeActive = false;
+            document.getElementById('freeze').style.backgroundColor = "";
+        }
+
+    }
+
+    //activate if it was activated and vice versa.
+    activateEraser(where) {
+        if (!pd.ui.selectModeActiveDR) {
+            if (!this.pd.visual.eraserActive) {
+                if (this.pd.visual.highlightActive) this.pd.ui.activateHighlighting(where); //unactivate Highlighting actually
+                if (this.pd.visual.freezeActive && !(where === "DR")) this.pd.ui.activateFreezing();
+                this.pd.visual.eraserActive = true;
+                if (where)
+                    document.getElementById('DReraser_button').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+                else
+                    document.getElementById('eraser').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+            } else {
+                this.pd.visual.eraserActive = false;
+                if (where)
+                    document.getElementById('DReraser_button').style.backgroundColor = "";
+                else
+                    document.getElementById('eraser').style.backgroundColor = "";
+            }
+        }
+
+    }
+
+    //activate if it was activated and vice versa.
+    activateHighlighting(where) {
+        if (!pd.ui.selectModeActiveDR) {
+            if (!this.pd.visual.highlightActive) {
+                if (this.pd.visual.eraserActive) this.pd.ui.activateEraser(where); //unactivate eraser actually
+                if (this.pd.visual.freezeActive && !(where === "DR")) this.pd.ui.activateFreezing();
+                this.pd.visual.highlightActive = true;
+                if (where === "DR")
+                    document.getElementById('DRhighlight_button').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+                else
+                    document.getElementById('highlight').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+            } else {
+                this.pd.visual.highlightActive = false;
+                if (where === "DR")
+                    document.getElementById('DRhighlight_button').style.backgroundColor = "";
+                else
+                    document.getElementById('highlight').style.backgroundColor = "";
+            }
+        }
+    }
+
+    showHighlightingColourBox(where) {
+        if (!pd.ui.selectModeActiveDR) {
+            if (document.getElementById("highlightingBox")) {
+                return;
+            }
+            var that = this;
+            var parent = document.getElementsByTagName('body')[0];
+            var highlightingBox = document.createElement("div");
+            highlightingBox.id = "highlightingBox";
+            let color1 = this.pd.visual.cssConf("highlighting-color1");
+            let color2 = this.pd.visual.cssConf("highlighting-color2");
+            let color3 = this.pd.visual.cssConf("highlighting-color3");
+            let color4 = this.pd.visual.cssConf("highlighting-color4");
+            let color5 = this.pd.visual.cssConf("highlighting-color5");
+            let color6 = this.pd.visual.cssConf("highlighting-color6");
+            highlightingBox.innerHTML = `<h3>${that.translate("LABEL_COLOR")}</h3>\n` +
+                "        <div id=\"colors\">\n" +
+                `            <div id='color1' style=\"background: ${color1}\"></div>\n` +
+                `            <div id='color2' style=\"background: ${color2}\"></div>\n` +
+                `            <div id='color3' style=\"background: ${color3}\"></div>\n` +
+                `            <div id='color4' style=\"background: ${color4}\"></div>\n` +
+                `            <div id='color5' style=\"background: ${color5}\"></div>\n` +
+                `            <div id='color6' style=\"background: ${color6}\"></div>\n` +
+                "        </div>\n" +
+                "        <div  id=\"highlightingColorButton\">\n" +
+                `            <span >${that.translate("BUTTON_CLOSE")}</span>\n` +
+                "        </div>";
+            if (where === "DR") highlightingBox.style.left = "30vw";
+            parent.appendChild(highlightingBox);
+            document.getElementById("highlightingColorButton").onpointerdown = function (event) {
+                //event.preventDefault();
+                that.closeHighlightingColorBox();
+            }
+            if (that.pd.visual.highlightColor) document.getElementById(that.pd.visual.highlightColor).style.border = `2px solid white`
+            else document.getElementById("color1").style.border = `2px solid white`
+            document.getElementById("color1").onclick = function () {
+                selectColor("color1");
+            }
+            document.getElementById("color2").onclick = function () {
+                selectColor("color2");
+            }
+            document.getElementById("color3").onclick = function () {
+                selectColor("color3");
+            }
+            document.getElementById("color4").onclick = function () {
+                selectColor("color4");
+            }
+            document.getElementById("color5").onclick = function () {
+                selectColor("color5");
+            }
+            document.getElementById("color6").onclick = function () {
+                selectColor("color6");
+            }
+
+            function selectColor(id) {
+                for (let i = 1; i < 7; i++) {
+                    document.getElementById(`color${i}`).style.border = "";
+                }
+                document.getElementById(id).style.border = `2px solid white`;
+                that.pd.visual.highlightColor = id;
 
 
-		}}
-	}
+            }
+        }
+    }
 
 	closeHighlightingColorBox(){
 		document.getElementById("highlightingBox").remove();
 	}
 
 
+    showAnnotationBar() {
+        document.getElementById('annotation').style.display = '';
+        document.getElementById('functions').style.display = 'none';
+        document.getElementById("hint").style.display = 'none';
+        let children = this.layer.getChildren();
+        this.pd.visual.annotationMode = true;
+    }
 
-	showAnnotationBar(){
-		document.getElementById('annotation').style.display='';
-		document.getElementById('functions').style.display='none';
-		document.getElementById("hint").style.display='none';
-		let children=this.layer.getChildren();
-		/*for(let i in children){
-			if(children[i].getClassName()==="Text"){
-				children[i].draggable(true);
-			}
-		}*/
-		this.pd.visual.annotationMode=true;
-	}
-
-    hideAnnotationBar(){
-		if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
-		if(this.pd.visual.eraserActive)this.pd.ui.activateEraser(); //unactivate eraser actually
-		if(this.pd.visual.freezeActive)this.pd.ui.activateFreezing();
-		if(document.getElementById("highlightingBox")){pd.ui.closeHighlightingColorBox();}
-		document.getElementById('annotation').style.display='none';
-		document.getElementById('functions').style.display='';
-		document.getElementById("hint").style.display='';
-		let children=this.layer.getChildren();
-		for(let i in children){
-			if(children[i].getClassName()==="Text"){
-				children[i].draggable(false);
-			}
-		}
-		this.pd.visual.annotationMode=false;
-	}
+    hideAnnotationBar() {
+        if (this.pd.visual.highlightActive) this.pd.ui.activateHighlighting(); //unactivate Highlighting actually
+        if (this.pd.visual.eraserActive) this.pd.ui.activateEraser(); //unactivate eraser actually
+        if (this.pd.visual.freezeActive) this.pd.ui.activateFreezing();
+        if (document.getElementById("highlightingBox")) {
+            pd.ui.closeHighlightingColorBox();
+        }
+        document.getElementById('annotation').style.display = 'none';
+        document.getElementById('functions').style.display = '';
+        document.getElementById("hint").style.display = '';
+        let children = this.layer.getChildren();
+        for (let i in children) {
+            if (children[i].getClassName() === "Text") {
+                children[i].draggable(false);
+            }
+            if (children[i].getClassName() === "Transformer") {
+                children[i].hide();
+            }
+        }
+        this.pd.visual.annotationMode = false;
+    }
 
 	//display a QR code on an overlay
 	showQRCode(text){
