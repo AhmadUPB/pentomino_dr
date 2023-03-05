@@ -214,7 +214,7 @@ game itself. Those are in Visual.js
 		setTimeout(function(){
 			that.updateHeatButton();
 		},10);
-		// define Konva Stage for documentation mode in Play Room
+		// define Konva Stage for Annotation Mode in Play Room
 		this.stageWidth=window.innerWidth-(7*window.innerWidth/100); //7: function-area-width, tray-height
 		this.stageHeight=window.innerHeight-(7*window.innerHeight/100);
 		this.stage = new Konva.Stage({
@@ -237,261 +237,255 @@ game itself. Those are in Visual.js
 
 			if (after) after.call(this,div);
 	}
+    // load images that used in building the screenshots and cache them
+    // Cloned copies of them are used to draw the screenshots in Document Room(pereformance tip)
+    loadDRpics() {
+        //based on: //https://konvajs.org/docs/shapes/Image.html
+        let imageObj1 = new Image();
+        imageObj1.onload = function () {
+            let snowflake = new Konva.Image({
+                image: imageObj1,
+                listening: false,
+                perfectDrawEnabled: false,
+                shadowForStrokeEnabled: false,
+            });
+            snowflake.cache();
+            DocumentDR.cashedSnowflake = snowflake;
+        };
+        imageObj1.src = './ico/freeze.png';
 
-	loadDRpics(){
-		//based on: //https://konvajs.org/docs/shapes/Image.html
-		let imageObj1 = new Image();
-		imageObj1.onload = function () {
-			let snowflake = new Konva.Image({
-				image: imageObj1,
-				listening: false,
-				perfectDrawEnabled: false,
-				shadowForStrokeEnabled: false,
-			});
-			snowflake.cache();
-			DocumentDR.cashedSnowflake =snowflake;
-		};
-		imageObj1.src = './ico/freeze.png';
+        let imageObj2 = new Image();
+        imageObj2.onload = function () {
+            let checkMark = new Konva.Image({
+                image: imageObj2,
+                listening: false,
+                perfectDrawEnabled: false,
+                shadowForStrokeEnabled: false,
+            });
+            checkMark.cache();
+            DocumentDR.cashedCheckMark = checkMark;
+        };
+        imageObj2.src = './ico/dr_check.png';
+    }
 
-		let imageObj2 = new Image();
-		imageObj2.onload = function () {
-			let checkMark = new Konva.Image({
-				image: imageObj2,
-				listening: false,
-				perfectDrawEnabled: false,
-				shadowForStrokeEnabled: false,
-			});
-			checkMark.cache();
-			DocumentDR.cashedCheckMark = checkMark;
-		};
-		imageObj2.src = './ico/dr_check.png';
-	}
+    openDocumentRoom() {
+        this.documentRoomOpened = true;
+        let that = this;
+        let documentroom = document.getElementById("documentroom");
+        documentroom.style.display = 'block';
+        documentroom.innerHTML = '<div id="documentroom_header"><h1>' + this.translate('HEADING_DOCUMENT_ROOM') + '</h1>' + '<img onclick="pd.ui.closeDocumentsRoom();" src="./ico/dr_close.png">' +
+            '</div><div id="documentroom_toolbar">' +
+            '</div>' + '<div id="DRbackground"><p>' + this.translate('STATUS_WAIT') + '</p>></div>' + '<div id="documentroom_content"><div id="scroll-container">' + '<div id="large-container"><div id="DRcontainer"></div> </div></div>' + '</div>'
 
-	openDocumentRoom(){
-		this.documentRoomOpened=true;
-		let that = this;
-		let documentroom = document.getElementById("documentroom");
-		documentroom.style.display = 'block';
-		documentroom.innerHTML = '<div id="documentroom_header"><h1>' + this.translate('HEADING_DOCUMENT_ROOM') + '</h1>'+ '<img onclick="pd.ui.closeDocumentsRoom();" src="./ico/dr_close.png">' +
-		 '</div><div id="documentroom_toolbar">' +
-			'</div>' +'<div id="DRbackground"><p>'+this.translate('STATUS_WAIT')+'</p>></div>'+'<div id="documentroom_content"><div id="scroll-container">'+ '<div id="large-container"><div id="DRcontainer"></div> </div></div>' + '</div>'
-		//'<div id="toolbar">'+'<h2>Draw.</h2>'+'<label htmlFor="stroke">Stroke</label>'
-		//this.translate('STATUS_LOADING')
-
-
-
-			var oReqDocs = new XMLHttpRequest();
-			oReqDocs.addEventListener("load", function () {
-				let documentRoomData = this.responseText.split('%');
-				let rectangles= documentRoomData[0];
-				let arrows= documentRoomData[1];
-				let labels= documentRoomData[2];
-				let documents= documentRoomData[3].split('¤');
+        var oReqDocs = new XMLHttpRequest();
+        oReqDocs.addEventListener("load", function () {
+            let documentRoomData = this.responseText.split('%');
+            let rectangles = documentRoomData[0];
+            let arrows = documentRoomData[1];
+            let labels = documentRoomData[2];
+            let documents = documentRoomData[3].split('¤');
 
 
-				// compute the adequate Konva stage dimensions to suffice all documents
-				let documentWidth = that.pd.visual.cssConf('document-width');
-				let documentHeight = that.pd.visual.cssConf('document-height');
-				let numberDocumentsInRow = (Math.floor(95 / (documentWidth + 2.5)));
-				let rowsNumber = Math.ceil((documents.length-1) / numberDocumentsInRow);
-				let numberDocumentsInLastRow = (documents.length-1) % numberDocumentsInRow;
-				let startOfLeftMargin = (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2;
-				that.DRDocumentDefaultY = ( rowsNumber - 1 ) * ( documentHeight + 2.5 ) + 2.5;
-				if(numberDocumentsInLastRow!==0)that.DRDocumentDefaultX = startOfLeftMargin + (numberDocumentsInLastRow-1) * (documentWidth + 2.5);
-				else that.DRDocumentDefaultX  = startOfLeftMargin + (numberDocumentsInRow-1) * (documentWidth + 2.5);
-				that.DRStageHeight = that.DRDocumentDefaultY + documentHeight + 2.5 + 2.5;
-				if(that.DRStageHeight/100*window.innerWidth<window.innerHeight-(6/100*window.innerWidth)-22) that.DRStageHeightPX= window.innerHeight-(6/100*window.innerWidth)-22
-				else that.DRStageHeightPX=that.DRStageHeight/100*window.innerWidth;
+            // compute the adequate Konva stage dimensions to suffice all documents
+            let documentWidth = that.pd.visual.cssConf('document-width');
+            let documentHeight = that.pd.visual.cssConf('document-height');
+            let numberDocumentsInRow = (Math.floor(95 / (documentWidth + 2.5)));
+            let rowsNumber = Math.ceil((documents.length - 1) / numberDocumentsInRow);
+            let numberDocumentsInLastRow = (documents.length - 1) % numberDocumentsInRow;
+            let startOfLeftMargin = (100 - ((Math.floor(95 / (documentWidth + 2.5))) * (documentWidth + 2.5))) / 2;
+            that.DRDocumentDefaultY = (rowsNumber - 1) * (documentHeight + 2.5) + 2.5;
+            if (numberDocumentsInLastRow !== 0) that.DRDocumentDefaultX = startOfLeftMargin + (numberDocumentsInLastRow - 1) * (documentWidth + 2.5);
+            else that.DRDocumentDefaultX = startOfLeftMargin + (numberDocumentsInRow - 1) * (documentWidth + 2.5);
+            that.DRStageHeight = that.DRDocumentDefaultY + documentHeight + 2.5 + 2.5;
+            if (that.DRStageHeight / 100 * window.innerWidth < window.innerHeight - (6 / 100 * window.innerWidth) - 22) that.DRStageHeightPX = window.innerHeight - (6 / 100 * window.innerWidth) - 22
+            else that.DRStageHeightPX = that.DRStageHeight / 100 * window.innerWidth;
 
-				//Initialize stage and layers
-				// based on https://konvajs.org/docs/sandbox/Canvas_Scrolling.html
-				let largeContainer = document.getElementById('large-container')
-				largeContainer.style.width=(window.innerWidth-22)+"px";
-				largeContainer.style.height=that.DRStageHeightPX+"px";
-				let scrollContainer = document.getElementById('scroll-container')
-				let scrollContainerHeight=window.innerHeight-(6/100*window.innerWidth)-22;
-				scrollContainer.style.height= scrollContainerHeight+"px";
-				that.PADDING = 500;
-				that.DRstage = new Konva.Stage({
-					container: 'DRcontainer',
-					width:(window.innerWidth-(0/100*window.innerWidth))+ that.PADDING*2,
-					height:window.innerHeight-(6/100*window.innerWidth)+that.PADDING*2,
-				})
+            //Initialize stage and layers, build the scrolling functionality
+            // based on https://konvajs.org/docs/sandbox/Canvas_Scrolling.html
+            let largeContainer = document.getElementById('large-container')
+            largeContainer.style.width = (window.innerWidth - 22) + "px";
+            largeContainer.style.height = that.DRStageHeightPX + "px";
+            let scrollContainer = document.getElementById('scroll-container')
+            let scrollContainerHeight = window.innerHeight - (6 / 100 * window.innerWidth) - 22;
+            scrollContainer.style.height = scrollContainerHeight + "px";
+            that.PADDING = 500;
+            that.DRstage = new Konva.Stage({
+                container: 'DRcontainer',
+                width: (window.innerWidth - (0 / 100 * window.innerWidth)) + that.PADDING * 2,
+                height: window.innerHeight - (6 / 100 * window.innerWidth) + that.PADDING * 2,
+            })
 
-				that.DRlayerShapes = new Konva.Layer();
-				that.DRlayerDocuments1 = new Konva.Layer();
-				//that.DRlayerDocuments2 = new Konva.Layer();
-				that.DRlayerDocumentsDragging= new Konva.Layer();
-				that.DRlayerLabels = that.DRlayerDocumentsDragging;
-				that.DRstage.add(that.DRlayerShapes,that.DRlayerDocuments1,that.DRlayerDocumentsDragging);
-				function repositionStage() {
-					let dx = scrollContainer.scrollLeft - that.PADDING;
-					let dy = scrollContainer.scrollTop - that.PADDING;
-					that.DRstage.container().style.transform =
-						'translate(' + dx + 'px, ' + dy + 'px)';
-					that.DRstage.x(-dx);
-					that.DRstage.y(-dy);
-				}
-				scrollContainer.addEventListener('scroll', repositionStage);
-				repositionStage();
+            that.DRlayerShapes = new Konva.Layer();
+            that.DRlayerDocuments1 = new Konva.Layer();
+            that.DRlayerDocumentsDragging = new Konva.Layer();
+            that.DRlayerLabels = that.DRlayerDocumentsDragging;
+            that.DRstage.add(that.DRlayerShapes, that.DRlayerDocuments1, that.DRlayerDocumentsDragging);
 
+            function repositionStage() {
+                let dx = scrollContainer.scrollLeft - that.PADDING;
+                let dy = scrollContainer.scrollTop - that.PADDING;
+                that.DRstage.container().style.transform =
+                    'translate(' + dx + 'px, ' + dy + 'px)';
+                that.DRstage.x(-dx);
+                that.DRstage.y(-dy);
+            }
 
-				// draw Document Room content
-				DocumentDR.createCashedElements(that.pd);
-				for (let i in documents){
-					if(!documents[i])continue;
-					else that.drawDocument(documents[documents.length-i],scrollContainer);
-				}
-				pd.game.setTextStateDR(labels);
-				pd.game.setRectangleStateDR(rectangles);
-				pd.game.setArrowStateDR(arrows);
-
-			});
-			oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documentData');
-			oReqDocs.send();
-		this.createDRtoolbar();
+            scrollContainer.addEventListener('scroll', repositionStage);
+            repositionStage();
 
 
+            // draw Document Room content
+            DocumentDR.createCashedElements(that.pd);
+            for (let i in documents) {
+                if (!documents[i]) continue;
+                else that.drawDocument(documents[documents.length - i], scrollContainer);
+            }
+            pd.game.setTextStateDR(labels);
+            pd.game.setRectangleStateDR(rectangles);
+            pd.game.setArrowStateDR(arrows);
 
-	}
+        });
+        oReqDocs.open("GET", './loginsystem/reqhandler.php?type=documentData');
+        oReqDocs.send();
+        this.createDRtoolbar();
 
 
-
-	drawDocument(documentAttributes,scrollContainer){
-		documentAttributes = documentAttributes.split('&');
-		//console.log(documentAttributes);
-		var newDocument = new DocumentDR(this.pd,documentAttributes,scrollContainer);
-
-		this.pd.game.documents[newDocument.id]=newDocument;
+    }
 
 
-	}
+    // draw a document in Document Room by initializing a new Document
+    drawDocument(documentAttributes, scrollContainer) {
+        documentAttributes = documentAttributes.split('&');
+        var newDocument = new DocumentDR(this.pd, documentAttributes, scrollContainer);
+        this.pd.game.documents[newDocument.id] = newDocument;
+    }
 
-	createDRtoolbar(){
-		//todo: add labels to translation files
-		let that = this;
-		let DRtoolBar = document.getElementById("documentroom_toolbar");
-		DRtoolBar.innerHTML='<div id="documentroom_toolbar_general">' +
-			'<div id="DRtext_button" onclick="pd.ui.addText(0,0,0,0,0,`DR`)"><img src="./ico/text_dr.png" id="" title=""><span id="label_dr">add label</span></div>' +
-			'<div id="DRrectangle_button" onclick="pd.ui.addRectangleDR(0,0,0,0,0,1)"><img src="./ico/rectangle_dr.png" id="" title=""><span id="rectangle_dr">add rectangle</span></div>' +
-			'<div id="arrow_button" onclick="pd.ui.addArrowDR(0,0,0,0,0,1)"><img src="./ico/arrow_dr.png" id="" title=""><span id="arrow_dr">add arrow</span></div>' +
-			'<div id="DRhighlight_button" onclick="pd.ui.activateHighlighting(`DR`)"><img src="./ico/highlight_dr.png" id="" title=""><span id="highlight_dr">highlight</span></div>' +
-			'<div id="DRcolor_button" onclick="pd.ui.showHighlightingColourBox(`DR`)"><img src="./ico/color_dr.png" id="" title=""><span id="color_dr">highlighting color</span></div>' +
-			'<div id="DReraser_button" onclick="pd.ui.activateEraser(`DR`);"><img src="./ico/eraser_dr.png" id="" title=""><span id="eraser_dr">eraser</span></div>' +
-			'<div id="DRselectmode_button" onclick="pd.ui.activateSelectModeDR();"><img src="./ico/selectmode_dr.png" id="" title=""><span id="select_dr">select</span></div>' +
-			'</div>' +
-			'<div id="documentroom_toolbar_selectmode">' +
-			'<div id="DRselectall_button" onclick="DocumentDR.selectAll();"><img src="./ico/selectall_dr.png" id="" title=""><span id="selectall_dr">select all</span></div>' +
-			'<div id="DRsend_button" onclick="pd.ui.sendSelectedDocuments();"><img src="./ico/send_dr.png" id="" title=""><span id="send_dr">send</span></div>' +
-			'<div id="DRdelete_button" onclick="pd.ui.deleteSelectedDocuments();"><img src="./ico/delete_dr.png" id="" title=""><span id="delete_dr">delete</spanid></div>' +
-			'</div>'
+    //build the tool bar of the Document Room
+    createDRtoolbar() {
+        //todo: add labels to translation files
+        let that = this;
+        let DRtoolBar = document.getElementById("documentroom_toolbar");
+        DRtoolBar.innerHTML = '<div id="documentroom_toolbar_general">' +
+            '<div id="DRtext_button" onclick="pd.ui.addText(0,0,0,0,0,`DR`)"><img src="./ico/text_dr.png" id="" title=""><span id="label_dr">add label</span></div>' +
+            '<div id="DRrectangle_button" onclick="pd.ui.addRectangleDR(0,0,0,0,0,1)"><img src="./ico/rectangle_dr.png" id="" title=""><span id="rectangle_dr">add rectangle</span></div>' +
+            '<div id="arrow_button" onclick="pd.ui.addArrowDR(0,0,0,0,0,1)"><img src="./ico/arrow_dr.png" id="" title=""><span id="arrow_dr">add arrow</span></div>' +
+            '<div id="DRhighlight_button" onclick="pd.ui.activateHighlighting(`DR`)"><img src="./ico/highlight_dr.png" id="" title=""><span id="highlight_dr">highlight</span></div>' +
+            '<div id="DRcolor_button" onclick="pd.ui.showHighlightingColourBox(`DR`)"><img src="./ico/color_dr.png" id="" title=""><span id="color_dr">highlighting color</span></div>' +
+            '<div id="DReraser_button" onclick="pd.ui.activateEraser(`DR`);"><img src="./ico/eraser_dr.png" id="" title=""><span id="eraser_dr">eraser</span></div>' +
+            '<div id="DRselectmode_button" onclick="pd.ui.activateSelectModeDR();"><img src="./ico/selectmode_dr.png" id="" title=""><span id="select_dr">select</span></div>' +
+            '</div>' +
+            '<div id="documentroom_toolbar_selectmode">' +
+            '<div id="DRselectall_button" onclick="DocumentDR.selectAll();"><img src="./ico/selectall_dr.png" id="" title=""><span id="selectall_dr">select all</span></div>' +
+            '<div id="DRsend_button" onclick="pd.ui.sendSelectedDocuments();"><img src="./ico/send_dr.png" id="" title=""><span id="send_dr">send</span></div>' +
+            '<div id="DRdelete_button" onclick="pd.ui.deleteSelectedDocuments();"><img src="./ico/delete_dr.png" id="" title=""><span id="delete_dr">delete</spanid></div>' +
+            '</div>'
 
-		document.querySelectorAll("#documentroom_toolbar_selectmode div")
-			.forEach(button=>{
-				button.style.opacity='20%';
-				//TODO:remove event listeners for select mode buttons
-			});
-		document.getElementById("label_dr").textContent=pd.ui.translate('LABEL_DR_LABEL');
-		document.getElementById("rectangle_dr").textContent=pd.ui.translate('LABEL_DR_RECTANGLE');
-		document.getElementById("arrow_dr").textContent=pd.ui.translate('LABEL_DR_ARROW');
-		document.getElementById("highlight_dr").textContent=pd.ui.translate('LABEL_DR_HIGHLIGHT');
-		document.getElementById("color_dr").textContent=pd.ui.translate('LABEL_DR_COLOR');
-		document.getElementById("eraser_dr").textContent=pd.ui.translate('LABEL_DR_ERASER');
-		document.getElementById("select_dr").textContent=pd.ui.translate('LABEL_DR_SELECT');
-		document.getElementById("selectall_dr").textContent=pd.ui.translate('LABEL_DR_SELECTALL');
-		document.getElementById("send_dr").textContent=pd.ui.translate('LABEL_DR_SEND');
-		document.getElementById("delete_dr").textContent=pd.ui.translate('LABEL_DR_DELETE');
-	}
-	sendSelectedDocuments(){
-		if(Object.keys(DocumentDR.selectedDocuments).length === 1){
-			pd.game.showQRCode("annotated");
-		}
-	}
-	deleteSelectedDocuments(){
-		if(Object.keys(DocumentDR.selectedDocuments).length >= 1){
-			let text=this.translate('DELETE_CONFIRM');
-			let isSure = confirm(text);
-			if(isSure)this.pd.game.deleteSelectedDocuments();
-		}
-	}
+        document.querySelectorAll("#documentroom_toolbar_selectmode div")
+            .forEach(button => {
+                button.style.opacity = '20%';
+                //TODO:remove event listeners for select mode buttons
+            });
+        // add the translation
+        document.getElementById("label_dr").textContent = pd.ui.translate('LABEL_DR_LABEL');
+        document.getElementById("rectangle_dr").textContent = pd.ui.translate('LABEL_DR_RECTANGLE');
+        document.getElementById("arrow_dr").textContent = pd.ui.translate('LABEL_DR_ARROW');
+        document.getElementById("highlight_dr").textContent = pd.ui.translate('LABEL_DR_HIGHLIGHT');
+        document.getElementById("color_dr").textContent = pd.ui.translate('LABEL_DR_COLOR');
+        document.getElementById("eraser_dr").textContent = pd.ui.translate('LABEL_DR_ERASER');
+        document.getElementById("select_dr").textContent = pd.ui.translate('LABEL_DR_SELECT');
+        document.getElementById("selectall_dr").textContent = pd.ui.translate('LABEL_DR_SELECTALL');
+        document.getElementById("send_dr").textContent = pd.ui.translate('LABEL_DR_SEND');
+        document.getElementById("delete_dr").textContent = pd.ui.translate('LABEL_DR_DELETE');
+    }
 
-	activateSelectModeDR(){
-		if(!this.selectModeActiveDR){
-			if(this.pd.visual.eraserActive)this.pd.ui.activateEraser('DR');
-			if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting('DR');
-			this.selectModeActiveDR=true;
-			document.getElementById('DRselectmode_button').style.backgroundColor=this.pd.visual.cssConf('activated-button');
-		document.querySelectorAll("#documentroom_toolbar_general div")
-			.forEach(button=>{
-				if(button.id!=="DRselectmode_button") {
-					button.style.opacity = '20%';
-					//TODO:remove event listeners for general mode buttons
-				}
-			});
-		let DRselectall_button = document.querySelector("#DRselectall_button")
-		DRselectall_button.style.opacity='100';
-		//TODO:activate event listeners for #DRselectall_button
+    sendSelectedDocuments() {
+        if (Object.keys(DocumentDR.selectedDocuments).length === 1) {
+            pd.game.showQRCode("annotated");
+        }
+    }
 
-		let documents = this.pd.game.documents;
-		for(let id in documents){
-			documents[id].activateSelectMode();
-		}
-		}
-		else{
-			this.selectModeActiveDR=false;
-			document.querySelectorAll("#documentroom_toolbar_general div")
-				.forEach(button=>{
-					button.style.opacity='100%';
-					//TODO:activate event listeners for select mode buttons
-				});
-			document.querySelectorAll("#documentroom_toolbar_selectmode div")
-				.forEach(button=>{
-					button.style.opacity='20%';
-					//TODO:remove event listeners for select mode buttons
-				});
-			document.getElementById('DRselectmode_button').style.backgroundColor="";
-			let documents = this.pd.game.documents;
-			for(let id in documents){
-				documents[id].deactivateSelectMode();
-			}
-			DocumentDR.selectedDocuments={};
-			DocumentDR.allSelected=false;
-		}
+    deleteSelectedDocuments() {
+        if (Object.keys(DocumentDR.selectedDocuments).length >= 1) {
+            let text = this.translate('DELETE_CONFIRM');
+            let isSure = confirm(text);
+            if (isSure) this.pd.game.deleteSelectedDocuments();
+        }
+    }
+    // activate the select mode in Document Room if it was deactivated and vice versa.
+    activateSelectModeDR() {
+        if (!this.selectModeActiveDR) {
+            if (this.pd.visual.eraserActive) this.pd.ui.activateEraser('DR');
+            if (this.pd.visual.highlightActive) this.pd.ui.activateHighlighting('DR');
+            this.selectModeActiveDR = true;
+            document.getElementById('DRselectmode_button').style.backgroundColor = this.pd.visual.cssConf('activated-button');
+            document.querySelectorAll("#documentroom_toolbar_general div")
+                .forEach(button => {
+                    if (button.id !== "DRselectmode_button") {
+                        button.style.opacity = '20%';
+                        //TODO:remove event listeners for general mode buttons
+                    }
+                });
+            let DRselectall_button = document.querySelector("#DRselectall_button")
+            DRselectall_button.style.opacity = '100';
+            //TODO:activate event listeners for #DRselectall_button
 
-	}
+            let documents = this.pd.game.documents;
+            for (let id in documents) {
+                documents[id].activateSelectMode();
+            }
+        } else {
+            this.selectModeActiveDR = false;
+            document.querySelectorAll("#documentroom_toolbar_general div")
+                .forEach(button => {
+                    button.style.opacity = '100%';
+                    //TODO:activate event listeners for select mode buttons
+                });
+            document.querySelectorAll("#documentroom_toolbar_selectmode div")
+                .forEach(button => {
+                    button.style.opacity = '20%';
+                    //TODO:remove event listeners for select mode buttons
+                });
+            document.getElementById('DRselectmode_button').style.backgroundColor = "";
+            let documents = this.pd.game.documents;
+            for (let id in documents) {
+                documents[id].deactivateSelectMode();
+            }
+            DocumentDR.selectedDocuments = {};
+            DocumentDR.allSelected = false;
+        }
+
+    }
 
 	activateButtonDR(type){
 		let DRdelete_button = document.querySelector(type);
 		DRdelete_button.style.opacity='100%';
-		//TODO:activate event listeners for #DRselectall_button
-
 	}
 	deactivateButtonDR(type){
 		let DRdelete_button = document.querySelector(type);
 		DRdelete_button.style.opacity='20%';
-		//TODO:deactivate event listeners for #DRselectall_button
-
 	}
 
+    closeDocumentsRoom() {
+        var documentroom = document.getElementById("documentroom");
+        documentroom.style.display = 'none';
+        if (document.getElementById("highlightingBox")) {
+            pd.ui.closeHighlightingColorBox();
+        }
+        if (this.pd.visual.highlightActive) this.pd.ui.activateHighlighting("DR"); //unactivate Highlighting actually
+        if (this.pd.visual.eraserActive) this.pd.ui.activateEraser("DR"); //unactivate eraser actually
+        if (this.selectModeActiveDR) this.selectModeActiveDR = false;
+        // destroy old stage to avoid memory leaks and better performance
+        pd.ui.DRstage.clearCache();
+        pd.ui.DRstage.destroy()
+        this.documentRoomOpened = false;
+        DocumentDR.selectedDocuments = {};
+        this.pd.game.documents = {};
+        pd.ui.windowWidth = window.innerWidth;
+    }
 
-	closeDocumentsRoom(){
-		var documentroom = document.getElementById("documentroom");
-		documentroom.style.display = 'none';
-		if(document.getElementById("highlightingBox")){pd.ui.closeHighlightingColorBox();}
-		if(this.pd.visual.highlightActive)this.pd.ui.activateHighlighting("DR"); //unactivate Highlighting actually
-		if(this.pd.visual.eraserActive)this.pd.ui.activateEraser("DR"); //unactivate eraser actually
-		if(this.selectModeActiveDR)this.selectModeActiveDR=false;
-		// destroy old stage to avoid memory leaks and better performance
-		pd.ui.DRstage.clearCache();
-		pd.ui.DRstage.destroy()
-
-		this.documentRoomOpened=false;
-		DocumentDR.selectedDocuments={};
-		this.pd.game.documents={};
-		pd.ui.windowWidth=window.innerWidth;
-	}
-
+    // add arrow to Document Room(for both from old sessions or new one)
 	addArrowDR(x1,y1,x2,y2,stroke,isNew){
+        // calculate where to add new arrow per default and consider scrolling state too
 		if(this.documentRoomOpened && this.selectModeActiveDR && isNew)return;
         let scrollContainer;
         let PosY = window.innerWidth/20;
@@ -499,47 +493,46 @@ game itself. Those are in Visual.js
         let dy = scrollContainer.scrollTop - pd.ui.PADDING;
         if(dy>0)PosY+=Math.abs(dy)+500;
         else PosY+=500-Math.abs(dy);
-
-
         var arrow = new Konva.Arrow({
             points: [x1?x1:3/100*this.windowWidth, y1?y1:PosY, x2?x2:10/100*this.windowWidth, y2?y2:PosY+(10/100*this.windowWidth)],
             stroke: stroke?stroke:'white',
             strokeWidth: 8,
 
         });
-
+        // add a resizing circle to the arrow
         var handleTop = new Konva.Circle({
             x: arrow.points()[2],
             y: arrow.points()[3],
             stroke: '#0fa1f7',
             fill: 'white',
             strokeWidth: 2,
-            radius: 8,
+            radius: 10,
             draggable: true
         });
-
+        // add a dragging circle to the arrow
         var handleMiddle = new Konva.Circle({
             x: (arrow.points()[0]+arrow.points()[2])/2,
             y: (arrow.points()[1]+arrow.points()[3])/2,
             stroke: '#0fa1f7',
             fill: 'white',
             strokeWidth: 2,
-            radius: 10,
+            radius: 12,
             draggable: true
         });
+        // add a resizing circle to the arrow
         var handleBottom = new Konva.Circle({
             x: arrow.points()[0],
             y: arrow.points()[1],
             stroke: '#0fa1f7',
             fill: 'white',
             strokeWidth: 2,
-            radius: 8,
+            radius: 10,
             draggable: true
         });
         pd.ui.DRlayerShapes.add(arrow,handleTop,handleMiddle,handleBottom);
 
+        // define what happen when the handling circles are dragged(mathematics)
         let middleTopDifferenceX,middleTopDifferenceY,middleBottomDifferenceX,middleBottomDifferenceY,arrowHead;
-
         handleBottom.on('dragmove', function() {
             arrow.points([ handleBottom.x(), handleBottom.y(),arrow.points()[2], arrow.points()[3]]);
             handleMiddle.x((arrow.points()[0]+arrow.points()[2])/2);
@@ -560,7 +553,6 @@ game itself. Those are in Visual.js
             draggingOrTransforming=true;
 			pd.game.postArrowStateDR();
         });
-
 
         handleMiddle.on('dragstart', function() {
             middleBottomDifferenceX=handleBottom.x()-handleMiddle.x();
@@ -586,10 +578,7 @@ game itself. Those are in Visual.js
         handleTop.hide();
         handleMiddle.hide();
         handleBottom.hide();
-        if(isNew) {
-            //if(!where)this.pd.game.storeTextStatePR();
-			pd.game.postArrowStateDR();
-        }
+        if(isNew) pd.game.postArrowStateDR();
         let draggingOrTransforming=false;
         arrow.on('pointerclick', () => {
 			if(this.pd.visual.eraserActive){
@@ -629,7 +618,7 @@ game itself. Those are in Visual.js
         });
 
     }
-	// add rectangle to Document Room for spatially ordering
+	// add rectangle to Document Room(for both from old sessions or new one)
 	addRectangleDR(x,y,stroke,width,height,isNew){
 		if(this.documentRoomOpened && this.selectModeActiveDR && isNew)return;
 		// calculate where to add new rectangle per default and consider scrolling state too

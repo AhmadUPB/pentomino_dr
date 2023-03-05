@@ -501,17 +501,15 @@ class Game{
 		let index=0;
 		for(let i in layerChildren){
 			if(layerChildren[i].getClassName()==="Transformer"){
-				//add only rectangle transformers
+				//add only rectangles' transformers
 				if(layerChildren[i].nodes()[0].getClassName()==="Rect")transformers.push(layerChildren[i]);
 			}
 		}
 		for(let i in layerChildren){
 			if(layerChildren[i].getClassName()==="Rect"){
-				console.log(transformers[index].getClassName());
 				let findWidth=transformers[index].width();
 				let findHeight=transformers[index].height();
 				index++;
-
 				out+="!"+"_"+parseFloat(layerChildren[i].x()*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].y()*100/window.innerWidth)+"_"+layerChildren[i].stroke()+"_"+parseFloat(findWidth*100/window.innerWidth)+"_"+parseFloat(findHeight*100/window.innerWidth);
 			}
 		}
