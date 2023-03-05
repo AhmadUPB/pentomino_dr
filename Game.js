@@ -331,29 +331,26 @@ class Game{
 		this.pd.visual.updatePieces(piece); 
 	}
 
-
-	setAnnotatedDocument(){
+	// update the local stoarge with the state of the sent document
+	setAnnotatedDocument() {
 		let info = this.pd.annotatedDocument.split("&");
 		var stoarge = window.localStorage;
-		if(info[1]!=="none" && info[2]!=="none"){
-			stoarge.setItem('gameState','');
-			stoarge.setItem('piecesState','');
-			stoarge.setItem('boardState','');
-			stoarge.setItem('TextStatePR','');
-			stoarge.setItem('gameState','"n":"'+info[1]+'"."s":"'+info[2]+'"');
-			if(info[3]!=="none"){
-				stoarge.setItem('piecesState','{"pieces":"'+info[3]+'"}');
+		if (info[1] !== "none" && info[2] !== "none") {
+			stoarge.setItem('gameState', '');
+			stoarge.setItem('piecesState', '');
+			stoarge.setItem('boardState', '');
+			stoarge.setItem('TextStatePR', '');
+			stoarge.setItem('gameState', '"n":"' + info[1] + '"."s":"' + info[2] + '"');
+			if (info[3] !== "none") {
+				stoarge.setItem('piecesState', '{"pieces":"' + info[3] + '"}');
 			}
-			if(info[4]!=="none"){
-				stoarge.setItem('boardState','{"board":"'+info[4]+'"}');
+			if (info[4] !== "none") {
+				stoarge.setItem('boardState', '{"board":"' + info[4] + '"}');
 			}
-			if(info[5]!=="none"){
-				stoarge.setItem('TextStatePR','{"texts":"'+info[5]+'"}');
+			if (info[5] !== "none") {
+				stoarge.setItem('TextStatePR', '{"texts":"' + info[5] + '"}');
 			}
-
 		}
-
-
 	}
 	
 	//save the new state of a piece to history
@@ -391,7 +388,6 @@ class Game{
 		var storage=window.localStorage;
 		storage.setItem('piecesState', this.getAnnotationStatePieces());
 	}
-
 	storeHighlightingStatePieces(postion,color){
 		this.updateHighlightingStateBoard(postion,color);
 		var storage=window.localStorage;
@@ -399,15 +395,10 @@ class Game{
 
 
 	}
-
 	storeTextStatePR(){
 		var storage=window.localStorage;
 		storage.setItem('TextStatePR', this.getTextStatePR());
 	}
-
-
-
-	
 	unstore(){
 		var storage=window.localStorage;
 		storage.setItem('gameState', false);
@@ -432,21 +423,22 @@ class Game{
 		if (altFunc) return altFunc();	
 	}
 
-	updateHighlightingStateBoard(toUpdate,color){
-		var postions=this.highlightedPositions.split("_");
+	// update the text representing the highlighting state of the board
+	updateHighlightingStateBoard(toUpdate, color) {
+		var postions = this.highlightedPositions.split("_");
 
-		this.highlightedPositions="";
-		for (var i in postions){
-			var postion=postions[i];
-			if(postion) {
+		this.highlightedPositions = "";
+		for (var i in postions) {
+			var postion = postions[i];
+			if (postion) {
 				//problem postion includes # somtimes and the condtion below will not be checked correctly
-				var hasOldColor=false;
-				var oldColor="";
-				if(postion.includes("#")){
-					let info=postion.split("#");
-					postion=info[0];
-					oldColor="#"+info[1];
-					hasOldColor=true;
+				var hasOldColor = false;
+				var oldColor = "";
+				if (postion.includes("#")) {
+					let info = postion.split("#");
+					postion = info[0];
+					oldColor = "#" + info[1];
+					hasOldColor = true;
 				}
 				if (toUpdate == postion) {
 
@@ -460,93 +452,95 @@ class Game{
 
 			}
 		}
-		postions=this.highlightedPositions.split("_");
+		postions = this.highlightedPositions.split("_");
 
 	}
 
-	getTextStatePR(){
-		let out={};
-		out.texts='';
+	// get a json string representing the notes state in Play Room
+	getTextStatePR() {
+		let out = {};
+		out.texts = '';
 		let layerChildren = this.pd.ui.layer.getChildren();
-		let stageWidth =this.pd.ui.stage.width();
-		for(let i in layerChildren){
-			if(layerChildren[i].getClassName()==="Text"){
-				out.texts+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y()*100/stageWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width()*100/stageWidth);
+		let stageWidth = this.pd.ui.stage.width();
+		for (let i in layerChildren) {
+			if (layerChildren[i].getClassName() === "Text") {
+				out.texts += "!" + layerChildren[i].text() + "_" + parseFloat(layerChildren[i].x() * 100 / stageWidth) + "_" + parseFloat(layerChildren[i].y() * 100 / stageWidth) + "_" + layerChildren[i].fill() + "_" + parseFloat(layerChildren[i].width() * 100 / stageWidth);
 			}
 		}
-
-		out=JSON.stringify(out);
+		out = JSON.stringify(out);
 		return out;
 
 	}
-	getTextStateDR(){
-		let out='';
+
+	// get a string representing the notes state in Document Room
+	getTextStateDR() {
+		let out = '';
 		let layerChildren = this.pd.ui.DRlayerLabels.getChildren();
-		for(let i in layerChildren){
-			if(layerChildren[i].getClassName()==="Text"){
-				out+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].y()*100/window.innerWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width()*100/window.innerWidth);
+		for (let i in layerChildren) {
+			if (layerChildren[i].getClassName() === "Text") {
+				out += "!" + layerChildren[i].text() + "_" + parseFloat(layerChildren[i].x() * 100 / window.innerWidth) + "_" + parseFloat(layerChildren[i].y() * 100 / window.innerWidth) + "_" + layerChildren[i].fill() + "_" + parseFloat(layerChildren[i].width() * 100 / window.innerWidth);
 			}
 		}
-
 		return out;
-
 	}
 
-	getRectangleStateDR(){
-		let out='';
+	// get a string representing the rectangles' state in Document Room
+	getRectangleStateDR() {
+		let out = '';
 		let layerChildren = this.pd.ui.DRlayerShapes.getChildren();
 		// find the konva transformers of the rectangles to assign each rectangle its actual width and height
 		// the actual width and height of rectangles are those of the transformer
-		let transformers=[];
-		let index=0;
-		for(let i in layerChildren){
-			if(layerChildren[i].getClassName()==="Transformer"){
+		let transformers = [];
+		let index = 0;
+		for (let i in layerChildren) {
+			if (layerChildren[i].getClassName() === "Transformer") {
 				//add only rectangles' transformers
-				if(layerChildren[i].nodes()[0].getClassName()==="Rect")transformers.push(layerChildren[i]);
+				if (layerChildren[i].nodes()[0].getClassName() === "Rect") transformers.push(layerChildren[i]);
 			}
 		}
-		for(let i in layerChildren){
-			if(layerChildren[i].getClassName()==="Rect"){
-				let findWidth=transformers[index].width();
-				let findHeight=transformers[index].height();
+		for (let i in layerChildren) {
+			if (layerChildren[i].getClassName() === "Rect") {
+				let findWidth = transformers[index].width();
+				let findHeight = transformers[index].height();
 				index++;
-				out+="!"+"_"+parseFloat(layerChildren[i].x()*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].y()*100/window.innerWidth)+"_"+layerChildren[i].stroke()+"_"+parseFloat(findWidth*100/window.innerWidth)+"_"+parseFloat(findHeight*100/window.innerWidth);
+				out += "!" + "_" + parseFloat(layerChildren[i].x() * 100 / window.innerWidth) + "_" + parseFloat(layerChildren[i].y() * 100 / window.innerWidth) + "_" + layerChildren[i].stroke() + "_" + parseFloat(findWidth * 100 / window.innerWidth) + "_" + parseFloat(findHeight * 100 / window.innerWidth);
 			}
 		}
-
 		return out;
 	}
-	getArrowStateDR(){
-		let out='';
+
+	// get a string representing the arrows' state in Document Room
+	getArrowStateDR() {
+		let out = '';
 		let layerChildren = this.pd.ui.DRlayerShapes.getChildren();
-		for(let i in layerChildren){
-			if(layerChildren[i].getClassName()==="Arrow"){
+		for (let i in layerChildren) {
+			if (layerChildren[i].getClassName() === "Arrow") {
 
-				out+="!"+"_"+parseFloat(layerChildren[i].points()[0]*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].points()[1]*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].points()[2]*100/window.innerWidth)+"_"+parseFloat(layerChildren[i].points()[3]*100/window.innerWidth)+"_"+layerChildren[i].stroke();
+				out += "!" + "_" + parseFloat(layerChildren[i].points()[0] * 100 / window.innerWidth) + "_" + parseFloat(layerChildren[i].points()[1] * 100 / window.innerWidth) + "_" + parseFloat(layerChildren[i].points()[2] * 100 / window.innerWidth) + "_" + parseFloat(layerChildren[i].points()[3] * 100 / window.innerWidth) + "_" + layerChildren[i].stroke();
 			}
 		}
 		return out;
 	}
 
-
-	getHighlightingStateBoard(){
-		var out={};
-		out.board=this.highlightedPositions;
-		out=JSON.stringify(out)
-
+	// get a json string representing the highlighting state of the board
+	getHighlightingStateBoard() {
+		var out = {};
+		out.board = this.highlightedPositions;
+		out = JSON.stringify(out)
 		return out;
-
 	};
-	getAnnotationStatePieces(){
-		var out ={};
-		out.pieces="";
-		for (var i in this.pieceArray){
+
+	// get a json string representing the highlighting and freezing state of the pieces
+	getAnnotationStatePieces() {
+		var out = {};
+		out.pieces = "";
+		for (var i in this.pieceArray) {
 			var piece = this.pieceArray[i];
-			var color = piece.highlighted===undefined?"":piece.highlighted;
-			var frozen= piece.frozen===true?"f":"n";
-			out.pieces+='_' + piece.name + color + "." + frozen;
+			var color = piece.highlighted === undefined ? "" : piece.highlighted;
+			var frozen = piece.frozen === true ? "f" : "n";
+			out.pieces += '_' + piece.name + color + "." + frozen;
 		}
-		out=JSON.stringify(out);
+		out = JSON.stringify(out);
 		return out;
 	}
 
@@ -604,28 +598,24 @@ class Game{
 		
 	}
 
-	showQRCode(type,id){
+	//function modified to continue a document in Document Room too
+	showQRCode(type, id) {
 		let url = new URL(location.href);
 		let params = new URLSearchParams();
-
 		var getUrl = window.location;
-		var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
-		if(type){
+		var baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+		if (type) {
 			var docmentId = Object.keys(DocumentDR.selectedDocuments)[0];
-			if(type==="playDocument")docmentId=id;
-			params.set('d', window.LoggedIn+"."+docmentId);
+			if (type === "playDocument") docmentId = id;
+			params.set('d', window.LoggedIn + "." + docmentId);
 			url = (baseUrl + '?' + params.toString());
-
-		}
-		else {
+		} else {
 			params.set('s', this.getGameState());
 			params.set('conf', 'res');
 			url = (baseUrl + '?' + params.toString());
 		}
-		if(type && type==="playDocument") window.location.href = url;
-
-		else
-		this.pd.ui.showQRCode(url);
+		if (type && type === "playDocument") window.location.href = url;
+		else this.pd.ui.showQRCode(url);
 	}
 
 	//set the game state according to the content string provided
@@ -709,113 +699,112 @@ class Game{
 		
 	}
 
-	setTextStatePR(content){
-		if(!content)return;
-		let data=JSON.parse(content);
-		let texts=data.texts;
-		texts=texts.split('!');
-		let text="";
+	// set the given state of notes to the Play Room
+	setTextStatePR(content) {
+		if (!content) return;
+		let data = JSON.parse(content);
+		let texts = data.texts;
+		texts = texts.split('!');
+		let text = "";
 		let stageWidth = this.pd.ui.stage.width();
 		//let stageHeight = this.pd.ui.stage.height();
-		for (let i in texts){
-			text=texts[i];
+		for (let i in texts) {
+			text = texts[i];
 			if (!text) continue;
-			text=text.split('_');
-			this.pd.ui.addText(text[0],parseFloat(text[1]*stageWidth/100),parseFloat(text[2]*stageWidth/100),text[3],parseFloat(text[4]*stageWidth/100));
+			text = text.split('_');
+			this.pd.ui.addText(text[0], parseFloat(text[1] * stageWidth / 100), parseFloat(text[2] * stageWidth / 100), text[3], parseFloat(text[4] * stageWidth / 100));
 
 		}
 	}
-	setTextStateDR(content){
-		if(!content)return;
-		let texts=content.split('!');
-		let text="";
-		//let stageHeight = this.pd.ui.stage.height();
-		for (let i in texts){
-			text=texts[i];
-			if (!text) continue;
-			text=text.split('_');
-			this.pd.ui.addText(text[0],parseFloat(text[1]*window.innerWidth/100),parseFloat(text[2]*window.innerWidth/100),text[3],parseFloat(text[4]*window.innerWidth/100),"DR");
 
+	// set the given state of labels to the Document Room
+	setTextStateDR(content) {
+		if (!content) return;
+		let texts = content.split('!');
+		let text = "";
+		//let stageHeight = this.pd.ui.stage.height();
+		for (let i in texts) {
+			text = texts[i];
+			if (!text) continue;
+			text = text.split('_');
+			this.pd.ui.addText(text[0], parseFloat(text[1] * window.innerWidth / 100), parseFloat(text[2] * window.innerWidth / 100), text[3], parseFloat(text[4] * window.innerWidth / 100), "DR");
 		}
 	}
-	setRectangleStateDR(content){
-		if(!content)return;
-		let rectangles=content.split('!');
-		let rectangle="";
+
+	// set the given state of rectangles to the Document Room
+	setRectangleStateDR(content) {
+		if (!content) return;
+		let rectangles = content.split('!');
+		let rectangle = "";
 		//let stageHeight = this.pd.ui.stage.height();
-		for (let i in rectangles){
-			rectangle=rectangles[i];
+		for (let i in rectangles) {
+			rectangle = rectangles[i];
 			if (!rectangle) continue;
-			rectangle=rectangle.split('_');
-			this.pd.ui.addRectangleDR(parseFloat(rectangle[1]*window.innerWidth/100),parseFloat(rectangle[2]*window.innerWidth/100),rectangle[3],parseFloat(rectangle[4]*window.innerWidth/100),parseFloat(rectangle[5]*window.innerWidth/100));
+			rectangle = rectangle.split('_');
+			this.pd.ui.addRectangleDR(parseFloat(rectangle[1] * window.innerWidth / 100), parseFloat(rectangle[2] * window.innerWidth / 100), rectangle[3], parseFloat(rectangle[4] * window.innerWidth / 100), parseFloat(rectangle[5] * window.innerWidth / 100));
 
 		}
 	}
-	setArrowStateDR(content){
-		if(!content)return;
-		let arrows=content.split('!');
-		let arrow="";
+
+	// set the given state of arrows to the Document Room
+	setArrowStateDR(content) {
+		if (!content) return;
+		let arrows = content.split('!');
+		let arrow = "";
 		//let stageHeight = this.pd.ui.stage.height();
-		for (let i in arrows){
-			arrow=arrows[i];
+		for (let i in arrows) {
+			arrow = arrows[i];
 			if (!arrow) continue;
-			arrow=arrow.split('_');
-			this.pd.ui.addArrowDR(parseFloat(arrow[1]*window.innerWidth/100),parseFloat(arrow[2]*window.innerWidth/100),parseFloat(arrow[3]*window.innerWidth/100),parseFloat(arrow[4]*window.innerWidth/100),arrow[5]);
-
+			arrow = arrow.split('_');
+			this.pd.ui.addArrowDR(parseFloat(arrow[1] * window.innerWidth / 100), parseFloat(arrow[2] * window.innerWidth / 100), parseFloat(arrow[3] * window.innerWidth / 100), parseFloat(arrow[4] * window.innerWidth / 100), arrow[5]);
 		}
 	}
 
-
-	setPiecesAnnotationState(content){
-		if(!content)return;
+	// set the given state of pieces to the Play Room
+	setPiecesAnnotationState(content) {
+		if (!content) return;
 		//this.pd.evaluator.stopChecking();
-		var data=JSON.parse(content);
-		var state=data.pieces.split('_');
-		for (var i in state){
-			var pieceData=state[i];
+		var data = JSON.parse(content);
+		var state = data.pieces.split('_');
+		for (var i in state) {
+			var pieceData = state[i];
 			if (!pieceData) continue;
-
-			var name=pieceData[0];
-			var color="";
-			var piece=this.getPiece(name);
-			if(pieceData.length>1){
+			var name = pieceData[0];
+			var color = "";
+			var piece = this.getPiece(name);
+			if (pieceData.length > 1) {
 				//we need to distinguish if a piece is colored or frozen
-				if(pieceData.substring(1).includes("color") && pieceData.substring(1).includes(".")){
-					color=pieceData.substring(1,7);
-					if(pieceData.substring(8)==="f")piece.frozen=true;
-					piece.highlighted=color;
+				if (pieceData.substring(1).includes("color") && pieceData.substring(1).includes(".")) {
+					color = pieceData.substring(1, 7);
+					if (pieceData.substring(8) === "f") piece.frozen = true;
+					piece.highlighted = color;
+					this.pd.visual.updatePiece(piece);
+				} else if (pieceData.substring(1).includes("color")) {
+					color = pieceData.substring(1);
+					piece.highlighted = color;
+					this.pd.visual.updatePiece(piece);
+				} else {
+					if (pieceData.substring(2) === "f") piece.frozen = true;
 					this.pd.visual.updatePiece(piece);
 				}
-				else if(pieceData.substring(1).includes("color") ){
-					color=pieceData.substring(1);
-					piece.highlighted=color;
-					this.pd.visual.updatePiece(piece);
-
-				}
-				else{
-					if(pieceData.substring(2)==="f")piece.frozen=true;
-					this.pd.visual.updatePiece(piece);
-				}
-
 			}
 		}
 	}
 
-	setHighlightingStateBoard(content){
-		if(!content)return;
-		var data=JSON.parse(content);
-		this.highlightedPositions=data.board;
-		var postions=data.board.split('_');
-		for (var i in postions){
-			var postionData=postions[i];
+	// set the given state of board highlighting to the Play Room
+	setHighlightingStateBoard(content) {
+		if (!content) return;
+		var data = JSON.parse(content);
+		this.highlightedPositions = data.board;
+		var postions = data.board.split('_');
+		for (var i in postions) {
+			var postionData = postions[i];
 			if (!postionData) continue;
-
-			if (postionData.includes("#")){
-				postionData=postionData.split("#");
-				this.pd.visual.highlightBoardPostion(postionData[0],"#"+postionData[1]);
+			if (postionData.includes("#")) {
+				postionData = postionData.split("#");
+				this.pd.visual.highlightBoardPostion(postionData[0], "#" + postionData[1]);
 			}
 		}
-
 	}
 	
 	//load a game from a file
@@ -852,75 +841,83 @@ class Game{
 		
 	}
 
-	addDocument(){
+	// store the current game situation in Play Room to server
+	addDocument() {
 		var stoarge = window.localStorage;
 		var gameState = stoarge.getItem('gameState')
 		if (!gameState) {
 			alert("Error!, no board in local stoarge to load")
 		}
-		if (!gameState.includes("{")) {gameState='{'+gameState+'}';}
-		gameState=gameState.replaceAll('.',',');
+		if (!gameState.includes("{")) {
+			gameState = '{' + gameState + '}';
+		}
+		gameState = gameState.replaceAll('.', ',');
 		gameState = JSON.parse(gameState);
 		let piecesState = stoarge.getItem('piecesState')
-		if(piecesState) piecesState= JSON.parse(piecesState).pieces; else piecesState='none'
+		if (piecesState) piecesState = JSON.parse(piecesState).pieces; else piecesState = 'none'
 		let boardState = stoarge.getItem('boardState')
-		if(boardState) boardState= JSON.parse(boardState).board; else boardState='none';
+		if (boardState) boardState = JSON.parse(boardState).board; else boardState = 'none';
 		let TextStatePR = stoarge.getItem('TextStatePR')
-		if(TextStatePR){
-			TextStatePR= JSON.parse(TextStatePR);
-			TextStatePR=TextStatePR.texts;
-		}
-		else TextStatePR = 'none';
-		let boardLayout= this.layoutForDocument;
+		if (TextStatePR) {
+			TextStatePR = JSON.parse(TextStatePR);
+			TextStatePR = TextStatePR.texts;
+		} else TextStatePR = 'none';
+		let boardLayout = this.layoutForDocument;
 		var xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send("type="+"storedocumentPR"+"&x="+"none"+"&y="+"none"+"&boardname="+gameState.n+"&piecestate1="+gameState.s+"&piecestate2="+piecesState+"&boardState="+boardState+"&TextStatePR="+TextStatePR+"&boardLayout="+this.layoutForDocument+"&url="+document.documentURI);
+		xhttp.send("type=" + "storedocumentPR" + "&x=" + "none" + "&y=" + "none" + "&boardname=" + gameState.n + "&piecestate1=" + gameState.s + "&piecestate2=" + piecesState + "&boardState=" + boardState + "&TextStatePR=" + TextStatePR + "&boardLayout=" + this.layoutForDocument + "&url=" + document.documentURI);
 	}
 
-	deleteSelectedDocuments(){
+	// tell the server to remove the selected documents
+	deleteSelectedDocuments() {
 		let documentIDs = "";
-		Object.keys(DocumentDR.selectedDocuments).forEach(ID =>{
-			documentIDs+="_"+ID
+		Object.keys(DocumentDR.selectedDocuments).forEach(ID => {
+			documentIDs += "_" + ID
 			this.documents[ID].group.destroy();
 			delete this.documents[ID];
 		});
-		DocumentDR.selectedDocuments={};
+		DocumentDR.selectedDocuments = {};
 		this.pd.ui.deactivateButtonDR("#DRdelete_button");
 		this.pd.ui.deactivateButtonDR("#DRsend_button");
 		var xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send("type="+"deletedocumentsDR"+"&documentIDs="+documentIDs);
+		xhttp.send("type=" + "deletedocumentsDR" + "&documentIDs=" + documentIDs);
 	}
 
-	updateDocumentCoordinates(id,x,y){
-		x=x*100/window.innerWidth;
-		y=y*100/window.innerWidth;
+	// update the postion of a document in the server
+	updateDocumentCoordinates(id, x, y) {
+		x = x * 100 / window.innerWidth;
+		y = y * 100 / window.innerWidth;
 		var xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send("type="+"updateDocumentCoordinates"+"&id="+id+"&x="+x+"&y="+y);
-
+		xhttp.send("type=" + "updateDocumentCoordinates" + "&id=" + id + "&x=" + x + "&y=" + y);
 	}
 
-	postTextStateDR(){
+	// update the labels state of the Document Room on the server
+	postTextStateDR() {
 		let xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send("type="+"postTextStateDR"+"&state="+this.getTextStateDR());
+		xhttp.send("type=" + "postTextStateDR" + "&state=" + this.getTextStateDR());
 	}
-	postRectangleStateDR(){
+
+	// update the rectangle state of the Document Room on the server
+	postRectangleStateDR() {
 		let xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send("type="+"postRectangleStateDR"+"&state="+this.getRectangleStateDR());
+		xhttp.send("type=" + "postRectangleStateDR" + "&state=" + this.getRectangleStateDR());
 	}
-	postArrowStateDR(){
+
+	// update the arrow state of the Document Room on the server
+	postArrowStateDR() {
 		let xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "./loginsystem/reqhandler.php", true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send("type="+"postArrowStateDR"+"&state="+this.getArrowStateDR());
+		xhttp.send("type=" + "postArrowStateDR" + "&state=" + this.getArrowStateDR());
 	}
 	//*** partition handling ***
 
