@@ -523,7 +523,8 @@ class DocumentDR {
                     fontSize: 5/(100*documentWidth) * window.innerWidth,
                     fontFamily: 'Calibri',
                     fill: text[3],
-                    width: text[4]/(100*4*documentWidth) * window.innerWidth,
+                    width: text[4]/(100*(documentWidth*0.35)) * window.innerWidth,
+                    //width: text[4]/(100*4*documentWidth) * window.innerWidth,
                 });
                 this.group.add(textNode);
             }

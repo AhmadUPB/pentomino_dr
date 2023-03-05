@@ -734,7 +734,7 @@ game itself. Those are in Visual.js
 			y: y?y:PosY,
 			fontSize: 1.5/100 * window.innerWidth,
 			fill: fill?fill:where?"#FFF":"#000",
-			width: width?width/(100*10) * window.innerWidth:200/(100*10) * window.innerWidth, //make width relative to the window size
+			width: width?width:200/(100*10) * window.innerWidth, //make width relative to the window size
 			preventDefault: false
 		});
 

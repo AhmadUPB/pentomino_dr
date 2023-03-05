@@ -471,7 +471,7 @@ class Game{
 		let stageWidth =this.pd.ui.stage.width();
 		for(let i in layerChildren){
 			if(layerChildren[i].getClassName()==="Text"){
-				out.texts+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y()*100/stageWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width());
+				out.texts+="!"+layerChildren[i].text()+"_"+parseFloat(layerChildren[i].x()*100/stageWidth)+"_"+parseFloat(layerChildren[i].y()*100/stageWidth)+"_"+layerChildren[i].fill()+"_"+parseFloat(layerChildren[i].width()*100/stageWidth);
 			}
 		}
 
@@ -721,7 +721,7 @@ class Game{
 			text=texts[i];
 			if (!text) continue;
 			text=text.split('_');
-			this.pd.ui.addText(text[0],parseFloat(text[1]*stageWidth/100),parseFloat(text[2]*stageWidth/100),text[3],parseFloat(text[4]));
+			this.pd.ui.addText(text[0],parseFloat(text[1]*stageWidth/100),parseFloat(text[2]*stageWidth/100),text[3],parseFloat(text[4]*stageWidth/100));
 
 		}
 	}
