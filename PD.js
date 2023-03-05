@@ -77,7 +77,7 @@ class PD{
 			window.hinter=that.hinter;
 
 		}
-
+		// if there is a document sent to load then load it state before starting the game
 		this.loadTranslations(window.annotatedDocument?"":afterwards);
 		if(window.annotatedDocument){
 			this.setAnnotatedDocument(afterwards);
@@ -154,14 +154,14 @@ class PD{
 		console.log('Missing translation in '+this.config.language+' for '+text);
 		return text;
 	}
-
+	// if there is a document sent to load then load it state before starting the game
 	setAnnotatedDocument(afterwards){
 		var that = this;
 		var oReqDocs = new XMLHttpRequest();
 		oReqDocs.addEventListener("load", function () {
 			that.annotatedDocument=this.responseText;
 			//delete the parameter referencing the loaded document
-			// to avoid losing changes when updating the page after modifying the game situation in the Play Room
+			// to avoid losing new changes when updating the page after modifying the sent game situation in the Play Room
 			//based on: https://developer.mozilla.org/en-US/docs/Web/API/History/pushState
 			let newUrl = new URL(window.location.href);
 			newUrl.searchParams.delete('d');
