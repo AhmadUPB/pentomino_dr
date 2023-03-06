@@ -314,7 +314,6 @@ game itself. Those are in Visual.js
                 width: (window.innerWidth - (0 / 100 * window.innerWidth)) + that.PADDING * 2,
                 height: window.innerHeight - (6 / 100 * window.innerWidth) + that.PADDING * 2,
             })
-
             that.DRlayerShapes = new Konva.Layer();
             that.DRlayerDocuments1 = new Konva.Layer();
             that.DRlayerDocumentsDragging = new Konva.Layer();

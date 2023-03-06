@@ -86,6 +86,7 @@ body {
 	background-size: 100vw;
     background-position: bottom 0px left 0;
 	touch-action: none;
+	-webkit-user-select: none;          /* prevent copy paste and magnifier on safari devices */
 	}
 
 #functions,#annotation {
