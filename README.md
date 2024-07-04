@@ -24,3 +24,12 @@ To install and run this project locally using Apache server and XAMPP, follow th
    - Move the cloned repository into the htdocs directory. For example:
    ```bash
    mv your-repo-name /path/to/xampp/htdocs/
+4. **Start Apache Server:**
+   - Open the XAMPP Control Panel.
+   - Start the Apache server by clicking the "Start" button next to "Apache".
+   - 
+5. **Access the Project:**
+   - Open your web browser and go to http://localhost/your-repo-name
+  
+## Contact
+For any questions or feedback, please contact Ahmad Alfakes at nm.3@hotmail.com
