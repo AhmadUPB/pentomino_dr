@@ -4,7 +4,7 @@
 This project is a digital version of the analog Pentomino board game, designed primarily for use in primary schools to help improve children's spatial thinking and geometrical learning. The goal of the game is to cover a board completely with pentomino pieces without any empty spaces. This project introduces a new feature called the "Document Room" which allows users to annotate, save, and manage game situations for later use or sharing.
 
 <div align="center">
-  <img src="https://github.com/AhmadUPB/pentomino_dr/blob/main/appinfo/game.png" alt="Pentomino Game Board">
+  <img src="https://github.com/AhmadUPB/pentomino_dr/blob/main/appinfo/game.png" alt="Pentomino Game Board"  style="width: 60%;">
   <p><em>Figure 1: Pentomino Game Board</em></p>
 </div>
 
