@@ -42,7 +42,7 @@ To install and run this project locally using Apache server and XAMPP, follow th
 
 2. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/your-repo-name.git
+   git clone https://github.com/AhmadUPB/pentomino_dr
 
 3. **Move Project Files:**
    - Navigate to the XAMPP installation directory.
