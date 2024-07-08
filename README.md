@@ -10,8 +10,28 @@ This project is a digital version of the analog Pentomino board game, designed p
 
 ## New Features
 - **Annotation of Game Situations:** Teachers and students can annotate interesting game cases, freeze pieces in certain positions, highlight pieces or board positions, and take notes.
-- **Saving and Managing Game Situations:** Users can save game situations as text files, visually differentiate and compare stored game situations, and organize them spatially in a "Document Room".
-- **Sharing Game Situations:** Users can share annotated game situations with others, allowing them to access and continue the game with all annotations and specifications.
+  
+<div align="center">
+  <img src="https://github.com/AhmadUPB/pentomino_dr/blob/main/appinfo/annotations.png" alt="Annotation Mode"  style="width: 60%;">
+  <p><em>Figure 2: Making Annotations on a game situation</em></p>
+</div>
+
+- **Saving and Managing Game Situations:** Teachers can store game situations, visually differentiate and compare stored game situations, and organize them spatially in a "Document Room".
+
+- **Sharing Game Situations:** Teachers can share annotated game situations with others, allowing them to access and continue the game with all annotations and specifications.
+
+<div align="center">
+  <img src="https://github.com/AhmadUPB/pentomino_dr/blob/main/appinfo/sending_games.png" alt="Managing and sending game situations"  style="width: 60%; margin-bottom: 10px;">
+  <p><em>Figure 1: managing and sending</em></p>
+</div>
+
+- **Authentication System:** An authentication feature was added to the app to allow teachers to store their game situations on the server for later access.
+
+
+<div align="center">
+  <img src="https://github.com/AhmadUPB/pentomino_dr/blob/main/appinfo/login.png" alt="Authentication System"  style="width: 60%;">
+  <p><em>Figure 1: Authentication System</em></p>
+</div>
 
 ## Installation
 To install and run this project locally using Apache server and XAMPP, follow these steps:
